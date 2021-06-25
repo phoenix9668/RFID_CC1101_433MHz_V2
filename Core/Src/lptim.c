@@ -1,12 +1,12 @@
 /**
   ******************************************************************************
-  * File Name          : LPTIM.c
-  * Description        : This file provides code for the configuration
-  *                      of the LPTIM instances.
+  * @file    lptim.c
+  * @brief   This file provides code for the configuration
+  *          of the LPTIM instances.
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2020 STMicroelectronics.
+  * <h2><center>&copy; Copyright (c) 2021 STMicroelectronics.
   * All rights reserved.</center></h2>
   *
   * This software component is licensed by ST under BSD 3-Clause license,
@@ -21,17 +21,18 @@
 #include "lptim.h"
 
 /* USER CODE BEGIN 0 */
-__IO ITStatus twentyMinute = RESET;
-__IO ITStatus fourHour = RESET;
-__IO uint8_t timBase = 0x00;//one step == 128s
-__IO uint8_t resetBase = 0x00;
-__IO uint8_t Interval = 0x0A;//1280s
-__IO uint8_t ResetCC1101 = 0x70;//4hours
+lptim_t lptim;
+__IO uint8_t INTERVAL = 0x0A;//1280s
+__IO uint8_t RESETCC1101 = 0x70;//4hours
 /* USER CODE END 0 */
 
 /* LPTIM1 init function */
 void MX_LPTIM1_Init(void)
 {
+
+  /* USER CODE BEGIN LPTIM1_Init 0 */
+
+  /* USER CODE END LPTIM1_Init 0 */
 
   /* Peripheral clock enable */
   LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_LPTIM1);
@@ -40,12 +41,18 @@ void MX_LPTIM1_Init(void)
   NVIC_SetPriority(LPTIM1_IRQn, 3);
   NVIC_EnableIRQ(LPTIM1_IRQn);
 
+  /* USER CODE BEGIN LPTIM1_Init 1 */
+
+  /* USER CODE END LPTIM1_Init 1 */
   LL_LPTIM_SetClockSource(LPTIM1, LL_LPTIM_CLK_SOURCE_INTERNAL);
   LL_LPTIM_SetPrescaler(LPTIM1, LL_LPTIM_PRESCALER_DIV128);
   LL_LPTIM_SetPolarity(LPTIM1, LL_LPTIM_OUTPUT_POLARITY_REGULAR);
   LL_LPTIM_SetUpdateMode(LPTIM1, LL_LPTIM_UPDATE_MODE_IMMEDIATE);
   LL_LPTIM_SetCounterMode(LPTIM1, LL_LPTIM_COUNTER_MODE_INTERNAL);
   LL_LPTIM_TrigSw(LPTIM1);
+  /* USER CODE BEGIN LPTIM1_Init 2 */
+
+  /* USER CODE END LPTIM1_Init 2 */
 
 }
 
@@ -72,17 +79,17 @@ void LPTIM1_Counter_Start_IT(void)
   */
 void LPTimerAutoreloadMatch_Callback(void)
 {
-	timBase++;
-	resetBase++;
-	if(timBase == Interval)//1280s
+	lptim.twentyMinuteTimeBase++;
+	lptim.fourHourTimeBase++;
+	if(lptim.twentyMinuteTimeBase == INTERVAL)//1280s
 	{
-		twentyMinute = SET;
-		timBase = 0x00;
+		lptim.twentyMinuteIndex = SET;
+		lptim.twentyMinuteTimeBase = 0x00;
 	}
-	if(resetBase == ResetCC1101)//4hours
+	if(lptim.fourHourTimeBase == RESETCC1101)//4hours
 	{
-		fourHour = SET;
-		resetBase = 0x00;
+		lptim.fourHourIndex = SET;
+		lptim.fourHourTimeBase = 0x00;
 	}
 }
 

@@ -29,9 +29,9 @@ extern "C" {
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32l0xx_hal.h"
+
 #include "stm32l0xx_ll_iwdg.h"
 #include "stm32l0xx_ll_lptim.h"
-#include "stm32l0xx_hal.h"
 #include "stm32l0xx_ll_spi.h"
 #include "stm32l0xx_ll_usart.h"
 #include "stm32l0xx_ll_rcc.h"
@@ -51,29 +51,57 @@ extern "C" {
 
 /* Exported types ------------------------------------------------------------*/
 /* USER CODE BEGIN ET */
-//#define DEBUG
+typedef struct
+{
+	uint32_t deviceSerial0;
+	uint32_t deviceSerial1;
+	uint32_t deviceSerial2;
+	uint8_t deviceCode1;
+	uint8_t deviceCode2;
+	uint8_t deviceCode3;
+	uint8_t deviceCode4;
+	uint8_t deviceCode5;
+	uint8_t deviceCode6;
+	uint8_t deviceCode7;
+	uint8_t deviceCode8;
+	uint8_t deviceCode9;
+	uint8_t deviceCode10;
+	uint8_t deviceCode11;
+	uint8_t deviceCode12;
+} device_t;
+
+extern device_t device;
 /* USER CODE END ET */
 
 /* Exported constants --------------------------------------------------------*/
 /* USER CODE BEGIN EC */
 #define EEPROM_START_ADDR   0x08080000   /* Start @ of user eeprom area */
-#define RXBUFFERSIZE  		10			// Size of Reception buffer
+#define PI 3.1415926
 #define SEND_S1LENGTH    	16
 #define SEND_S2LENGTH    	17
 #define SEND_S3LENGTH    	24
 #define SEND_S5LENGTH    	20
 #define SEND_S7LENGTH    	25
 #define SEND_LLENGTH     	97
-#define SEND_LENGTH     	120
+#define SEND_LENGTH     	180
 #define RECV_LENGTH   		24
-#define STEP_NUM					36			// 20min per step,have 36 steps,equal 12 hours
-#define STEPOVERFLOW			STEP_NUM-1
 
 #define	Time_Delay				500		// cc1101 tx wait time
 /* USER CODE END EC */
 
 /* Exported macro ------------------------------------------------------------*/
 /* USER CODE BEGIN EM */
+#define _DEBUG              0        //  set device info
+#define _NBIOT_DEBUG        0        //  use printf debug
+
+#if (_NBIOT_DEBUG == 1)
+#define rfid_printf(...)     			printf(__VA_ARGS__)
+#else
+#define rfid_printf(...)     			{};
+#endif
+
+static uint8_t SendBuffer[SEND_LENGTH] = {0};
+static uint8_t RecvBuffer[RECV_LENGTH] = {0};
 
 /* USER CODE END EM */
 
@@ -96,6 +124,9 @@ void Error_Handler(void);
 #define INT1_Pin LL_GPIO_PIN_0
 #define INT1_GPIO_Port GPIOB
 #define INT1_EXTI_IRQn EXTI0_1_IRQn
+#define INT2_Pin LL_GPIO_PIN_1
+#define INT2_GPIO_Port GPIOB
+#define INT2_EXTI_IRQn EXTI0_1_IRQn
 #define SPI2_CS_Pin LL_GPIO_PIN_12
 #define SPI2_CS_GPIO_Port GPIOB
 #define LED_GREEN_Pin LL_GPIO_PIN_4

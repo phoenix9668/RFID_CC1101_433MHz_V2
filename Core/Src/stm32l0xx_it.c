@@ -24,6 +24,8 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "usart.h"
+#include "adxl362.h"
+#include "spi.h"
 #include "lptim.h"
 /* USER CODE END Includes */
 
@@ -44,11 +46,8 @@
 
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN PV */
-extern __IO FlagStatus stepState;
 extern __IO ITStatus rxCatch;
 extern __IO ITStatus txFiFoUnFlow;
-extern __IO uint8_t stepStage;
-extern __IO uint16_t stepNum;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -171,9 +170,18 @@ void EXTI0_1_IRQHandler(void)
   {
     LL_EXTI_ClearFlag_0_31(LL_EXTI_LINE_0);
     /* USER CODE BEGIN LL_EXTI_LINE_0 */
-		stepNum++;
-		stepState = SET;
+		MX_SPI2_Init();
+		Activate_SPI(SPI2);
+		ADXL362FifoRead(1024, fifo);
+		step.stepState = SET;
     /* USER CODE END LL_EXTI_LINE_0 */
+  }
+  if (LL_EXTI_IsActiveFlag_0_31(LL_EXTI_LINE_1) != RESET)
+  {
+    LL_EXTI_ClearFlag_0_31(LL_EXTI_LINE_1);
+    /* USER CODE BEGIN LL_EXTI_LINE_1 */
+		freeFallDetection = SET;
+    /* USER CODE END LL_EXTI_LINE_1 */
   }
   /* USER CODE BEGIN EXTI0_1_IRQn 1 */
 

@@ -11,9 +11,40 @@
 ********************************************************************************/
 
 #include "stm32l0xx.h"
+#include <string.h>
+#include "math.h"
 
 #ifndef _ADXL362DRIVER_H_
-#define _ADXL362DRIVER_H_  
+#define _ADXL362DRIVER_H_
+
+#define STEP_LOOPNUM    36  // 20min per step,have 36 steps,equal 12 hours
+
+/**
+ * \brief           Buffer for FIFO
+ * \note            SPI
+ */
+extern uint8_t fifo[1024];
+static short int xAxis[5];
+static short int yAxis[5];
+static short int zAxis[5];
+static short int temp[5];
+static double angle[5];
+static uint8_t angle_num;
+static double angle_sum;
+static double angle_avg;
+
+typedef struct
+{
+	__IO uint8_t stepStage;
+	__IO FlagStatus stepState;
+	__IO uint16_t stepNum;
+	__IO uint16_t stepArray[STEP_LOOPNUM];
+	__IO uint16_t ingestionNum;
+	__IO uint16_t ingestionArray[STEP_LOOPNUM];
+} step_t;
+
+extern step_t step;
+extern __IO FlagStatus freeFallDetection;
 
 /* ------- Register names ------- */
 
@@ -53,11 +84,13 @@
 #define XL362_SELF_TEST			  0x2E
 
 unsigned char ADXL362RegisterRead(unsigned char Address);
-void	ADXL362RegisterWrite(unsigned char Address, unsigned char SendValue);
-void  ADXL362BurstRead(unsigned char Address, unsigned char NumberofRegisters, unsigned char *RegisterData);
-void  ADXL362BurstWrite(unsigned char Address, unsigned char NumberofRegisters, unsigned char *RegisterData);
-void 	ADXL362FifoRead(unsigned int NumberofRegisters, unsigned char *RegisterData);
-void	ADXL362_Init(void);
-void	ADXL362_ReInit(uint8_t thresh_act_h, uint8_t thresh_act_l, uint8_t thresh_inact_h, uint8_t thresh_inact_l, uint8_t time_inact_h, uint8_t time_inact_l, uint8_t filter_ctl);
+void ADXL362RegisterWrite(unsigned char Address, unsigned char SendValue);
+void ADXL362BurstRead(unsigned char Address, unsigned char NumberofRegisters, unsigned char *RegisterData);
+void ADXL362BurstWrite(unsigned char Address, unsigned char NumberofRegisters, unsigned char *RegisterData);
+void ADXL362FifoRead(unsigned int NumberofRegisters, unsigned char *RegisterData);
+uint16_t ADXL362FifoEntries(void);
+void ADXL362FifoProcess(void);
+void ADXL362_Init(void);
+void ADXL362_ReInit(uint8_t thresh_act_h, uint8_t thresh_act_l, uint8_t time_act, uint8_t thresh_inact_h, uint8_t thresh_inact_l, uint8_t time_inact_h, uint8_t time_inact_l, uint8_t filter_ctl);
 
 #endif

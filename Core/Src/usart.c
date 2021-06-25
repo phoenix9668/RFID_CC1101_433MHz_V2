@@ -1,12 +1,12 @@
 /**
   ******************************************************************************
-  * File Name          : USART.c
-  * Description        : This file provides code for the configuration
-  *                      of the USART instances.
+  * @file    usart.c
+  * @brief   This file provides code for the configuration
+  *          of the USART instances.
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2020 STMicroelectronics.
+  * <h2><center>&copy; Copyright (c) 2021 STMicroelectronics.
   * All rights reserved.</center></h2>
   *
   * This software component is licensed by ST under BSD 3-Clause license,
@@ -21,9 +21,7 @@
 #include "usart.h"
 
 /* USER CODE BEGIN 0 */
-__IO uint8_t RxBuffer[RXBUFFERSIZE];
-__IO uint8_t RxCounter = 0;
-__IO FlagStatus commandState = RESET;
+usart_t usart;
 
 #ifdef __GNUC__
 /* With GCC, small printf (option LD Linker->Libraries->Small printf
@@ -38,6 +36,11 @@ __IO FlagStatus commandState = RESET;
 
 void MX_USART1_UART_Init(void)
 {
+
+  /* USER CODE BEGIN USART1_Init 0 */
+
+  /* USER CODE END USART1_Init 0 */
+
   LL_USART_InitTypeDef USART_InitStruct = {0};
 
   LL_GPIO_InitTypeDef GPIO_InitStruct = {0};
@@ -70,6 +73,9 @@ void MX_USART1_UART_Init(void)
   NVIC_SetPriority(USART1_IRQn, 3);
   NVIC_EnableIRQ(USART1_IRQn);
 
+  /* USER CODE BEGIN USART1_Init 1 */
+
+  /* USER CODE END USART1_Init 1 */
   USART_InitStruct.BaudRate = 9600;
   USART_InitStruct.DataWidth = LL_USART_DATAWIDTH_8B;
   USART_InitStruct.StopBits = LL_USART_STOPBITS_1;
@@ -80,6 +86,9 @@ void MX_USART1_UART_Init(void)
   LL_USART_Init(USART1, &USART_InitStruct);
   LL_USART_ConfigAsyncMode(USART1);
   LL_USART_Enable(USART1);
+  /* USER CODE BEGIN USART1_Init 2 */
+
+  /* USER CODE END USART1_Init 2 */
 
 }
 
@@ -147,15 +156,15 @@ void PrintInfo(uint8_t *String, uint32_t Size)
 void USART_CharReception_Callback(void)
 {
   /* Read Received character. RXNE flag is cleared by reading of RDR register */
-  RxBuffer[RxCounter++] = LL_USART_ReceiveData8(USART1);
+  usart.rxBuffer[usart.rxCounter++] = LL_USART_ReceiveData8(USART1);
   /* Echo received character on TX */
 //  LL_USART_TransmitData8(USART1, RxBuffer[RxCounter-1]);
 	/* Check if received value is corresponding to specific one : S or s */
-  if (RxBuffer[RxCounter-2] == 0x0D && RxBuffer[RxCounter-1] == 0x0A)
+  if (usart.rxBuffer[usart.rxCounter-2] == 0x0D && usart.rxBuffer[usart.rxCounter-1] == 0x0A)
   {
     /* Clear RxCounter : Expected character has been received */
-    RxCounter = 0x00;
-		commandState = SET;
+    usart.rxCounter = 0x00;
+		usart.rxState = SET;
   }
 }
 
@@ -184,7 +193,7 @@ void Error_Callback(void)
 			MX_USART1_UART_Init();
 			LL_USART_EnableIT_RXNE(USART1);
 			LL_USART_EnableIT_ERROR(USART1);
-			RxCounter = 0x00;
+			usart.rxCounter = 0x00;
   }
 	else if (isr_reg & LL_USART_ISR_FE)
   {
@@ -194,7 +203,7 @@ void Error_Callback(void)
 			MX_USART1_UART_Init();
 			LL_USART_EnableIT_RXNE(USART1);
 			LL_USART_EnableIT_ERROR(USART1);
-			RxCounter = 0x00;
+			usart.rxCounter = 0x00;
   }
 	else if (isr_reg & LL_USART_ISR_ORE)
   {
@@ -204,7 +213,7 @@ void Error_Callback(void)
 			MX_USART1_UART_Init();
 			LL_USART_EnableIT_RXNE(USART1);
 			LL_USART_EnableIT_ERROR(USART1);
-			RxCounter = 0x00;
+			usart.rxCounter = 0x00;
   }
 	else if (isr_reg & LL_USART_ISR_PE)
   {
@@ -214,7 +223,7 @@ void Error_Callback(void)
 			MX_USART1_UART_Init();
 			LL_USART_EnableIT_RXNE(USART1);
 			LL_USART_EnableIT_ERROR(USART1);
-			RxCounter = 0x00;
+			usart.rxCounter = 0x00;
   }
   else
   {
@@ -223,7 +232,7 @@ void Error_Callback(void)
 			MX_USART1_UART_Init();
 			LL_USART_EnableIT_RXNE(USART1);
 			LL_USART_EnableIT_ERROR(USART1);
-			RxCounter = 0x00;
+			usart.rxCounter = 0x00;
   }
 }
 

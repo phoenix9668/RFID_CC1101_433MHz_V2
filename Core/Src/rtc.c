@@ -1,12 +1,12 @@
 /**
   ******************************************************************************
-  * File Name          : RTC.c
-  * Description        : This file provides code for the configuration
-  *                      of the RTC instances.
+  * @file    rtc.c
+  * @brief   This file provides code for the configuration
+  *          of the RTC instances.
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2020 STMicroelectronics.
+  * <h2><center>&copy; Copyright (c) 2021 STMicroelectronics.
   * All rights reserved.</center></h2>
   *
   * This software component is licensed by ST under BSD 3-Clause license,
@@ -21,7 +21,8 @@
 #include "rtc.h"
 
 /* USER CODE BEGIN 0 */
-
+RTC_TimeTypeDef UTC_Time = {0};
+RTC_DateTypeDef UTC_Date = {0};
 /* USER CODE END 0 */
 
 RTC_HandleTypeDef hrtc;
@@ -29,9 +30,17 @@ RTC_HandleTypeDef hrtc;
 /* RTC init function */
 void MX_RTC_Init(void)
 {
+
+  /* USER CODE BEGIN RTC_Init 0 */
+
+  /* USER CODE END RTC_Init 0 */
+
   RTC_TimeTypeDef sTime = {0};
   RTC_DateTypeDef sDate = {0};
 
+  /* USER CODE BEGIN RTC_Init 1 */
+
+  /* USER CODE END RTC_Init 1 */
   /** Initialize RTC Only
   */
   hrtc.Instance = RTC;
@@ -77,6 +86,9 @@ void MX_RTC_Init(void)
   {
     Error_Handler();
   }
+  /* USER CODE BEGIN RTC_Init 2 */
+
+  /* USER CODE END RTC_Init 2 */
 
 }
 
@@ -136,10 +148,8 @@ void GetRTC(RTC_TimeTypeDef *sTime, RTC_DateTypeDef *sDate)
 {
 	HAL_RTC_GetTime(&hrtc, sTime, RTC_FORMAT_BIN);
 	HAL_RTC_GetDate(&hrtc, sDate, RTC_FORMAT_BIN);
-	#ifdef DEBUG
-		printf("%02d/%02d/%02d ",2000+sDate->Year, sDate->Month, sDate->Date);
-		printf("%02d:%02d:%02d\n",sTime->Hours, sTime->Minutes, sTime->Seconds);
-	#endif
+	rfid_printf("%02d/%02d/%02d ",2000+sDate->Year, sDate->Month, sDate->Date);
+	rfid_printf("%02d:%02d:%02d\n",sTime->Hours, sTime->Minutes, sTime->Seconds);
 }
 
 void SetRTC(uint8_t *buffer)
@@ -168,7 +178,7 @@ void SetRTC(uint8_t *buffer)
   }
 }
 
-void InitRTC(uint32_t sdate, uint32_t stime)
+void InitRTC(uint32_t stime, uint32_t sdate)
 {
 	RTC_TimeTypeDef sTime = {0};
   RTC_DateTypeDef sDate = {0};
@@ -183,9 +193,9 @@ void InitRTC(uint32_t sdate, uint32_t stime)
   {
     Error_Handler();
   }
-  sDate.WeekDay = (uint8_t)(0x000000FF & sdate);
+  sDate.Date = (uint8_t)(0x000000FF & sdate);
   sDate.Month = (uint8_t)(0x000000FF & sdate>>16);
-  sDate.Date = (uint8_t)(0x000000FF & sdate>>8);
+  sDate.WeekDay = (uint8_t)(0x000000FF & sdate>>8);
   sDate.Year = (uint8_t)(0x000000FF & sdate>>24);
 
   if (HAL_RTC_SetDate(&hrtc, &sDate, RTC_FORMAT_BIN) != HAL_OK)

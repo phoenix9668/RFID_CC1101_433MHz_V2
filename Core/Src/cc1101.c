@@ -432,14 +432,13 @@ OUTPUT   : None
 void CC1101SendPacket(uint8_t *txbuffer, uint8_t size, TX_DATA_MODE mode)
 {
     uint8_t address;
-    uint8_t i;
 		uint8_t tempbuffer[60];
 
-		if(size > 60)
-		{
-			for(i=0; i<(size-60); i++)
-			{	tempbuffer[i] = txbuffer[i+60];}
+		if(size > 60){
+			for(uint8_t i=0; i<(size-60); i++){
+				tempbuffer[i] = txbuffer[i+60];}
 		}
+
 		rxCatch = RESET;
 		txFiFoUnFlow = RESET;
 	
@@ -464,14 +463,28 @@ void CC1101SendPacket(uint8_t *txbuffer, uint8_t size, TX_DATA_MODE mode)
 			while(rxCatch != SET){}
 			rxCatch = RESET;
 		}
-		else{
+		else
+		{
 			CC1101WriteMultiReg(CC1101_TXFIFO, txbuffer, 60);
 			CC1101SetTRMode(TX_MODE);
-			
+
 			while(txFiFoUnFlow != SET){}
 			rxCatch = RESET;
 			CC1101WriteMultiReg(CC1101_TXFIFO, tempbuffer, (size-60));
 		}
+//		else
+//		{
+//			CC1101WriteMultiReg(CC1101_TXFIFO, txbuffer, 60);
+//			CC1101SetTRMode(TX_MODE);
+
+//			while(txFiFoUnFlow != SET){}
+//			txFiFoUnFlow = RESET;
+//			CC1101WriteMultiReg(CC1101_TXFIFO, tempbuffer1, 60);
+
+//			while(txFiFoUnFlow != SET){}
+//			rxCatch = RESET;
+//			CC1101WriteMultiReg(CC1101_TXFIFO, tempbuffer2, (size-120));
+//		}
 
 		while(rxCatch != SET){}
 		rxCatch = RESET;
@@ -580,12 +593,8 @@ void CC1101Init(uint8_t addr, uint16_t sync)
     CC1101WriteMultiReg(CC1101_PATABLE, PaTabel, 8);
 		NVIC_EnableIRQ(EXTI2_3_IRQn);
 		
-		#ifdef DEBUG
-			i = CC1101ReadStatus(CC1101_PARTNUM);//for test, must be 0x00
-			printf("i1 = %d ",i);
-			i = CC1101ReadStatus(CC1101_VERSION);//for test, refer to the datasheet,must be 0x14
-			printf("i2 = %d ",i);
-		#endif
+		rfid_printf("i1 = %d ",CC1101ReadStatus(CC1101_PARTNUM));//for test, must be 0x00
+		rfid_printf("i2 = %d ",CC1101ReadStatus(CC1101_VERSION));//for test, refer to the datasheet,must be 0x14
 }
 /*
 ================================================================================
