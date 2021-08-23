@@ -1,7 +1,7 @@
 Protel Design System Design Rule Check
 PCB File : C:\Users\phoen\OneDrive\Work\PCB\RFID_CC1101_433MHz\RFID_CC1101_433MHz.PcbDoc
-Date     : 2021-05-11
-Time     : 18:41:35
+Date     : 2021-08-10
+Time     : 17:31:24
 
 Processing Rule : Clearance Constraint (Gap=8mil) ((IsPad and InComponent('U1')) or (IsPad and InComponent('U4')) or (IsPad and InComponent('U5')) or (IsPad and InComponent('USB1'))),(All)
 Rule Violations :0
@@ -13,8 +13,7 @@ Processing Rule : Short-Circuit Constraint (Allowed=No) (All),(All)
 Rule Violations :0
 
 Processing Rule : Un-Routed Net Constraint ( (All) )
-   Violation between Un-Routed Net Constraint: Net BAT+ Between Track (821.404mil,96.74mil)(821.404mil,181.404mil) on Bottom Layer And Track (821.404mil,96.74mil)(825mil,100.336mil) on Top Layer 
-Rule Violations :1
+Rule Violations :0
 
 Processing Rule : Modified Polygon (Allow modified: No), (Allow shelved: No)
 Rule Violations :0
@@ -37,20 +36,19 @@ Rule Violations :0
 Processing Rule : Minimum Solder Mask Sliver (Gap=1.4mil) (All),(All)
 Rule Violations :0
 
-Processing Rule : Silk To Solder Mask (Clearance=3.5mil) (IsPad),(All)
+Processing Rule : Silk To Solder Mask (Clearance=0mil) (IsPad),(All)
 Rule Violations :0
 
-Processing Rule : Silk to Silk (Clearance=10mil) (All),(All)
+Processing Rule : Silk to Silk (Clearance=6mil) (All),(All)
 Rule Violations :0
 
 Processing Rule : Net Antennae (Tolerance=0mil) (All)
-   Violation between Net Antennae: Track (821.404mil,96.74mil)(821.404mil,181.404mil) on Bottom Layer 
-Rule Violations :1
+Rule Violations :0
 
 Processing Rule : Height Constraint (Min=0mil) (Max=1000mil) (Prefered=500mil) (All)
 Rule Violations :0
 
 
-Violations Detected : 2
+Violations Detected : 0
 Waived Violations : 0
-Time Elapsed        : 00:00:01
+Time Elapsed        : 00:00:00
