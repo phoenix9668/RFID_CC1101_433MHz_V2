@@ -472,19 +472,6 @@ void CC1101SendPacket(uint8_t *txbuffer, uint8_t size, TX_DATA_MODE mode)
 			rxCatch = RESET;
 			CC1101WriteMultiReg(CC1101_TXFIFO, tempbuffer, (size-60));
 		}
-//		else
-//		{
-//			CC1101WriteMultiReg(CC1101_TXFIFO, txbuffer, 60);
-//			CC1101SetTRMode(TX_MODE);
-
-//			while(txFiFoUnFlow != SET){}
-//			txFiFoUnFlow = RESET;
-//			CC1101WriteMultiReg(CC1101_TXFIFO, tempbuffer1, 60);
-
-//			while(txFiFoUnFlow != SET){}
-//			rxCatch = RESET;
-//			CC1101WriteMultiReg(CC1101_TXFIFO, tempbuffer2, (size-120));
-//		}
 
 		while(rxCatch != SET){}
 		rxCatch = RESET;

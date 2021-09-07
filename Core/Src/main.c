@@ -396,7 +396,7 @@ uint8_t RF_RecvHandler(void)
 	if(rxCatch == SET)
 		{
 			recvState = SET;
-			HAL_Delay(2);
+			HAL_Delay(4);
 			rfid_printf("interrupt occur\n");
 			for (uint8_t i=0; i<RECV_LENGTH; i++)   { RecvBuffer[i] = 0; } // clear array
 			length = CC1101RecPacket(RecvBuffer, &ChipAddr, &RSSI);
