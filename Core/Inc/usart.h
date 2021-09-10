@@ -32,7 +32,7 @@ extern "C" {
 /* USER CODE END Includes */
 
 /* USER CODE BEGIN Private defines */
-#define RXBUFFERSIZE  		10			// Size of Reception buffer
+#define RXBUFFERSIZE  		24			// Size of Reception buffer
 
 typedef struct
 {

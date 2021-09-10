@@ -161,23 +161,27 @@ int main(void)
 				Set_DeviceInfo();
 				usart.rxState = RESET;
 			}
+			HAL_Delay(100);
+			LED_GREEN_TOG();
 		#endif
 		if(step.stepState == SET)
 		{
 			ADXL362FifoProcess();
 			step.stepState = RESET;
 		}
-		if(usart.rxState == RESET && recvState == RESET && step.stepState == RESET && lptim.twentyMinuteIndex == RESET && lptim.fourHourIndex == RESET)
-		{
-			MX_SPI1_DeInit();
-			MX_SPI2_DeInit();
-			SystemPower_Config();
-			/* Enter Stop Mode */
-			HAL_PWR_EnterSTOPMode(PWR_LOWPOWERREGULATOR_ON, PWR_STOPENTRY_WFI);
-			SystemClock_Config();
-			MX_SPI1_Init();
-			Activate_SPI(SPI1);
-		}
+		#if (_DEBUG == 0)
+			if(usart.rxState == RESET && recvState == RESET && step.stepState == RESET && lptim.twentyMinuteIndex == RESET && lptim.fourHourIndex == RESET)
+			{
+				MX_SPI1_DeInit();
+				MX_SPI2_DeInit();
+				SystemPower_Config();
+				/* Enter Stop Mode */
+				HAL_PWR_EnterSTOPMode(PWR_LOWPOWERREGULATOR_ON, PWR_STOPENTRY_WFI);
+				SystemClock_Config();
+				MX_SPI1_Init();
+				Activate_SPI(SPI1);
+			}
+		#endif
   }
   /* USER CODE END 3 */
 }
@@ -295,8 +299,12 @@ void System_Initial(void)
 	/*##-2- initial CC1101 peripheral,configure it's address and sync code ##*/
 	addrEeprom = (uint8_t)(0xff & DATAEEPROM_Read(EEPROM_START_ADDR)>>16);
 	syncEeprom = (uint16_t)(0xffff & DATAEEPROM_Read(EEPROM_START_ADDR));
+	
 	rfid_printf("addrEeprom = %x\n",addrEeprom);
 	rfid_printf("syncEeprom = %x\n",syncEeprom);
+	rfid_printf("deviceCode = %08x",device.deviceSerial0);
+	rfid_printf("%08x",device.deviceSerial1);
+	rfid_printf("%08x\n",device.deviceSerial2);
 	RFIDInitial(addrEeprom, syncEeprom, IDLE_MODE);
 	
 	for(uint8_t i=0; i<STEP_LOOPNUM; i++){
@@ -323,9 +331,12 @@ void System_Initial(void)
 void Get_SerialNum(void)
 {
 	memset(&device, 0, sizeof(device));
-  device.deviceSerial0 = *(uint32_t*)(0x1FF80050);
-  device.deviceSerial1 = *(uint32_t*)(0x1FF80054);
-  device.deviceSerial2 = *(uint32_t*)(0x1FF80064);
+	device.deviceSerial0 = DATAEEPROM_Read(EEPROM_START_ADDR+32);
+  device.deviceSerial1 = DATAEEPROM_Read(EEPROM_START_ADDR+36);
+  device.deviceSerial2 = DATAEEPROM_Read(EEPROM_START_ADDR+40);
+//  device.deviceSerial0 = *(uint32_t*)(0x1FF80050);
+//  device.deviceSerial1 = *(uint32_t*)(0x1FF80054);
+//  device.deviceSerial2 = *(uint32_t*)(0x1FF80064);
 	device.deviceCode1 = (uint8_t)(0x000000FF & device.deviceSerial0>>24);
 	device.deviceCode2 = (uint8_t)(0x000000FF & device.deviceSerial0>>16);
 	device.deviceCode3 = (uint8_t)(0x000000FF & device.deviceSerial0>>8);
@@ -350,10 +361,19 @@ void Show_Message(void)
 	rfid_printf("\r\n CC1101 chip transfer program \n");
 	rfid_printf(" using USART1,configuration:%d 8-N-1 \n",9600);
 	rfid_printf(" when in transfer mode,the data can exceed 60 bytes!!\r\n");
-
-	rfid_printf("Device_Serial0 : %x\n",device.deviceSerial0);
-	rfid_printf("Device_Serial1 : %x\n",device.deviceSerial1);
-	rfid_printf("Device_Serial2 : %x\n",device.deviceSerial2);
+	
+	#if (_DEBUG == 1)
+		printf("EEPROM INIT DATA:\n");
+		printf("addrEeprom = %x\n",addrEeprom);
+		printf("syncEeprom = %x\n",syncEeprom);
+		printf("deviceCode = %08x",device.deviceSerial0);
+		printf("%08x",device.deviceSerial1);
+		printf("%08x\n",device.deviceSerial2);
+		printf("\n");
+		printf("please configure eeprom,include addrEeprom,syncEeprom and deviceCode\n");
+		printf("|------Header-------|---addr--|---sync--|------------------------device code------------------------|---Tail--|\n");
+		printf("|0x41 0x42 0x43 0x44|0x00 0xXX|0xXX 0xXX|0xXX 0xXX 0xXX 0xXX 0xXX 0xXX 0xXX 0xXX 0xXX 0xXX 0xXX 0xXX|0x0D 0x0A|\n");
+	#endif
 
 	ReadValueTemp = ADXL362RegisterRead(XL362_DEVID_AD);     	//Analog Devices device ID, 0xAD
 	if(ReadValueTemp == 0xAD)
@@ -730,19 +750,31 @@ void Set_DeviceInfo(void)
 {
   /* Set transmission flag: trasfer complete*/
 	uint32_t data;
-	uint8_t uart_addr_eeprom;// 从eeprom中读出的数
-	uint16_t uart_sync_eeprom;
 
 	/*##-1- Check UART receive data whether is ‘ABCD’ begin or not ###########################*/
 	if(usart.rxBuffer[0] == 0x41 && usart.rxBuffer[1] == 0x42 && usart.rxBuffer[2] == 0x43 && usart.rxBuffer[3] == 0x44)//输入‘ABCD’
 	{
 		data = ((uint32_t)(0xFF000000 & usart.rxBuffer[4]<<24)+(uint32_t)(0x00FF0000 & usart.rxBuffer[5]<<16)+(uint32_t)(0x0000FF00 & usart.rxBuffer[6]<<8)+(uint32_t)(0x000000FF & usart.rxBuffer[7]));
 		DATAEEPROM_Program(EEPROM_START_ADDR, data);
-		uart_addr_eeprom = (uint8_t)(0xff & DATAEEPROM_Read(EEPROM_START_ADDR)>>16);
-		uart_sync_eeprom = (uint16_t)(0xffff & DATAEEPROM_Read(EEPROM_START_ADDR));
-		rfid_printf("eeprom program end\n");
-		rfid_printf("addr_eeprom = %x\n",uart_addr_eeprom);
-		rfid_printf("sync_eeprom = %x\n",uart_sync_eeprom);
+		data = ((uint32_t)(0xFF000000 & usart.rxBuffer[8]<<24)+(uint32_t)(0x00FF0000 & usart.rxBuffer[9]<<16)+(uint32_t)(0x0000FF00 & usart.rxBuffer[10]<<8)+(uint32_t)(0x000000FF & usart.rxBuffer[11]));
+		DATAEEPROM_Program(EEPROM_START_ADDR+32, data);
+		data = ((uint32_t)(0xFF000000 & usart.rxBuffer[12]<<24)+(uint32_t)(0x00FF0000 & usart.rxBuffer[13]<<16)+(uint32_t)(0x0000FF00 & usart.rxBuffer[14]<<8)+(uint32_t)(0x000000FF & usart.rxBuffer[15]));
+		DATAEEPROM_Program(EEPROM_START_ADDR+36, data);
+		data = ((uint32_t)(0xFF000000 & usart.rxBuffer[16]<<24)+(uint32_t)(0x00FF0000 & usart.rxBuffer[17]<<16)+(uint32_t)(0x0000FF00 & usart.rxBuffer[18]<<8)+(uint32_t)(0x000000FF & usart.rxBuffer[19]));
+		DATAEEPROM_Program(EEPROM_START_ADDR+40, data);
+		
+		addrEeprom = (uint8_t)(0xff & DATAEEPROM_Read(EEPROM_START_ADDR)>>16);
+		syncEeprom = (uint16_t)(0xffff & DATAEEPROM_Read(EEPROM_START_ADDR));
+		Get_SerialNum();
+
+		#if (_DEBUG == 1)
+			printf("eeprom program end\n");
+			printf("addrEeprom = %x\n",addrEeprom);
+			printf("syncEeprom = %x\n",syncEeprom);
+			printf("deviceCode = %08x",device.deviceSerial0);
+			printf("%08x",device.deviceSerial1);
+			printf("%08x\n",device.deviceSerial2);
+		#endif
 	}
 }
 
