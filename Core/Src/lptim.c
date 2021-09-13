@@ -66,7 +66,7 @@ void LPTIM1_Counter_Start_IT(void)
   LL_LPTIM_Enable(LPTIM1);
 
   /* Set the Autoreload value */
-  LL_LPTIM_SetAutoReload(LPTIM1, 0x9087);
+  LL_LPTIM_SetAutoReload(LPTIM1, 0x7FFF);
   
   /* Start the LPTIM counter in continuous mode */
   LL_LPTIM_StartCounter(LPTIM1, LL_LPTIM_OPERATING_MODE_CONTINUOUS);
