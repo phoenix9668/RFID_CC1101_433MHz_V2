@@ -14,9 +14,11 @@
 #include "usart.h"
 #include "spi.h"
 #include "gpio.h"
+#include "adxl362.h"
 
 //10, 7, 5, 0, -5, -10, -15, -20, dbm output power
 uint8_t PaTabel[]={0xC0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+cc1101_t cc1101;
 __IO ITStatus txFiFoUnFlow;
 __IO ITStatus rxCatch = RESET;
 
@@ -241,12 +243,12 @@ OUTPUT   : the byte read from the rigister
 */
 uint8_t CC1101ReadReg(uint8_t addr)
 {
-    uint8_t i;
+    uint8_t d;
     CC1101_CSN_LOW();
     SPI_ExchangeByte(SPI1, addr | READ_SINGLE);
-    i = SPI_ExchangeByte(SPI1, 0xFF);
+    d = SPI_ExchangeByte(SPI1, 0xFF);
     CC1101_CSN_HIGH();
-    return i;
+    return d;
 }
 /*
 ================================================================================
@@ -260,12 +262,11 @@ OUTPUT   : None
 */
 void CC1101ReadMultiReg(uint8_t addr, uint8_t *buff, uint8_t size)
 {
-    uint8_t i, j;
     CC1101_CSN_LOW();
     SPI_ExchangeByte(SPI1, addr | READ_BURST);
-    for(i=0; i<size; i++)
+    for(uint8_t i=0; i<size; i++)
     {
-        for(j=0; j<20; j++);
+        for(uint8_t j=0; j<20; j++);
         *(buff+i)=SPI_ExchangeByte(SPI1, 0xFF);
     }
     CC1101_CSN_HIGH();
@@ -280,12 +281,12 @@ OUTPUT   : the value read from the status register
 */
 uint8_t CC1101ReadStatus(uint8_t addr)
 {
-    uint8_t i;
+    uint8_t d;
     CC1101_CSN_LOW();
     SPI_ExchangeByte(SPI1, addr | READ_BURST);
-    i = SPI_ExchangeByte(SPI1, 0xFF);
+    d = SPI_ExchangeByte(SPI1, 0xFF);
     CC1101_CSN_HIGH();
-    return i;
+    return d;
 }
 /*
 ================================================================================
@@ -338,10 +339,9 @@ OUTPUT   : None
 */
 void CC1101WriteMultiReg(uint8_t addr, uint8_t *buff, uint8_t size)
 {
-    uint8_t i;
     CC1101_CSN_LOW();
     SPI_ExchangeByte(SPI1, addr | WRITE_BURST);
-    for(i=0; i<size; i++)
+    for(uint8_t i=0; i<size; i++)
     {
         SPI_ExchangeByte(SPI1, *(buff+i));
     }
@@ -371,15 +371,16 @@ OUTPUT   : None
 */
 void CC1101Reset(void)
 {
-    uint16_t x;
-
     CC1101_CSN_HIGH();
     CC1101_CSN_LOW();
-		for(x=0; x<10; x++){}
+		for(uint16_t i=0; i<10; i++){}
     CC1101_CSN_HIGH();
-    for(x=0; x<100; x++){}
+    for(uint16_t i=0; i<500; i++){}//40us
+		CC1101_CSN_LOW();
+		for(uint16_t i=0; i<10; i++){}
+		while(CC1101_MISO_READ()){}
     CC1101WriteCmd(CC1101_SRES);
-    for(x=0; x<100; x++){}
+    for(uint16_t i=0; i<500; i++){}
 }
 /*
 ================================================================================
@@ -565,12 +566,10 @@ OUTPUT   : None
 */
 void CC1101Init(uint8_t addr, uint16_t sync)
 {
-    uint8_t i;
-
 		NVIC_DisableIRQ(EXTI2_3_IRQn);
     CC1101Reset();
 
-    for(i=0; i<47; i++)
+    for(uint8_t i=0; i<47; i++)
     {
         CC1101WriteReg(CC1101InitData[i][0], CC1101InitData[i][1]);
     }
@@ -579,9 +578,10 @@ void CC1101Init(uint8_t addr, uint16_t sync)
 
     CC1101WriteMultiReg(CC1101_PATABLE, PaTabel, 8);
 		NVIC_EnableIRQ(EXTI2_3_IRQn);
-		
-		rfid_printf("i1 = %d ",CC1101ReadStatus(CC1101_PARTNUM));//for test, must be 0x00
-		rfid_printf("i2 = %d ",CC1101ReadStatus(CC1101_VERSION));//for test, refer to the datasheet,must be 0x14
+
+    memset(&cc1101, 0, sizeof(cc1101));
+		rfid_printf("CC1101_PKTCTRL1 = %d\n",CC1101ReadStatus(CC1101_PARTNUM));//for test, must be 0x00
+		rfid_printf("CC1101_VERSION = %d\n",CC1101ReadStatus(CC1101_VERSION));//for test, refer to the datasheet,must be 0x14
 }
 /*
 ================================================================================
@@ -599,6 +599,8 @@ void RFIDInitial(uint8_t addr, uint16_t sync, TRMODE mode)
 	else if(mode == TX_MODE)
 	{CC1101SetTRMode(TX_MODE);}
 	else if(mode == IDLE_MODE)
+	{CC1101SetIdle();}
+	else if(mode == WOR_Mode)
 	{
 		CC1101SetIdle();
 		CC1101WORInit();
@@ -645,6 +647,117 @@ int16_t CC1101CalcRSSI_dBm(uint8_t rssi_dec)
 	else
 		rssi_dBm = (rssi_dec/2) - rssi_offset;
 	return rssi_dBm;
+}
+/*
+================================================================================
+Function : uint8_t CC1101RecvHandler(void)
+    Receive RF Single
+INPUT    : None
+OUTPUT   : uint8_t
+================================================================================
+*/
+uint8_t CC1101RecvHandler(void)
+{
+	if(rxCatch == SET)
+		{
+			HAL_Delay(4);
+			rfid_printf("interrupt occur\n");
+			for (uint8_t i=0; i<sizeof(cc1101.recvBuffer); i++)   { cc1101.recvBuffer[i] = 0; } // clear array
+			cc1101.length = CC1101RecPacket(cc1101.recvBuffer, &cc1101.addr, &cc1101.rssi);
+
+			cc1101.rssidBm = CC1101CalcRSSI_dBm(cc1101.rssi);
+			rfid_printf("RSSI = %ddBm, length = %d, address = %d\n",cc1101.rssidBm,cc1101.length,cc1101.addr);
+			for(uint8_t i=0; i<sizeof(cc1101.recvBuffer); i++)
+			{
+				rfid_printf("%x ",cc1101.recvBuffer[i]);
+			}
+
+			/* Reset transmission flag */
+			rxCatch = RESET;
+
+			if(cc1101.length == 0)
+				{
+					rfid_printf("receive error or Address Filtering fail\n");
+					return 0x01;
+				}
+			else
+				{
+					if(cc1101.recvBuffer[3] == device.deviceCode1 && cc1101.recvBuffer[4] == device.deviceCode2 && cc1101.recvBuffer[5] == device.deviceCode3 
+						&& cc1101.recvBuffer[6] == device.deviceCode4 && cc1101.recvBuffer[7] == device.deviceCode5 && cc1101.recvBuffer[8] == device.deviceCode6)
+						{
+						if(cc1101.recvBuffer[2] == 0xC0)
+							{return cc1101.recvBuffer[2];}
+						else
+							{
+								rfid_printf("receive function order error\r\n");
+								return 0x03;}
+							}
+					else
+						{
+							rfid_printf("receive RFID code error\r\n");
+							return 0x02;}
+				}
+		}
+	else	{return 0x00;}
+}
+/*
+================================================================================
+Function : void CC1101SendHandler(void)
+    Send RF Single
+INPUT    : None
+OUTPUT   : None
+================================================================================
+*/
+void CC1101SendHandler(void)
+{
+	#if (_DEBUG == 1)
+		LED_GREEN_ON();
+	#endif
+	
+	cc1101.sendBuffer[0] = device.deviceCode1;
+	cc1101.sendBuffer[1] = device.deviceCode2;
+	cc1101.sendBuffer[2] = device.deviceCode3;
+	cc1101.sendBuffer[3] = device.deviceCode4;
+	cc1101.sendBuffer[4] = device.deviceCode5;
+	cc1101.sendBuffer[5] = device.deviceCode6;
+
+//	for(uint8_t i = 0;i < STEP_LOOPNUM; i++)
+//	{
+//		SendBuffer[15+i*2] = (uint8_t)(0x00FF & step.stepArray[i]>>8);
+//		SendBuffer[16+i*2] = (uint8_t)(0x00FF & step.stepArray[i]);
+//	}
+	
+//	for(uint8_t i = 0;i < STEP_LOOPNUM; i++)
+//	{
+//		SendBuffer[15+i*2] = (uint8_t)(0x00FF & step.ingestionArray[i]>>8);
+//		SendBuffer[16+i*2] = (uint8_t)(0x00FF & step.ingestionArray[i]);
+//	}
+
+	for(uint8_t i = 0;i<STEP_LOOPNUM; i++)
+	{
+		cc1101.sendBuffer[6+i*2] = i*2;
+		cc1101.sendBuffer[7+i*2] = i*2+1;
+	}
+	cc1101.sendBuffer[87] = step.stepStage;
+	cc1101.sendBuffer[88] = cc1101.length;
+	cc1101.sendBuffer[96] = cc1101.rssi;
+
+	for(uint16_t i=0; i<sizeof(cc1101.sendBuffer); i++)
+	{	rfid_printf("%x ",cc1101.sendBuffer[i]);}
+	rfid_printf("\r\n");
+	
+	for(uint8_t i=0; i<2; i++)
+	{
+		HAL_Delay(_TX_WAIT_TIME);
+		CC1101SendPacket(cc1101.sendBuffer, 97, ADDRESS_CHECK);
+	}
+	
+	CC1101SetIdle();
+	CC1101WriteCmd(CC1101_SXOFF);
+	
+	#if (_DEBUG == 1)
+		LED_GREEN_OFF();
+	#endif
 }
 /*
 ================================================================================

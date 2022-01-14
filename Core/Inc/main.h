@@ -55,19 +55,12 @@ typedef struct
 {
 	uint32_t deviceSerial0;
 	uint32_t deviceSerial1;
-	uint32_t deviceSerial2;
 	uint8_t deviceCode1;
 	uint8_t deviceCode2;
 	uint8_t deviceCode3;
 	uint8_t deviceCode4;
 	uint8_t deviceCode5;
 	uint8_t deviceCode6;
-	uint8_t deviceCode7;
-	uint8_t deviceCode8;
-	uint8_t deviceCode9;
-	uint8_t deviceCode10;
-	uint8_t deviceCode11;
-	uint8_t deviceCode12;
 } device_t;
 
 extern device_t device;
@@ -77,31 +70,18 @@ extern device_t device;
 /* USER CODE BEGIN EC */
 #define EEPROM_START_ADDR   0x08080000   /* Start @ of user eeprom area */
 #define PI 3.1415926
-#define SEND_S1LENGTH    	16
-#define SEND_S2LENGTH    	17
-#define SEND_S3LENGTH    	24
-#define SEND_S5LENGTH    	20
-#define SEND_S7LENGTH    	25
-#define SEND_LLENGTH     	97
-#define SEND_LENGTH     	180
-#define RECV_LENGTH   		24
-
-#define	Time_Delay				500		// cc1101 tx wait time
 /* USER CODE END EC */
 
 /* Exported macro ------------------------------------------------------------*/
 /* USER CODE BEGIN EM */
 #define _DEBUG              0        //  set device info
-#define _NBIOT_DEBUG        0        //  use printf debug
+#define _NBIOT_DEBUG        1        //  use printf debug
 
 #if (_NBIOT_DEBUG == 1)
 #define rfid_printf(...)     			printf(__VA_ARGS__)
 #else
 #define rfid_printf(...)     			{};
 #endif
-
-static uint8_t SendBuffer[SEND_LENGTH] = {0};
-static uint8_t RecvBuffer[RECV_LENGTH] = {0};
 
 /* USER CODE END EM */
 
@@ -135,9 +115,6 @@ void Error_Handler(void);
 void System_Initial(void);
 void Get_SerialNum(void);
 void Show_Message(void);
-uint8_t RF_RecvHandler(void);
-void RF_SendPacket(uint8_t index);
-void Package_Array(void);
 void Set_DeviceInfo(void);
 void DATAEEPROM_Program(uint32_t Address, uint32_t Data);
 uint32_t DATAEEPROM_Read(uint32_t Address);

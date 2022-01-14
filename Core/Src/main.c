@@ -51,18 +51,6 @@
 /* USER CODE BEGIN PV */
 uint8_t ErrorIndex;
 device_t device;
-static uint8_t addrEeprom;
-static uint16_t syncEeprom;
-static uint8_t rxIndex = 0x0;
-static uint8_t ChipAddr = 0;
-static uint8_t RSSI = 0;
-static uint8_t batteryLow;
-
-extern __IO uint8_t INTERVAL;
-extern __IO uint8_t RESETCC1101;
-
-extern __IO ITStatus rxCatch;
-FlagStatus recvState = RESET;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -120,11 +108,6 @@ int main(void)
   while (1)
   {
 		LL_IWDG_ReloadCounter(IWDG);
-		rxIndex = RF_RecvHandler();
-		if(rxIndex != 0x0)
-		{
-			RF_SendPacket(rxIndex);
-		}
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -134,8 +117,7 @@ int main(void)
 			step.ingestionArray[step.stepStage] = step.ingestionNum;
 			for(uint8_t i=0; i<STEP_LOOPNUM; i++)
 			{	rfid_printf("%x ",step.stepArray[i]);}
-			rfid_printf("\n");
-			rfid_printf("stepStage = %d\n",step.stepStage);
+			rfid_printf("\nstepStage = %d\n",step.stepStage);
 			DATAEEPROM_Program((EEPROM_START_ADDR+0x100+4*step.stepStage), (uint32_t)step.stepArray[step.stepStage]);
 			step.stepNum = 0;
 			DATAEEPROM_Program((EEPROM_START_ADDR+0x200+4*step.stepStage), (uint32_t)step.ingestionArray[step.stepStage]);
@@ -145,14 +127,12 @@ int main(void)
 			else
 			{	step.stepStage++;}
 			DATAEEPROM_Program(EEPROM_START_ADDR+8, step.stepStage);
-			GetRTC(&UTC_Time, &UTC_Date);
-			DATAEEPROM_Program((EEPROM_START_ADDR+16), (uint32_t)((0xff000000 & UTC_Date.Year<<24) + (0x00ff0000 & UTC_Date.Month<<16) + (0x0000ff00 & UTC_Date.WeekDay<<8) + (0x000000ff & UTC_Date.Date)));
-			DATAEEPROM_Program((EEPROM_START_ADDR+20), (uint32_t)((0x00ff0000 & UTC_Time.Hours<<16) + (0x0000ff00 & UTC_Time.Minutes<<8) + (0x000000ff & UTC_Time.Seconds)));
 			lptim.twentyMinuteIndex = RESET;
 		}
 		if(lptim.fourHourIndex == SET)
 		{
-			RFIDInitial(addrEeprom, syncEeprom, IDLE_MODE);
+			RFIDInitial(0x00, 0x1234, IDLE_MODE);
+			CC1101SendHandler();
 			lptim.fourHourIndex = RESET;
 		}
 		#if (_DEBUG == 1)
@@ -170,7 +150,7 @@ int main(void)
 			step.stepState = RESET;
 		}
 		#if (_DEBUG == 0)
-			if(usart.rxState == RESET && recvState == RESET && step.stepState == RESET && lptim.twentyMinuteIndex == RESET && lptim.fourHourIndex == RESET)
+			if(usart.rxState == RESET && step.stepState == RESET && lptim.twentyMinuteIndex == RESET && lptim.fourHourIndex == RESET)
 			{
 				MX_SPI1_DeInit();
 				MX_SPI2_DeInit();
@@ -291,7 +271,7 @@ static void SystemPower_Config(void)
 void System_Initial(void)
 {
 	/*##-1- initial all peripheral ##*/
-	#if (_DEBUG == 1)
+	#if (_NBIOT_DEBUG == 1)
 		Activate_USART1_RXIT();
 	#else
 		MX_USART1_UART_DeInit();
@@ -302,15 +282,10 @@ void System_Initial(void)
 	Get_SerialNum();
 	ADXL362_Init();
 	/*##-2- initial CC1101 peripheral,configure it's address and sync code ##*/
-	addrEeprom = (uint8_t)(0xff & DATAEEPROM_Read(EEPROM_START_ADDR)>>16);
-	syncEeprom = (uint16_t)(0xffff & DATAEEPROM_Read(EEPROM_START_ADDR));
 	
-	rfid_printf("addrEeprom = %x\n",addrEeprom);
-	rfid_printf("syncEeprom = %x\n",syncEeprom);
 	rfid_printf("deviceCode = %08x",device.deviceSerial0);
-	rfid_printf("%08x",device.deviceSerial1);
-	rfid_printf("%08x\n",device.deviceSerial2);
-	RFIDInitial(addrEeprom, syncEeprom, IDLE_MODE);
+	rfid_printf("%04x\n",(uint16_t)(0x0000FFFF & device.deviceSerial1>>16));
+	RFIDInitial(0x00, 0x1234, IDLE_MODE);
 	
 	for(uint8_t i=0; i<STEP_LOOPNUM; i++){
 		step.stepArray[i] = (uint16_t)(0x0000FFFF & DATAEEPROM_Read(EEPROM_START_ADDR+0x100+4*i));
@@ -319,14 +294,10 @@ void System_Initial(void)
 		step.ingestionArray[i] = (uint16_t)(0x0000FFFF & DATAEEPROM_Read(EEPROM_START_ADDR+0x200+4*i));
 	}
 	step.stepStage = (uint8_t)(0x000000FF & DATAEEPROM_Read(EEPROM_START_ADDR+8));
-	batteryLow = (uint8_t)(0x000000FF & DATAEEPROM_Read(EEPROM_START_ADDR+12));
-	InitRTC(DATAEEPROM_Read(EEPROM_START_ADDR+16), DATAEEPROM_Read(EEPROM_START_ADDR+20));
 	
-	rfid_printf("\n");
 	for(uint8_t i=0; i<STEP_LOOPNUM; i++)
 	{	rfid_printf("%x ",step.stepArray[i]);}
-	rfid_printf("\n");
-	rfid_printf("stepStage = %d\n",step.stepStage);
+	rfid_printf("\nstepStage = %d\n",step.stepStage);
 }
 
 /**
@@ -336,9 +307,8 @@ void System_Initial(void)
 void Get_SerialNum(void)
 {
 	memset(&device, 0, sizeof(device));
-	device.deviceSerial0 = DATAEEPROM_Read(EEPROM_START_ADDR+32);
-  device.deviceSerial1 = DATAEEPROM_Read(EEPROM_START_ADDR+36);
-  device.deviceSerial2 = DATAEEPROM_Read(EEPROM_START_ADDR+40);
+	device.deviceSerial0 = DATAEEPROM_Read(EEPROM_START_ADDR);
+  device.deviceSerial1 = DATAEEPROM_Read(EEPROM_START_ADDR+4);
 //  device.deviceSerial0 = *(uint32_t*)(0x1FF80050);
 //  device.deviceSerial1 = *(uint32_t*)(0x1FF80054);
 //  device.deviceSerial2 = *(uint32_t*)(0x1FF80064);
@@ -348,12 +318,6 @@ void Get_SerialNum(void)
 	device.deviceCode4 = (uint8_t)(0x000000FF & device.deviceSerial0);
 	device.deviceCode5 = (uint8_t)(0x000000FF & device.deviceSerial1>>24);
 	device.deviceCode6 = (uint8_t)(0x000000FF & device.deviceSerial1>>16);
-	device.deviceCode7 = (uint8_t)(0x000000FF & device.deviceSerial1>>8);
-	device.deviceCode8 = (uint8_t)(0x000000FF & device.deviceSerial1);
-	device.deviceCode9 = (uint8_t)(0x000000FF & device.deviceSerial2>>24);
-	device.deviceCode10 = (uint8_t)(0x000000FF & device.deviceSerial2>>16);
-	device.deviceCode11 = (uint8_t)(0x000000FF & device.deviceSerial2>>8);
-	device.deviceCode12 = (uint8_t)(0x000000FF & device.deviceSerial2);
 }
 
 /**
@@ -363,19 +327,15 @@ void Get_SerialNum(void)
 void Show_Message(void)
 {
 	unsigned int  ReadValueTemp;
-	rfid_printf("\r\n CC1101 chip transfer program \n");
-	rfid_printf(" using USART1,configuration:%d 8-N-1 \n",9600);
-	rfid_printf(" when in transfer mode,the data can exceed 60 bytes!!\r\n");
+	rfid_printf("CC1101 chip transfer program \n");
+	rfid_printf("using USART1,configuration:%d 8-N-1 \n",115200);
+	rfid_printf("when in transfer mode,the data can exceed 60 bytes!!\r\n");
 	
 	#if (_DEBUG == 1)
 		printf("EEPROM INIT DATA:\n");
-		printf("addrEeprom = %x\n",addrEeprom);
-		printf("syncEeprom = %x\n",syncEeprom);
 		printf("deviceCode = %08x",device.deviceSerial0);
-		printf("%08x",device.deviceSerial1);
-		printf("%08x\n",device.deviceSerial2);
-		printf("\n");
-		printf("please configure eeprom,include addrEeprom,syncEeprom and deviceCode\n");
+		printf("%04x\n",(uint16_t)(0x0000FFFF & device.deviceSerial1>>16));
+		printf("\nplease configure eeprom,include addrEeprom,syncEeprom and deviceCode\n");
 		printf("|------Header-------|---addr--|---sync--|------------------------device code------------------------|---Tail--|\n");
 		printf("|0x41 0x42 0x43 0x44|0x00 0xXX|0xXX 0xXX|0xXX 0xXX 0xXX 0xXX 0xXX 0xXX 0xXX 0xXX 0xXX 0xXX 0xXX 0xXX|0x0D 0x0A|\n");
 	#endif
@@ -410,344 +370,6 @@ void Show_Message(void)
 }
 
 /**
-  * @brief Receive RF Single
-  * @retval index
-*/
-uint8_t RF_RecvHandler(void)
-{
-	uint8_t length=0;
-	int16_t rssi_dBm;
-
-	if(rxCatch == SET)
-		{
-			recvState = SET;
-			HAL_Delay(4);
-			rfid_printf("interrupt occur\n");
-			for (uint8_t i=0; i<RECV_LENGTH; i++)   { RecvBuffer[i] = 0; } // clear array
-			length = CC1101RecPacket(RecvBuffer, &ChipAddr, &RSSI);
-
-			rssi_dBm = CC1101CalcRSSI_dBm(RSSI);
-			rfid_printf("RSSI = %ddBm, length = %d, address = %d\n",rssi_dBm,length,ChipAddr);
-			for(uint8_t i=0; i<RECV_LENGTH; i++)
-			{
-				rfid_printf("%x ",RecvBuffer[i]);
-			}
-
-			/* Reset transmission flag */
-			rxCatch = RESET;
-
-			if(length == 0)
-				{
-					rfid_printf("receive error or Address Filtering fail\n");
-					return 0x01;
-				}
-			else
-				{
-					if(RecvBuffer[3] == device.deviceCode1 && RecvBuffer[4] == device.deviceCode2 && RecvBuffer[5] == device.deviceCode3 && RecvBuffer[6] == device.deviceCode4 && RecvBuffer[7] == device.deviceCode5 && RecvBuffer[8] == device.deviceCode6
-						&& RecvBuffer[9] == device.deviceCode7 && RecvBuffer[10] == device.deviceCode8 && RecvBuffer[11] == device.deviceCode9 && RecvBuffer[12] == device.deviceCode10 && RecvBuffer[13] == device.deviceCode11 && RecvBuffer[14] == device.deviceCode12)
-						{
-						if(RecvBuffer[2] == 0xC0 || RecvBuffer[2] == 0xC1 || RecvBuffer[2] == 0xC2 || RecvBuffer[2] == 0xC3 || RecvBuffer[2] == 0xC5 || RecvBuffer[2] == 0xC6 || RecvBuffer[2] == 0xC7)
-							{return RecvBuffer[2];}
-						else
-							{
-								rfid_printf("receive function order error\r\n");
-								return 0x03;}
-							}
-					else
-						{
-							rfid_printf("receive RFID code error\r\n");
-							return 0x02;}
-				}
-		}
-	else	{return 0x00;}
-}
-/**
-  * @brief Send RF Single
-  * @retval None
-*/
-void RF_SendPacket(uint8_t index)
-{
-	uint32_t data;
-	uint32_t dataeeprom;// 从eeprom中读出的数
-	
-	#if (_DEBUG == 1)
-		LED_GREEN_ON();
-	#endif
-	
-	switch(index)
-	{
-		case 0x01://receive error or Address Filtering fail
-			SendBuffer[0] = RecvBuffer[0];
-			SendBuffer[1] = RecvBuffer[1];
-			SendBuffer[2] = 0xE0;
-			Package_Array();
-			SendBuffer[15] = RSSI;
-		
-			for(uint8_t i=0; i<2; i++)
-			{
-				HAL_Delay(Time_Delay);
-				CC1101SendPacket(SendBuffer, SEND_S1LENGTH, ADDRESS_CHECK);
-			}
-			break;
-		case 0x02://receive RFID code error
-			SendBuffer[0] = RecvBuffer[2];
-			SendBuffer[1] = RecvBuffer[3];
-			SendBuffer[2] = 0xE1;
-			Package_Array();
-			SendBuffer[15] = RSSI;
-		
-			for(uint8_t i=0; i<2; i++)
-			{
-				HAL_Delay(Time_Delay);
-				CC1101SendPacket(SendBuffer, SEND_S1LENGTH, ADDRESS_CHECK);
-			}
-			break;
-		case 0x03://receive function order error
-			SendBuffer[0] = RecvBuffer[0];
-			SendBuffer[1] = RecvBuffer[1];
-			SendBuffer[2] = 0xE2;
-			Package_Array();
-			SendBuffer[15] = RSSI;
-		
-			for(uint8_t i=0; i<2; i++)
-			{
-				HAL_Delay(Time_Delay);
-				CC1101SendPacket(SendBuffer, SEND_S1LENGTH, ADDRESS_CHECK);
-			}
-			break;
-			
-		case 0xC0:
-			SendBuffer[0] = RecvBuffer[0];
-			SendBuffer[1] = RecvBuffer[1];
-			SendBuffer[2] = 0xD0;
-			Package_Array();
-
-			for(uint8_t i = 0;i < STEP_LOOPNUM; i++)
-			{
-				SendBuffer[15+i*2] = (uint8_t)(0x00FF & step.stepArray[i]>>8);
-				SendBuffer[16+i*2] = (uint8_t)(0x00FF & step.stepArray[i]);
-			}
-//			for(uint8_t i = 0;i < STEP_LOOPNUM; i++)
-//			{
-//				SendBuffer[15+i*2] = i*2;
-//				SendBuffer[16+i*2] = i*2+1;
-//			}
-			SendBuffer[87] = step.stepStage;
-			SendBuffer[88] = batteryLow;
-			
-			SendBuffer[89] = UTC_Date.Year;
-			SendBuffer[90] = UTC_Date.Month;
-			SendBuffer[91] = UTC_Date.Date;
-			SendBuffer[92] = UTC_Date.WeekDay;
-			SendBuffer[93] = UTC_Time.Hours;
-			SendBuffer[94] = UTC_Time.Minutes;
-			SendBuffer[95] = UTC_Time.Seconds;
-			SendBuffer[96] = RSSI;
-			
-			rfid_printf("\r\n");
-			for(uint8_t i=0; i<SEND_LLENGTH; i++)
-			{	rfid_printf("%x ",SendBuffer[i]);}
-			rfid_printf("\r\n");
-			
-			for(uint8_t i=0; i<2; i++)
-			{
-				HAL_Delay(Time_Delay);
-				CC1101SendPacket(SendBuffer, SEND_LLENGTH, ADDRESS_CHECK);
-			}
-			break;
-			
-		case 0xC1:
-			SendBuffer[0] = RecvBuffer[0];
-			SendBuffer[1] = RecvBuffer[1];
-			SendBuffer[2] = 0xD1;
-			Package_Array();
-
-			for(uint8_t i = 0;i < STEP_LOOPNUM; i++)
-			{
-				SendBuffer[15+i*2] = (uint8_t)(0x00FF & step.ingestionArray[i]>>8);
-				SendBuffer[16+i*2] = (uint8_t)(0x00FF & step.ingestionArray[i]);
-			}
-//			for(uint8_t i = 0;i < STEP_LOOPNUM; i++)
-//			{
-//				SendBuffer[15+i*2] = i*2;
-//				SendBuffer[16+i*2] = i*2+1;
-//			}
-			SendBuffer[87] = step.stepStage;
-			SendBuffer[88] = batteryLow;
-			
-			SendBuffer[89] = UTC_Date.Year;
-			SendBuffer[90] = UTC_Date.Month;
-			SendBuffer[91] = UTC_Date.Date;
-			SendBuffer[92] = UTC_Date.WeekDay;
-			SendBuffer[93] = UTC_Time.Hours;
-			SendBuffer[94] = UTC_Time.Minutes;
-			SendBuffer[95] = UTC_Time.Seconds;
-			SendBuffer[96] = RSSI;
-			
-			rfid_printf("\r\n");
-			for(uint8_t i=0; i<SEND_LLENGTH; i++)
-			{	rfid_printf("%x ",SendBuffer[i]);}
-			rfid_printf("\r\n");
-			
-			for(uint8_t i=0; i<2; i++)
-			{
-				HAL_Delay(Time_Delay);
-				CC1101SendPacket(SendBuffer, SEND_LLENGTH, ADDRESS_CHECK);
-			}
-			break;
-			
-		case 0xC2:
-			batteryLow = 0x00;
-			DATAEEPROM_Program(EEPROM_START_ADDR+12, batteryLow);
-			SendBuffer[0] = RecvBuffer[0];
-			SendBuffer[1] = RecvBuffer[1];
-			SendBuffer[2] = 0xD2;
-			Package_Array();
-			batteryLow = (uint8_t)(0x000000FF & DATAEEPROM_Read(EEPROM_START_ADDR+12));
-			SendBuffer[15] = batteryLow;
-			SendBuffer[16] = RSSI;
-		
-			for(uint8_t i=0; i<2; i++)
-			{
-				HAL_Delay(Time_Delay);
-				CC1101SendPacket(SendBuffer, SEND_S2LENGTH, ADDRESS_CHECK);
-			}
-			break;
-			
-		case 0xC3:
-			ADXL362_ReInit(RecvBuffer[15], RecvBuffer[16], RecvBuffer[17], RecvBuffer[18], RecvBuffer[19], RecvBuffer[20], RecvBuffer[21], RecvBuffer[22]);
-			SendBuffer[0] = RecvBuffer[0];
-			SendBuffer[1] = RecvBuffer[1];
-			SendBuffer[2] = 0xD3;
-			Package_Array();
-			SendBuffer[15] = ADXL362RegisterRead(XL362_THRESH_ACT_H);
-			SendBuffer[16] = ADXL362RegisterRead(XL362_THRESH_ACT_L);
-			SendBuffer[17] = ADXL362RegisterRead(XL362_TIME_ACT);
-			SendBuffer[18] = ADXL362RegisterRead(XL362_THRESH_INACT_H);
-			SendBuffer[19] = ADXL362RegisterRead(XL362_THRESH_INACT_L);
-			SendBuffer[20] = ADXL362RegisterRead(XL362_TIME_INACT_H);
-			SendBuffer[21] = ADXL362RegisterRead(XL362_TIME_INACT_L);
-			SendBuffer[22] = ADXL362RegisterRead(XL362_FILTER_CTL);
-			SendBuffer[23] = RSSI;
-		
-			for(uint8_t i=0; i<2; i++)
-			{
-				HAL_Delay(Time_Delay);
-				CC1101SendPacket(SendBuffer, SEND_S3LENGTH, ADDRESS_CHECK);
-			}
-			break;
-			
-		case 0xC5:
-			data = ((uint32_t)(0xFF000000 & RecvBuffer[15]<<24)+(uint32_t)(0x00FF0000 & RecvBuffer[16]<<16)+(uint32_t)(0x0000FF00 & RecvBuffer[17]<<8)+(uint32_t)(0x000000FF & RecvBuffer[18]));
-			DATAEEPROM_Program(EEPROM_START_ADDR, data);
-			SendBuffer[0] = RecvBuffer[0];
-			SendBuffer[1] = RecvBuffer[1];
-			SendBuffer[2] = 0xD5;
-			Package_Array();
-			dataeeprom = DATAEEPROM_Read(EEPROM_START_ADDR);
-			SendBuffer[15] = (uint8_t)(0x000000FF & dataeeprom>>24);
-			SendBuffer[16] = (uint8_t)(0x000000FF & dataeeprom>>16);
-			SendBuffer[17] = (uint8_t)(0x000000FF & dataeeprom>>8);
-			SendBuffer[18] = (uint8_t)(0x000000FF & dataeeprom);
-			SendBuffer[19] = RSSI;
-		
-			for(uint8_t i=0; i<2; i++)
-			{
-				HAL_Delay(Time_Delay);
-				CC1101SendPacket(SendBuffer, SEND_S5LENGTH, ADDRESS_CHECK);
-			}
-			break;
-			
-		case 0xC6:
-			memset(&step, 0, sizeof(step));
-			for(uint8_t i = 0;i < STEP_LOOPNUM; i++)
-			{
-				DATAEEPROM_Program((EEPROM_START_ADDR+0x100+4*i), 0x0);
-				DATAEEPROM_Program((EEPROM_START_ADDR+0x200+4*i), 0x0);
-			}
-			DATAEEPROM_Program(EEPROM_START_ADDR+8, 0x0);
-			SendBuffer[0] = RecvBuffer[0];
-			SendBuffer[1] = RecvBuffer[1];
-			SendBuffer[2] = 0xD6;
-			Package_Array();
-			SendBuffer[15] = RSSI;
-			
-			for(uint8_t i=0; i<2; i++)
-			{	
-				HAL_Delay(Time_Delay);
-				CC1101SendPacket(SendBuffer, SEND_S1LENGTH, ADDRESS_CHECK);
-			}
-			break;
-			
-		case 0xC7:
-			SendBuffer[0] = RecvBuffer[0];
-			SendBuffer[1] = RecvBuffer[1];
-			SendBuffer[2] = 0xD7;
-			Package_Array();
-			
-			SetRTC(RecvBuffer);
-			if(RecvBuffer[22] == 0x00 || RecvBuffer[23] == 0x00)
-			{	INTERVAL = 0x0A;
-				RESETCC1101 = 0x70;}
-			else
-			{	INTERVAL = RecvBuffer[22];
-				RESETCC1101 = RecvBuffer[23];}
-			GetRTC(&UTC_Time, &UTC_Date);
-			SendBuffer[15] = UTC_Date.Year;
-			SendBuffer[16] = UTC_Date.Month;
-			SendBuffer[17] = UTC_Date.Date;
-			SendBuffer[18] = UTC_Date.WeekDay;
-			SendBuffer[19] = UTC_Time.Hours;
-			SendBuffer[20] = UTC_Time.Minutes;
-			SendBuffer[21] = UTC_Time.Seconds;
-			SendBuffer[22] = INTERVAL;
-			SendBuffer[23] = RESETCC1101;
-			SendBuffer[24] = RSSI;
-			
-			for(uint8_t i=0; i<2; i++)
-			{
-				HAL_Delay(Time_Delay);
-				CC1101SendPacket(SendBuffer, SEND_S7LENGTH, ADDRESS_CHECK);
-			}
-			break;			
-		default : break;
-	}
-
-//	for(i=0; i<SEND_LLENGTH; i++) // clear array
-//	{SendBuffer[i] = 0;}
-	
-	CC1101SetIdle();
-	CC1101WORInit();
-	CC1101SetWORMode();
-	#if (_DEBUG == 1)
-		LED_GREEN_OFF();
-	#endif
-	recvState = RESET;
-}
-
-/**
-  * @brief Package_Array
-  * @retval None
-*/
-void Package_Array(void)
-{
-	SendBuffer[3] = device.deviceCode1;
-	SendBuffer[4] = device.deviceCode2;
-	SendBuffer[5] = device.deviceCode3;
-	SendBuffer[6] = device.deviceCode4;
-	
-	SendBuffer[7] = device.deviceCode5;
-	SendBuffer[8] = device.deviceCode6;
-	SendBuffer[9] = device.deviceCode7;
-	SendBuffer[10] = device.deviceCode8;
-	
-	SendBuffer[11] = device.deviceCode9;
-	SendBuffer[12] = device.deviceCode10;
-	SendBuffer[13] = device.deviceCode11;
-	SendBuffer[14] = device.deviceCode12;
-}
-
-/**
   * @brief Set_DeviceInfo
   * @retval None
 */
@@ -761,24 +383,15 @@ void Set_DeviceInfo(void)
 	{
 		data = ((uint32_t)(0xFF000000 & usart.rxBuffer[4]<<24)+(uint32_t)(0x00FF0000 & usart.rxBuffer[5]<<16)+(uint32_t)(0x0000FF00 & usart.rxBuffer[6]<<8)+(uint32_t)(0x000000FF & usart.rxBuffer[7]));
 		DATAEEPROM_Program(EEPROM_START_ADDR, data);
-		data = ((uint32_t)(0xFF000000 & usart.rxBuffer[8]<<24)+(uint32_t)(0x00FF0000 & usart.rxBuffer[9]<<16)+(uint32_t)(0x0000FF00 & usart.rxBuffer[10]<<8)+(uint32_t)(0x000000FF & usart.rxBuffer[11]));
-		DATAEEPROM_Program(EEPROM_START_ADDR+32, data);
-		data = ((uint32_t)(0xFF000000 & usart.rxBuffer[12]<<24)+(uint32_t)(0x00FF0000 & usart.rxBuffer[13]<<16)+(uint32_t)(0x0000FF00 & usart.rxBuffer[14]<<8)+(uint32_t)(0x000000FF & usart.rxBuffer[15]));
-		DATAEEPROM_Program(EEPROM_START_ADDR+36, data);
-		data = ((uint32_t)(0xFF000000 & usart.rxBuffer[16]<<24)+(uint32_t)(0x00FF0000 & usart.rxBuffer[17]<<16)+(uint32_t)(0x0000FF00 & usart.rxBuffer[18]<<8)+(uint32_t)(0x000000FF & usart.rxBuffer[19]));
-		DATAEEPROM_Program(EEPROM_START_ADDR+40, data);
-		
-		addrEeprom = (uint8_t)(0xff & DATAEEPROM_Read(EEPROM_START_ADDR)>>16);
-		syncEeprom = (uint16_t)(0xffff & DATAEEPROM_Read(EEPROM_START_ADDR));
+		data = ((uint32_t)(0xFF000000 & usart.rxBuffer[8]<<24)+(uint32_t)(0x00FF0000 & usart.rxBuffer[9]<<16));
+		DATAEEPROM_Program(EEPROM_START_ADDR+4, data);
+
 		Get_SerialNum();
 
 		#if (_DEBUG == 1)
 			printf("eeprom program end\n");
-			printf("addrEeprom = %x\n",addrEeprom);
-			printf("syncEeprom = %x\n",syncEeprom);
 			printf("deviceCode = %08x",device.deviceSerial0);
-			printf("%08x",device.deviceSerial1);
-			printf("%08x\n",device.deviceSerial2);
+			printf("%04x\n",(uint16_t)(0x0000FFFF & device.deviceSerial1>>16));
 		#endif
 	}
 }

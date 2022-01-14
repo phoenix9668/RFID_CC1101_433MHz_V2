@@ -6,7 +6,7 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2021 STMicroelectronics.
+  * <h2><center>&copy; Copyright (c) 2022 STMicroelectronics.
   * All rights reserved.</center></h2>
   *
   * This software component is licensed by ST under BSD 3-Clause license,
@@ -35,9 +35,6 @@ void MX_RTC_Init(void)
 
   /* USER CODE END RTC_Init 0 */
 
-  RTC_TimeTypeDef sTime = {0};
-  RTC_DateTypeDef sDate = {0};
-
   /* USER CODE BEGIN RTC_Init 1 */
 
   /* USER CODE END RTC_Init 1 */
@@ -55,34 +52,9 @@ void MX_RTC_Init(void)
   {
     Error_Handler();
   }
-
-  /* USER CODE BEGIN Check_RTC_BKUP */
-
-  /* USER CODE END Check_RTC_BKUP */
-
-  /** Initialize RTC and set the Time and Date
-  */
-  sTime.Hours = 0;
-  sTime.Minutes = 0;
-  sTime.Seconds = 0;
-  sTime.DayLightSaving = RTC_DAYLIGHTSAVING_NONE;
-  sTime.StoreOperation = RTC_STOREOPERATION_RESET;
-  if (HAL_RTC_SetTime(&hrtc, &sTime, RTC_FORMAT_BIN) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  sDate.WeekDay = RTC_WEEKDAY_MONDAY;
-  sDate.Month = RTC_MONTH_JANUARY;
-  sDate.Date = 1;
-  sDate.Year = 0;
-
-  if (HAL_RTC_SetDate(&hrtc, &sDate, RTC_FORMAT_BIN) != HAL_OK)
-  {
-    Error_Handler();
-  }
   /** Enable the WakeUp
   */
-  if (HAL_RTCEx_SetWakeUpTimer_IT(&hrtc, 0xA000, RTC_WAKEUPCLOCK_RTCCLK_DIV16) != HAL_OK)
+  if (HAL_RTCEx_SetWakeUpTimer_IT(&hrtc, 0xa000, RTC_WAKEUPCLOCK_RTCCLK_DIV16) != HAL_OK)
   {
     Error_Handler();
   }
@@ -142,66 +114,6 @@ void HAL_RTCEx_WakeUpTimerEventCallback(RTC_HandleTypeDef *hrtc)
 {
   /* Clear Wake Up Flag */
   __HAL_PWR_CLEAR_FLAG(PWR_FLAG_WU);
-}
-
-void GetRTC(RTC_TimeTypeDef *sTime, RTC_DateTypeDef *sDate)
-{
-	HAL_RTC_GetTime(&hrtc, sTime, RTC_FORMAT_BIN);
-	HAL_RTC_GetDate(&hrtc, sDate, RTC_FORMAT_BIN);
-	rfid_printf("%02d/%02d/%02d ",2000+sDate->Year, sDate->Month, sDate->Date);
-	rfid_printf("%02d:%02d:%02d\n",sTime->Hours, sTime->Minutes, sTime->Seconds);
-}
-
-void SetRTC(uint8_t *buffer)
-{
-	RTC_TimeTypeDef sTime = {0};
-  RTC_DateTypeDef sDate = {0};
-  /** Initialize RTC and set the Time and Date
-  */
-  sTime.Hours = buffer[19];
-  sTime.Minutes = buffer[20];
-  sTime.Seconds = buffer[21];
-  sTime.DayLightSaving = RTC_DAYLIGHTSAVING_NONE;
-  sTime.StoreOperation = RTC_STOREOPERATION_RESET;
-  if (HAL_RTC_SetTime(&hrtc, &sTime, RTC_FORMAT_BIN) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  sDate.WeekDay = buffer[18];
-  sDate.Month = buffer[16];
-  sDate.Date = buffer[17];
-  sDate.Year = buffer[15];
-
-  if (HAL_RTC_SetDate(&hrtc, &sDate, RTC_FORMAT_BIN) != HAL_OK)
-  {
-    Error_Handler();
-  }
-}
-
-void InitRTC(uint32_t stime, uint32_t sdate)
-{
-	RTC_TimeTypeDef sTime = {0};
-  RTC_DateTypeDef sDate = {0};
-  /** Initialize RTC and set the Time and Date
-  */
-  sTime.Hours = (uint8_t)(0x000000FF & stime>>16);
-  sTime.Minutes = (uint8_t)(0x000000FF & stime>>8);
-  sTime.Seconds = (uint8_t)(0x000000FF & stime);
-  sTime.DayLightSaving = RTC_DAYLIGHTSAVING_NONE;
-  sTime.StoreOperation = RTC_STOREOPERATION_RESET;
-  if (HAL_RTC_SetTime(&hrtc, &sTime, RTC_FORMAT_BIN) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  sDate.Date = (uint8_t)(0x000000FF & sdate);
-  sDate.Month = (uint8_t)(0x000000FF & sdate>>16);
-  sDate.WeekDay = (uint8_t)(0x000000FF & sdate>>8);
-  sDate.Year = (uint8_t)(0x000000FF & sdate>>24);
-
-  if (HAL_RTC_SetDate(&hrtc, &sDate, RTC_FORMAT_BIN) != HAL_OK)
-  {
-    Error_Handler();
-  }
 }
 
 /* USER CODE END 1 */

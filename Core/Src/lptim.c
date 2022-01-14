@@ -6,7 +6,7 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2021 STMicroelectronics.
+  * <h2><center>&copy; Copyright (c) 2022 STMicroelectronics.
   * All rights reserved.</center></h2>
   *
   * This software component is licensed by ST under BSD 3-Clause license,
@@ -22,8 +22,6 @@
 
 /* USER CODE BEGIN 0 */
 lptim_t lptim;
-__IO uint8_t INTERVAL = 0x0A;//1280s
-__IO uint8_t RESETCC1101 = 0x70;//4hours
 /* USER CODE END 0 */
 
 /* LPTIM1 init function */
@@ -81,12 +79,12 @@ void LPTimerAutoreloadMatch_Callback(void)
 {
 	lptim.twentyMinuteTimeBase++;
 	lptim.fourHourTimeBase++;
-	if(lptim.twentyMinuteTimeBase == INTERVAL)//1280s
+	if(lptim.twentyMinuteTimeBase == 0x0A)//1280s
 	{
 		lptim.twentyMinuteIndex = SET;
 		lptim.twentyMinuteTimeBase = 0x00;
 	}
-	if(lptim.fourHourTimeBase == RESETCC1101)//4hours
+	if(lptim.fourHourTimeBase == 0x01)//4hours
 	{
 		lptim.fourHourIndex = SET;
 		lptim.fourHourTimeBase = 0x00;

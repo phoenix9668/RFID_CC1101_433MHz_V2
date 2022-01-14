@@ -21,9 +21,25 @@
 /*===========================================================================
 ----------------------------------macro definitions--------------------------
 ============================================================================*/
-typedef enum { TX_MODE, RX_MODE, IDLE_MODE } TRMODE;
+typedef enum { TX_MODE, RX_MODE, IDLE_MODE, WOR_Mode } TRMODE;
 typedef enum { BROAD_ALL, BROAD_NO, BROAD_0, BROAD_0AND255 } ADDR_MODE;
 typedef enum { BROADCAST, ADDRESS_CHECK} TX_DATA_MODE;
+
+#define _RECV_LENGTH   		128
+#define _SEND_LENGTH     	256
+#define	_TX_WAIT_TIME			100		// cc1101 tx wait time
+
+typedef struct
+{
+	uint8_t  recvBuffer[_RECV_LENGTH];
+	uint8_t  sendBuffer[_SEND_LENGTH];
+  uint8_t  length;
+	uint8_t  addr;
+  uint8_t  rssi;
+	int16_t  rssidBm;
+}cc1101_t;
+
+extern cc1101_t cc1101;
 
 /*===========================================================================
 -------------------------------------exported APIs---------------------------
@@ -94,6 +110,12 @@ int16_t CC1101ReadRSSI(void);
 
 /*Calc the RSSI value to RSSI dBm*/
 int16_t CC1101CalcRSSI_dBm(uint8_t rssi_dec);
+
+/*Receive RF Single*/
+uint8_t CC1101RecvHandler(void);
+
+/*Send RF Single*/
+void CC1101SendHandler(void);
 
 #endif // _CC1101_H_
 
