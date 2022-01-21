@@ -19,6 +19,7 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "crc.h"
 #include "iwdg.h"
 #include "lptim.h"
 #include "rtc.h"
@@ -98,6 +99,7 @@ int main(void)
   MX_IWDG_Init();
   MX_RTC_Init();
   MX_LPTIM1_Init();
+  MX_CRC_Init();
   /* USER CODE BEGIN 2 */
   System_Initial();
   Show_Message();
@@ -115,14 +117,14 @@ int main(void)
 		{
 			step.stepArray[step.stepStage] = step.stepNum - step.ingestionNum;
 			step.ingestionArray[step.stepStage] = step.ingestionNum;
-			for(uint8_t i=0; i<STEP_LOOPNUM; i++)
+			for(uint8_t i=0; i<_STEP_LOOPNUM; i++)
 			{	rfid_printf("%x ",step.stepArray[i]);}
 			rfid_printf("\nstepStage = %d\n",step.stepStage);
 			DATAEEPROM_Program((EEPROM_START_ADDR+0x100+4*step.stepStage), (uint32_t)step.stepArray[step.stepStage]);
 			step.stepNum = 0;
 			DATAEEPROM_Program((EEPROM_START_ADDR+0x200+4*step.stepStage), (uint32_t)step.ingestionArray[step.stepStage]);
 			step.ingestionNum = 0;
-			if(step.stepStage == (STEP_LOOPNUM - 1))
+			if(step.stepStage == (_STEP_LOOPNUM - 1))
 			{	step.stepStage = 0;}
 			else
 			{	step.stepStage++;}
@@ -131,7 +133,6 @@ int main(void)
 		}
 		if(lptim.fourHourIndex == SET)
 		{
-			RFIDInitial(0x00, 0x1234, IDLE_MODE);
 			CC1101SendHandler();
 			lptim.fourHourIndex = RESET;
 		}
@@ -271,7 +272,7 @@ static void SystemPower_Config(void)
 void System_Initial(void)
 {
 	/*##-1- initial all peripheral ##*/
-	#if (_NBIOT_DEBUG == 1)
+	#if (_RFID_PRINT_DEBUG == 1)
 		Activate_USART1_RXIT();
 	#else
 		MX_USART1_UART_DeInit();
@@ -287,15 +288,15 @@ void System_Initial(void)
 	rfid_printf("%04x\n",(uint16_t)(0x0000FFFF & device.deviceSerial1>>16));
 	RFIDInitial(0x00, 0x1234, IDLE_MODE);
 	
-	for(uint8_t i=0; i<STEP_LOOPNUM; i++){
+	for(uint8_t i=0; i<_STEP_LOOPNUM; i++){
 		step.stepArray[i] = (uint16_t)(0x0000FFFF & DATAEEPROM_Read(EEPROM_START_ADDR+0x100+4*i));
 	}
-	for(uint8_t i=0; i<STEP_LOOPNUM; i++){
+	for(uint8_t i=0; i<_STEP_LOOPNUM; i++){
 		step.ingestionArray[i] = (uint16_t)(0x0000FFFF & DATAEEPROM_Read(EEPROM_START_ADDR+0x200+4*i));
 	}
 	step.stepStage = (uint8_t)(0x000000FF & DATAEEPROM_Read(EEPROM_START_ADDR+8));
 	
-	for(uint8_t i=0; i<STEP_LOOPNUM; i++)
+	for(uint8_t i=0; i<_STEP_LOOPNUM; i++)
 	{	rfid_printf("%x ",step.stepArray[i]);}
 	rfid_printf("\nstepStage = %d\n",step.stepStage);
 }

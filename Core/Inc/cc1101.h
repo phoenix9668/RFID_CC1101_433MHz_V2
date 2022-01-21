@@ -25,14 +25,18 @@ typedef enum { TX_MODE, RX_MODE, IDLE_MODE, WOR_Mode } TRMODE;
 typedef enum { BROAD_ALL, BROAD_NO, BROAD_0, BROAD_0AND255 } ADDR_MODE;
 typedef enum { BROADCAST, ADDRESS_CHECK} TX_DATA_MODE;
 
-#define _RECV_LENGTH   		128
-#define _SEND_LENGTH     	256
-#define	_TX_WAIT_TIME			100		// cc1101 tx wait time
+#define _RECV_LENGTH               128
+#define _SEND_LENGTH               256
+#define	_TX_WAIT_TIME			         500 // cc1101 tx wait time
+#define	_RFID_SIZE                 6   // RFID size
+#define	_BATTERY_SIZE              2   // battery size
+#define	_CRC32_SIZE                4   // CRC32 size
 
 typedef struct
 {
 	uint8_t  recvBuffer[_RECV_LENGTH];
 	uint8_t  sendBuffer[_SEND_LENGTH];
+	uint32_t crcValue;
   uint8_t  length;
 	uint8_t  addr;
   uint8_t  rssi;

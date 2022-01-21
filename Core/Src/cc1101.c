@@ -14,6 +14,7 @@
 #include "usart.h"
 #include "spi.h"
 #include "gpio.h"
+#include "crc.h"
 #include "adxl362.h"
 
 //10, 7, 5, 0, -5, -10, -15, -20, dbm output power
@@ -50,7 +51,7 @@ static const uint8_t CC1101InitData[47][2]=
 	{CC1101_IOCFG2,				0x29},
 	{CC1101_IOCFG1,				0x2E},
 	{CC1101_IOCFG0,				0x46},
-	{CC1101_FIFOTHR,			0x4C},
+	{CC1101_FIFOTHR,			0x4E},
 	{CC1101_SYNC1,				0xD3},
 	{CC1101_SYNC0,				0x91},
 	{CC1101_PKTLEN,				0xFF},
@@ -373,14 +374,14 @@ void CC1101Reset(void)
 {
     CC1101_CSN_HIGH();
     CC1101_CSN_LOW();
-		for(uint16_t i=0; i<10; i++){}
+		HAL_Delay(1);
     CC1101_CSN_HIGH();
-    for(uint16_t i=0; i<500; i++){}//40us
+    HAL_Delay(1);//>40us
 		CC1101_CSN_LOW();
-		for(uint16_t i=0; i<10; i++){}
+		HAL_Delay(1);
 		while(CC1101_MISO_READ()){}
     CC1101WriteCmd(CC1101_SRES);
-    for(uint16_t i=0; i<500; i++){}
+    HAL_Delay(1);
 }
 /*
 ================================================================================
@@ -433,47 +434,44 @@ OUTPUT   : None
 void CC1101SendPacket(uint8_t *txbuffer, uint8_t size, TX_DATA_MODE mode)
 {
     uint8_t address;
-		uint8_t tempbuffer[60];
-
-		if(size > 60){
-			for(uint8_t i=0; i<(size-60); i++){
-				tempbuffer[i] = txbuffer[i+60];}
-		}
 
 		rxCatch = RESET;
 		txFiFoUnFlow = RESET;
-	
+
     if(mode == BROADCAST)             {address=0;}
     else if(mode == ADDRESS_CHECK)    {address=CC1101ReadReg(CC1101_ADDR);}
     
     CC1101ClrTXBuff();
-    if((CC1101ReadReg(CC1101_PKTCTRL1) & ~0x03) != 0)
-    {
+    if((CC1101ReadReg(CC1101_PKTCTRL1) & ~0x03) != 0){
         CC1101WriteReg(CC1101_TXFIFO, size+1);
         CC1101WriteReg(CC1101_TXFIFO, address);
     }
-    else
-    {
+    else{
         CC1101WriteReg(CC1101_TXFIFO, size);
     }
-		
-		if(size <= 60)
-		{
+
+		if(size <= 60){
 			CC1101WriteMultiReg(CC1101_TXFIFO, txbuffer, size);
 			CC1101SetTRMode(TX_MODE);
 			while(rxCatch != SET){}
 			rxCatch = RESET;
 		}
-		else
-		{
+		else{
 			CC1101WriteMultiReg(CC1101_TXFIFO, txbuffer, 60);
 			CC1101SetTRMode(TX_MODE);
 
-			while(txFiFoUnFlow != SET){}
-			rxCatch = RESET;
-			CC1101WriteMultiReg(CC1101_TXFIFO, tempbuffer, (size-60));
+			for(uint8_t i=0; i<(size/60); i++){
+				if((i+1) == (size/60)){
+					while(txFiFoUnFlow != SET){}
+					CC1101WriteMultiReg(CC1101_TXFIFO, (txbuffer+(i+1)*60), (size-(i+1)*60));
+				}else{
+					while(txFiFoUnFlow != SET){}
+					txFiFoUnFlow = RESET;
+					CC1101WriteMultiReg(CC1101_TXFIFO, (txbuffer+(i+1)*60), 60);
+				}
+			}
 		}
-
+    rxCatch = RESET;
 		while(rxCatch != SET){}
 		rxCatch = RESET;
     //i = CC1101ReadStatus( CC1101_TXBYTES );//for test, TX status
@@ -579,7 +577,6 @@ void CC1101Init(uint8_t addr, uint16_t sync)
     CC1101WriteMultiReg(CC1101_PATABLE, PaTabel, 8);
 		NVIC_EnableIRQ(EXTI2_3_IRQn);
 
-    memset(&cc1101, 0, sizeof(cc1101));
 		rfid_printf("CC1101_PKTCTRL1 = %d\n",CC1101ReadStatus(CC1101_PARTNUM));//for test, must be 0x00
 		rfid_printf("CC1101_VERSION = %d\n",CC1101ReadStatus(CC1101_VERSION));//for test, refer to the datasheet,must be 0x14
 }
@@ -721,39 +718,51 @@ void CC1101SendHandler(void)
 	cc1101.sendBuffer[4] = device.deviceCode5;
 	cc1101.sendBuffer[5] = device.deviceCode6;
 
-//	for(uint8_t i = 0;i < STEP_LOOPNUM; i++)
-//	{
-//		SendBuffer[15+i*2] = (uint8_t)(0x00FF & step.stepArray[i]>>8);
-//		SendBuffer[16+i*2] = (uint8_t)(0x00FF & step.stepArray[i]);
+	for(uint8_t i = 0;i < _STEP_LOOPNUM; i++){
+		cc1101.sendBuffer[_RFID_SIZE + i*2] = (uint8_t)(0xFF & step.stepArray[i]>>8);
+		cc1101.sendBuffer[_RFID_SIZE + i*2 + 1] = (uint8_t)(0xFF & step.stepArray[i]);
+	}
+	
+	for(uint8_t i = 0;i < _STEP_LOOPNUM; i++){
+		cc1101.sendBuffer[_RFID_SIZE + 2*_STEP_LOOPNUM + i*2] = (uint8_t)(0xFF & step.ingestionArray[i]>>8);
+		cc1101.sendBuffer[_RFID_SIZE + 2*_STEP_LOOPNUM + i*2 + 1] = (uint8_t)(0xFF & step.ingestionArray[i]);
+	}
+
+//	for(uint8_t i = 0;i<_STEP_LOOPNUM; i++){
+//		cc1101.sendBuffer[_RFID_SIZE + i*2] = i*2;
+//		cc1101.sendBuffer[_RFID_SIZE + i*2 + 1] = i*2 + 1;
+//	}
+//	for(uint8_t i = 0;i<_STEP_LOOPNUM; i++){
+//		cc1101.sendBuffer[_RFID_SIZE + 2*_STEP_LOOPNUM + i*2] = i*2;
+//		cc1101.sendBuffer[_RFID_SIZE + 2*_STEP_LOOPNUM + i*2 + 1] = i*2 + 1;
 //	}
 	
-//	for(uint8_t i = 0;i < STEP_LOOPNUM; i++)
-//	{
-//		SendBuffer[15+i*2] = (uint8_t)(0x00FF & step.ingestionArray[i]>>8);
-//		SendBuffer[16+i*2] = (uint8_t)(0x00FF & step.ingestionArray[i]);
-//	}
+	cc1101.sendBuffer[_RFID_SIZE + 4*_STEP_LOOPNUM] = step.stepStage;
+	cc1101.sendBuffer[_RFID_SIZE + 4*_STEP_LOOPNUM + 1] = 0xE5;
+	cc1101.sendBuffer[_RFID_SIZE + 4*_STEP_LOOPNUM + 2] = 0x5E;
+	
+  cc1101.crcValue = ~HAL_CRC_Calculate(&hcrc, (uint32_t *)cc1101.sendBuffer, (uint32_t)(_RFID_SIZE + 4*_STEP_LOOPNUM + sizeof(step.stepStage) + _BATTERY_SIZE));
+	rfid_printf("crcBufferLength = %d\n",_RFID_SIZE + 4*_STEP_LOOPNUM + sizeof(step.stepStage) + _BATTERY_SIZE);
+	rfid_printf("crcValue = %x\n",cc1101.crcValue);
 
-	for(uint8_t i = 0;i<STEP_LOOPNUM; i++)
-	{
-		cc1101.sendBuffer[6+i*2] = i*2;
-		cc1101.sendBuffer[7+i*2] = i*2+1;
-	}
-	cc1101.sendBuffer[87] = step.stepStage;
-	cc1101.sendBuffer[88] = cc1101.length;
-	cc1101.sendBuffer[96] = cc1101.rssi;
-
+	cc1101.sendBuffer[_RFID_SIZE + 4*_STEP_LOOPNUM + sizeof(step.stepStage) + _BATTERY_SIZE] = (uint8_t)(0xFF & cc1101.crcValue>>24);
+	cc1101.sendBuffer[_RFID_SIZE + 4*_STEP_LOOPNUM + sizeof(step.stepStage) + _BATTERY_SIZE + 1] = (uint8_t)(0xFF & cc1101.crcValue>>16);
+	cc1101.sendBuffer[_RFID_SIZE + 4*_STEP_LOOPNUM + sizeof(step.stepStage) + _BATTERY_SIZE + 2] = (uint8_t)(0xFF & cc1101.crcValue>>8);
+	cc1101.sendBuffer[_RFID_SIZE + 4*_STEP_LOOPNUM + sizeof(step.stepStage) + _BATTERY_SIZE + 3] = (uint8_t)(0xFF & cc1101.crcValue);
+	
 	for(uint16_t i=0; i<sizeof(cc1101.sendBuffer); i++)
 	{	rfid_printf("%x ",cc1101.sendBuffer[i]);}
-	rfid_printf("\r\n");
+	rfid_printf("\n");
 	
-	for(uint8_t i=0; i<2; i++)
+	for(uint8_t i=0; i<3; i++)
 	{
 		HAL_Delay(_TX_WAIT_TIME);
-		CC1101SendPacket(cc1101.sendBuffer, 97, ADDRESS_CHECK);
+		RFIDInitial(0x00, 0x1234, IDLE_MODE);
+		CC1101SendPacket(cc1101.sendBuffer, _RFID_SIZE + 4*_STEP_LOOPNUM + sizeof(step.stepStage) + _BATTERY_SIZE + _CRC32_SIZE, ADDRESS_CHECK);
+		CC1101SetIdle();
+		CC1101WriteCmd(CC1101_SXOFF);
 	}
-	
-	CC1101SetIdle();
-	CC1101WriteCmd(CC1101_SXOFF);
+	memset(&cc1101, 0, sizeof(cc1101));
 	
 	#if (_DEBUG == 1)
 		LED_GREEN_OFF();

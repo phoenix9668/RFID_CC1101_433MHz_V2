@@ -17,7 +17,7 @@
 #ifndef _ADXL362DRIVER_H_
 #define _ADXL362DRIVER_H_
 
-#define STEP_LOOPNUM    36  // 20min per step,have 36 steps,equal 12 hours
+#define _STEP_LOOPNUM    36  // 20min per step,have 36 steps,equal 12 hours
 
 /**
  * \brief           Buffer for FIFO
@@ -38,9 +38,9 @@ typedef struct
 	__IO uint8_t stepStage;
 	__IO FlagStatus stepState;
 	__IO uint16_t stepNum;
-	__IO uint16_t stepArray[STEP_LOOPNUM];
+	__IO uint16_t stepArray[_STEP_LOOPNUM];
 	__IO uint16_t ingestionNum;
-	__IO uint16_t ingestionArray[STEP_LOOPNUM];
+	__IO uint16_t ingestionArray[_STEP_LOOPNUM];
 } step_t;
 
 extern step_t step;

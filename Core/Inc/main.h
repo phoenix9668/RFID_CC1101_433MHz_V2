@@ -75,9 +75,9 @@ extern device_t device;
 /* Exported macro ------------------------------------------------------------*/
 /* USER CODE BEGIN EM */
 #define _DEBUG              0        //  set device info
-#define _NBIOT_DEBUG        1        //  use printf debug
+#define _RFID_PRINT_DEBUG   0        //  use printf debug
 
-#if (_NBIOT_DEBUG == 1)
+#if (_RFID_PRINT_DEBUG == 1)
 #define rfid_printf(...)     			printf(__VA_ARGS__)
 #else
 #define rfid_printf(...)     			{};
