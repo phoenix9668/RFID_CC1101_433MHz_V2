@@ -707,6 +707,8 @@ OUTPUT   : None
 */
 void CC1101SendHandler(void)
 {
+	uint8_t uLen;
+	
 	#if (_DEBUG == 1)
 		LED_GREEN_ON();
 	#endif
@@ -738,11 +740,14 @@ void CC1101SendHandler(void)
 //	}
 	
 	cc1101.sendBuffer[_RFID_SIZE + 4*_STEP_LOOPNUM] = step.stepStage;
-	cc1101.sendBuffer[_RFID_SIZE + 4*_STEP_LOOPNUM + 1] = 0xE5;
-	cc1101.sendBuffer[_RFID_SIZE + 4*_STEP_LOOPNUM + 2] = 0x5E;
+	cc1101.sendBuffer[_RFID_SIZE + 4*_STEP_LOOPNUM + 1] = 0x4E;
+	cc1101.sendBuffer[_RFID_SIZE + 4*_STEP_LOOPNUM + 2] = 0x4F;
 	
-  cc1101.crcValue = ~HAL_CRC_Calculate(&hcrc, (uint32_t *)cc1101.sendBuffer, (uint32_t)(_RFID_SIZE + 4*_STEP_LOOPNUM + sizeof(step.stepStage) + _BATTERY_SIZE));
-	rfid_printf("crcBufferLength = %d\n",_RFID_SIZE + 4*_STEP_LOOPNUM + sizeof(step.stepStage) + _BATTERY_SIZE);
+	if (((uint8_t)(_RFID_SIZE + 4*_STEP_LOOPNUM + sizeof(step.stepStage) + _BATTERY_SIZE) % 4U) != 0U)
+  {  uLen = 4U - (uint8_t)(_RFID_SIZE + 4*_STEP_LOOPNUM + sizeof(step.stepStage) + _BATTERY_SIZE) & 0x03;}
+	
+  cc1101.crcValue = ~HAL_CRC_Calculate(&hcrc, (uint32_t *)cc1101.sendBuffer, (uint32_t)(_RFID_SIZE + 4*_STEP_LOOPNUM + sizeof(step.stepStage) + _BATTERY_SIZE + uLen));
+	rfid_printf("BufferLength = %d\n",_RFID_SIZE + 4*_STEP_LOOPNUM + sizeof(step.stepStage) + _BATTERY_SIZE + uLen);
 	rfid_printf("crcValue = %x\n",cc1101.crcValue);
 
 	cc1101.sendBuffer[_RFID_SIZE + 4*_STEP_LOOPNUM + sizeof(step.stepStage) + _BATTERY_SIZE] = (uint8_t)(0xFF & cc1101.crcValue>>24);
