@@ -78,16 +78,17 @@ void LPTIM1_Counter_Start_IT(void)
 void LPTimerAutoreloadMatch_Callback(void)
 {
 	lptim.twentyMinuteTimeBase++;
-	lptim.fourHourTimeBase++;
+	
 	if(lptim.twentyMinuteTimeBase == 0x0A)//1280s
 	{
 		lptim.twentyMinuteIndex = SET;
 		lptim.twentyMinuteTimeBase = 0x00;
+		lptim.oneHourTimeBase++;
 	}
-	if(lptim.fourHourTimeBase == 0x01)//4hours
+	if(lptim.oneHourTimeBase == 0x03)//1hours
 	{
-		lptim.fourHourIndex = SET;
-		lptim.fourHourTimeBase = 0x00;
+		lptim.oneHourIndex = SET;
+		lptim.oneHourTimeBase = 0x00;
 	}
 }
 

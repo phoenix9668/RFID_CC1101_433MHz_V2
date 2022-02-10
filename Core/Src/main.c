@@ -31,6 +31,7 @@
 /* USER CODE BEGIN Includes */
 #include "cc1101.h"
 #include "adxl362.h"
+#include "rand_bytes_gen.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -131,10 +132,13 @@ int main(void)
 			DATAEEPROM_Program(EEPROM_START_ADDR+8, step.stepStage);
 			lptim.twentyMinuteIndex = RESET;
 		}
-		if(lptim.fourHourIndex == SET)
+		if(lptim.oneHourIndex == SET)
 		{
+			RNG_Init();
+      RNG_Gen();
+			MX_CRC_Init();
 			CC1101SendHandler();
-			lptim.fourHourIndex = RESET;
+			lptim.oneHourIndex = RESET;
 		}
 		#if (_DEBUG == 1)
 			if(usart.rxState == SET)
@@ -151,7 +155,7 @@ int main(void)
 			step.stepState = RESET;
 		}
 		#if (_DEBUG == 0)
-			if(usart.rxState == RESET && step.stepState == RESET && lptim.twentyMinuteIndex == RESET && lptim.fourHourIndex == RESET)
+			if(usart.rxState == RESET && step.stepState == RESET && lptim.twentyMinuteIndex == RESET && lptim.oneHourIndex == RESET)
 			{
 				MX_SPI1_DeInit();
 				MX_SPI2_DeInit();
@@ -283,7 +287,6 @@ void System_Initial(void)
 	Get_SerialNum();
 	ADXL362_Init();
 	/*##-2- initial CC1101 peripheral,configure it's address and sync code ##*/
-	
 	rfid_printf("deviceCode = %08x",device.deviceSerial0);
 	rfid_printf("%04x\n",(uint16_t)(0x0000FFFF & device.deviceSerial1>>16));
 	RFIDInitial(0x00, 0x1234, IDLE_MODE);
@@ -310,9 +313,9 @@ void Get_SerialNum(void)
 	memset(&device, 0, sizeof(device));
 	device.deviceSerial0 = DATAEEPROM_Read(EEPROM_START_ADDR);
   device.deviceSerial1 = DATAEEPROM_Read(EEPROM_START_ADDR+4);
-//  device.deviceSerial0 = *(uint32_t*)(0x1FF80050);
-//  device.deviceSerial1 = *(uint32_t*)(0x1FF80054);
-//  device.deviceSerial2 = *(uint32_t*)(0x1FF80064);
+//  device.deviceSerial0 = *(uint32_t*)(0x1FF80050);//HAL_GetUIDw0
+//  device.deviceSerial1 = *(uint32_t*)(0x1FF80054);//HAL_GetUIDw1
+//  device.deviceSerial2 = *(uint32_t*)(0x1FF80064);//HAL_GetUIDw2
 	device.deviceCode1 = (uint8_t)(0x000000FF & device.deviceSerial0>>24);
 	device.deviceCode2 = (uint8_t)(0x000000FF & device.deviceSerial0>>16);
 	device.deviceCode3 = (uint8_t)(0x000000FF & device.deviceSerial0>>8);

@@ -36,8 +36,8 @@ typedef struct
 {
 	__IO ITStatus twentyMinuteIndex;
 	uint8_t twentyMinuteTimeBase;    //one step == 128s
-	__IO ITStatus fourHourIndex;
-	uint8_t fourHourTimeBase;    //one step == 128s
+	__IO ITStatus oneHourIndex;
+	uint8_t oneHourTimeBase;    //one step == 128s
 
 } lptim_t;
 
