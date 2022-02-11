@@ -114,6 +114,15 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+		if (freeFallDetection == SET)
+		{
+			RNG_Init();
+      RNG_Gen();
+			MX_CRC_Init();
+			CC1101SendFreeFallHandler();
+			freeFallDetection = RESET;
+		}
+		
 		if(lptim.twentyMinuteIndex == SET)
 		{
 			step.stepArray[step.stepStage] = step.stepNum - step.ingestionNum;
@@ -132,6 +141,7 @@ int main(void)
 			DATAEEPROM_Program(EEPROM_START_ADDR+8, step.stepStage);
 			lptim.twentyMinuteIndex = RESET;
 		}
+		
 		if(lptim.oneHourIndex == SET)
 		{
 			RNG_Init();
@@ -155,7 +165,7 @@ int main(void)
 			step.stepState = RESET;
 		}
 		#if (_DEBUG == 0)
-			if(usart.rxState == RESET && step.stepState == RESET && lptim.twentyMinuteIndex == RESET && lptim.oneHourIndex == RESET)
+			if(usart.rxState == RESET && step.stepState == RESET && lptim.twentyMinuteIndex == RESET && lptim.oneHourIndex == RESET && freeFallDetection == RESET)
 			{
 				MX_SPI1_DeInit();
 				MX_SPI2_DeInit();

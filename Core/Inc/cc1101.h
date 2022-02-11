@@ -120,6 +120,7 @@ uint8_t CC1101RecvHandler(void);
 
 /*Send RF Single*/
 void CC1101SendHandler(void);
+void CC1101SendFreeFallHandler(void);
 
 #endif // _CC1101_H_
 
