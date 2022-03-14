@@ -319,10 +319,10 @@ void ADXL362_Init(void)
 			Error_Handler();
 		}
 
-		ADXL362RegisterWrite(XL362_TIME_INACT_L,0x30);						//set inactive time equip 48/200s
+		ADXL362RegisterWrite(XL362_TIME_INACT_L,0x10);						//set inactive time equip 16/200s
 		ReadValueTemp = ADXL362RegisterRead(XL362_TIME_INACT_L);
 		rfid_printf("TIME_INACT_L: %x\n",ReadValueTemp);
-		if(ReadValueTemp != 0x30){
+		if(ReadValueTemp != 0x10){
 			ErrorIndex = 0x03;
 			Error_Handler();
 		}
