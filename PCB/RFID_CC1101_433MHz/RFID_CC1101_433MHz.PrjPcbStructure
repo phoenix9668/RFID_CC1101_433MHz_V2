@@ -1,4 +1,0 @@
-Record=TopLevelDocument|FileName=RFID_CC1101_433MHz.SchDoc
-Record=SheetSymbol|SourceDocument=RFID_CC1101_433MHz.SchDoc|Designator=U_MCU|SchDesignator=U_MCU|FileName=MCU.SchDoc|SymbolType=Normal|RawFileName=MCU.SchDoc|DesignItemId= |SourceLibraryName= |ObjectKind=Sheet Symbol|RevisionGUID= |ItemGUID= |VaultGUID= 
-Record=SheetSymbol|SourceDocument=RFID_CC1101_433MHz.SchDoc|Designator=U_MEMS&RF|SchDesignator=U_MEMS&RF|FileName=MEMS&RF.SchDoc|SymbolType=Normal|RawFileName=MEMS&RF.SchDoc|DesignItemId= |SourceLibraryName= |ObjectKind=Sheet Symbol|RevisionGUID= |ItemGUID= |VaultGUID= 
-Record=SheetSymbol|SourceDocument=RFID_CC1101_433MHz.SchDoc|Designator=U_Power|SchDesignator=U_Power|FileName=Power.SchDoc|SymbolType=Normal|RawFileName=Power.SchDoc|DesignItemId= |SourceLibraryName= |ObjectKind=Sheet Symbol|RevisionGUID= |ItemGUID= |VaultGUID= 

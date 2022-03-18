@@ -1,0 +1,11 @@
+Removed Member From Class: ClassName=Power Member=C15
+Removed Member From Class: ClassName=MCU Member=C18
+Removed Member From Class: ClassName=Power Member=D1
+Removed Member From Class: ClassName=Power Member=R11
+Removed Member From Class: ClassName=Power Member=U2
+Added Member To Class: ClassName=MEMS&RF Member=Component U3 E07-433M20S
+Added Member To Class: ClassName=Power Member=Component U4 TP4056
+Added Member To Class: ClassName=Power Member=Component U5 ADP151AUJZ-3.0-R7
+Added Room: Name=MCU
+Added Room: Name=MEMS&RF
+Added Room: Name=Power

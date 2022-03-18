@@ -1,0 +1,92 @@
+Added Component: Designator=TP1(EMB-SMT-40MILX40MIL)
+Added Component: Designator=TP2(EMB-SMT-40MILX40MIL)
+Added Component: Designator=TP3(EMB-SMT-40MILX40MIL)
+Added Component: Designator=TP4(EMB-SMT-40MILX40MIL)
+Added Component: Designator=TP5(EMB-SMT-40MILX40MIL)
+Added Component: Designator=TP6(EMB-SMT-40MILX40MIL)
+Added Component: Designator=TP7(EMB-SMT-40MILX40MIL)
+Added Component: Designator=TP8(EMB-SMT-40MILX40MIL)
+Added Component: Designator=TP9(EMB-SMT-40MILX40MIL)
+Added Component: Designator=TP10(EMB-SMT-40MILX40MIL)
+Added Component: Designator=TP11(EMB-SMT-40MILX40MIL)
+Added Component: Designator=TP12(EMB-SMT-40MILX40MIL)
+Added Component: Designator=TP13(EMB-SMT-40MILX40MIL)
+Added Component: Designator=TP14(EMB-SMT-40MILX40MIL)
+Added Component: Designator=TP15(EMB-SMT-40MILX40MIL)
+Added Component: Designator=TP16(EMB-SMT-40MILX40MIL)
+Added Component: Designator=TP17(EMB-SMT-40MILX40MIL)
+Added Component: Designator=TP18(EMB-SMT-40MILX40MIL)
+Added Component: Designator=TP19(EMB-SMT-40MILX40MIL)
+Added Component: Designator=TP20(EMB-SMT-40MILX40MIL)
+Added Pin To Net: NetName=NetP5_1 Pin=TP1-1
+Added Pin To Net: NetName=SOLAR+ Pin=TP2-1
+Added Pin To Net: NetName=BAT+ Pin=TP3-1
+Added Pin To Net: NetName=NetC20_2 Pin=TP4-1
+Added Pin To Net: NetName=VCC_3V Pin=TP5-1
+Added Pin To Net: NetName=ADC_V Pin=TP6-1
+Added Pin To Net: NetName=SPI1_CS Pin=TP7-1
+Added Pin To Net: NetName=GDO0 Pin=TP8-1
+Added Pin To Net: NetName=GDO2 Pin=TP9-1
+Added Pin To Net: NetName=SPI1_SCLK Pin=TP10-1
+Added Pin To Net: NetName=SPI1_MISO Pin=TP11-1
+Added Pin To Net: NetName=SPI1_MOSI Pin=TP12-1
+Added Pin To Net: NetName=TX_EN Pin=TP13-1
+Added Pin To Net: NetName=RX_EN Pin=TP14-1
+Added Pin To Net: NetName=INT1 Pin=TP15-1
+Added Pin To Net: NetName=INT2 Pin=TP16-1
+Added Pin To Net: NetName=SPI2_CS Pin=TP17-1
+Added Pin To Net: NetName=SPI2_SCLK Pin=TP18-1
+Added Pin To Net: NetName=SPI2_MISO Pin=TP19-1
+Added Pin To Net: NetName=SPI2_MOSI Pin=TP20-1
+Added Member To Class: ClassName=MCU Member=Component C1 10pF
+Added Member To Class: ClassName=MCU Member=Component C3 18pF
+Added Member To Class: ClassName=MCU Member=Component C5 18pF
+Added Member To Class: ClassName=MCU Member=Component C6 10uF
+Added Member To Class: ClassName=MCU Member=Component C7 100nF
+Added Member To Class: ClassName=MCU Member=Component C9 100nF
+Added Member To Class: ClassName=MCU Member=Component C10 100nF
+Added Member To Class: ClassName=MCU Member=Component C11 1uF
+Added Member To Class: ClassName=Power Member=Component C17 10uF
+Added Member To Class: ClassName=Power Member=Component C19 1uF
+Added Member To Class: ClassName=Power Member=Component C20 1uF
+Added Member To Class: ClassName=Power Member=Component D2 Green
+Added Member To Class: ClassName=Power Member=Component D4 SS24S
+Added Member To Class: ClassName=MEMS&RF Member=Component L1 100nH
+Added Member To Class: ClassName=MCU Member=Component P2 A1251WV-6P
+Added Member To Class: ClassName=MCU Member=Component P3 A2541WV-12P
+Added Member To Class: ClassName=MCU Member=Component P4 A1251WV-2P
+Added Member To Class: ClassName=Power Member=Component P5 LBX0062A
+Added Member To Class: ClassName=Power Member=Component P7 A1251WV-2P
+Added Member To Class: ClassName=MCU Member=Component Q1 MMS8050-L
+Added Member To Class: ClassName=MCU Member=Component R3 33
+Added Member To Class: ClassName=MCU Member=Component R5 1k
+Added Member To Class: ClassName=MCU Member=Component R7 1k
+Added Member To Class: ClassName=MCU Member=Component R8 390
+Added Member To Class: ClassName=MCU Member=Component R10 100k
+Added Member To Class: ClassName=MCU Member=Component R12 0¦¸
+Added Member To Class: ClassName=MCU Member=Component R13 100k
+Added Member To Class: ClassName=MEMS&RF Member=Component R14 0¦¸
+Added Member To Class: ClassName=MEMS&RF Member=Component R15 NC
+Added Member To Class: ClassName=Power Member=Component R16 0.4
+Added Member To Class: ClassName=Power Member=Component R18 10k
+Added Member To Class: ClassName=Power Member=Component TP1 TP-EMB-SMT-Single-20mil-1pin
+Added Member To Class: ClassName=Power Member=Component TP2 TP-EMB-SMT-Single-20mil-1pin
+Added Member To Class: ClassName=Power Member=Component TP3 TP-EMB-SMT-Single-20mil-1pin
+Added Member To Class: ClassName=Power Member=Component TP4 TP-EMB-SMT-Single-20mil-1pin
+Added Member To Class: ClassName=Power Member=Component TP5 TP-EMB-SMT-Single-20mil-1pin
+Added Member To Class: ClassName=MCU Member=Component TP6 TP-EMB-SMT-Single-20mil-1pin
+Added Member To Class: ClassName=MCU Member=Component TP7 TP-EMB-SMT-Single-20mil-1pin
+Added Member To Class: ClassName=MCU Member=Component TP8 TP-EMB-SMT-Single-20mil-1pin
+Added Member To Class: ClassName=MCU Member=Component TP9 TP-EMB-SMT-Single-20mil-1pin
+Added Member To Class: ClassName=MCU Member=Component TP10 TP-EMB-SMT-Single-20mil-1pin
+Added Member To Class: ClassName=MCU Member=Component TP11 TP-EMB-SMT-Single-20mil-1pin
+Added Member To Class: ClassName=MCU Member=Component TP12 TP-EMB-SMT-Single-20mil-1pin
+Added Member To Class: ClassName=MCU Member=Component TP13 TP-EMB-SMT-Single-20mil-1pin
+Added Member To Class: ClassName=MCU Member=Component TP14 TP-EMB-SMT-Single-20mil-1pin
+Added Member To Class: ClassName=MCU Member=Component TP15 TP-EMB-SMT-Single-20mil-1pin
+Added Member To Class: ClassName=MCU Member=Component TP16 TP-EMB-SMT-Single-20mil-1pin
+Added Member To Class: ClassName=MCU Member=Component TP17 TP-EMB-SMT-Single-20mil-1pin
+Added Member To Class: ClassName=MCU Member=Component TP18 TP-EMB-SMT-Single-20mil-1pin
+Added Member To Class: ClassName=MCU Member=Component TP19 TP-EMB-SMT-Single-20mil-1pin
+Added Member To Class: ClassName=MCU Member=Component TP20 TP-EMB-SMT-Single-20mil-1pin
+Added Member To Class: ClassName=MCU Member=Component YA1 8M

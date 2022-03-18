@@ -1,0 +1,32 @@
+Removed Pin From Net: NetName=VCC_5V Pin=P3-1
+Removed Pin From Net: NetName=PB5 Pin=P3-2
+Removed Pin From Net: NetName=PA11 Pin=P3-3
+Removed Pin From Net: NetName=PA12 Pin=P3-4
+Removed Pin From Net: NetName=PA15 Pin=P3-5
+Removed Pin From Net: NetName=GND Pin=P3-6
+Removed Pin From Net: NetName=PC13 Pin=P8-1
+Removed Pin From Net: NetName=I2C_SCL Pin=P8-2
+Removed Pin From Net: NetName=I2C_SDA Pin=P8-3
+Removed Pin From Net: NetName=PB8 Pin=P8-4
+Removed Pin From Net: NetName=PB9 Pin=P8-5
+Removed Pin From Net: NetName=PA11 Pin=U1-32
+Removed Pin From Net: NetName=PA12 Pin=U1-33
+Removed Pin From Net: NetName=LED_GREEN Pin=U1-39
+Removed Pin From Net: NetName=LED1 Pin=U1-40
+Added Pin To Net: NetName=GND Pin=P3-1
+Added Pin To Net: NetName=PC13 Pin=P3-2
+Added Pin To Net: NetName=PB9 Pin=P3-3
+Added Pin To Net: NetName=PB8 Pin=P3-4
+Added Pin To Net: NetName=I2C_SDA Pin=P3-5
+Added Pin To Net: NetName=I2C_SCL Pin=P3-6
+Added Pin To Net: NetName=VCC_5V Pin=P8-1
+Added Pin To Net: NetName=PB5 Pin=P8-2
+Added Pin To Net: NetName=PA11 Pin=P8-3
+Added Pin To Net: NetName=PA12 Pin=P8-4
+Added Pin To Net: NetName=PA15 Pin=P8-5
+Added Pin To Net: NetName=LED1 Pin=U1-32
+Added Pin To Net: NetName=LED_GREEN Pin=U1-33
+Added Pin To Net: NetName=PA12 Pin=U1-39
+Added Pin To Net: NetName=PA11 Pin=U1-40
+Change Net Name : Old Net Name=PA11 New Net Name=PB4
+Change Net Name : Old Net Name=PA12 New Net Name=PB3
