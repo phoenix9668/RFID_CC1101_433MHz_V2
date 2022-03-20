@@ -109,8 +109,12 @@ void Error_Handler(void);
 #define INT2_EXTI_IRQn EXTI0_1_IRQn
 #define SPI2_CS_Pin LL_GPIO_PIN_12
 #define SPI2_CS_GPIO_Port GPIOB
-#define LED_GREEN_Pin LL_GPIO_PIN_4
-#define LED_GREEN_GPIO_Port GPIOB
+#define LED1_Pin LL_GPIO_PIN_8
+#define LED1_GPIO_Port GPIOA
+#define LED2_Pin LL_GPIO_PIN_11
+#define LED2_GPIO_Port GPIOA
+#define LED_GREEN_Pin LL_GPIO_PIN_12
+#define LED_GREEN_GPIO_Port GPIOA
 /* USER CODE BEGIN Private defines */
 void System_Initial(void);
 void Get_SerialNum(void);
@@ -126,5 +130,3 @@ void LED_Blinking(uint32_t Period);
 #endif
 
 #endif /* __MAIN_H */
-
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
