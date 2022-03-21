@@ -19,6 +19,7 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "adc.h"
 #include "crc.h"
 #include "iwdg.h"
 #include "lptim.h"
@@ -101,9 +102,16 @@ int main(void)
   MX_RTC_Init();
   MX_LPTIM1_Init();
   MX_CRC_Init();
+  MX_ADC_Init();
   /* USER CODE BEGIN 2 */
   System_Initial();
   Show_Message();
+	
+			adc_detect();
+			RNG_Init();
+      RNG_Gen();
+			MX_CRC_Init();
+			CC1101SendHandler();
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -144,6 +152,7 @@ int main(void)
 		
 		if(lptim.oneHourIndex == SET)
 		{
+			adc_detect();
 			RNG_Init();
       RNG_Gen();
 			MX_CRC_Init();
@@ -210,7 +219,7 @@ void SystemClock_Config(void)
   RCC_OscInitStruct.LSIState = RCC_LSI_ON;
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
   RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
-  RCC_OscInitStruct.PLL.PLLMUL = RCC_PLLMUL_4;
+  RCC_OscInitStruct.PLL.PLLMUL = RCC_PLLMUL_8;
   RCC_OscInitStruct.PLL.PLLDIV = RCC_PLLDIV_2;
   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
   {
@@ -226,7 +235,7 @@ void SystemClock_Config(void)
   RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV1;
   RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
 
-  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_0) != HAL_OK)
+  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_1) != HAL_OK)
   {
     Error_Handler();
   }

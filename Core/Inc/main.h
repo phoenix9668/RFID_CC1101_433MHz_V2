@@ -47,6 +47,8 @@ extern "C" {
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "stdio.h"
+#include <string.h>
+#include <stdbool.h>
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/
@@ -93,6 +95,10 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
+#define ADC_V_Pin LL_GPIO_PIN_0
+#define ADC_V_GPIO_Port GPIOA
+#define TX_EN_Pin LL_GPIO_PIN_1
+#define TX_EN_GPIO_Port GPIOA
 #define SPI1_CS_Pin LL_GPIO_PIN_2
 #define SPI1_CS_GPIO_Port GPIOA
 #define GDO0_Pin LL_GPIO_PIN_3
@@ -107,6 +113,8 @@ void Error_Handler(void);
 #define INT2_Pin LL_GPIO_PIN_1
 #define INT2_GPIO_Port GPIOB
 #define INT2_EXTI_IRQn EXTI0_1_IRQn
+#define RX_EN_Pin LL_GPIO_PIN_2
+#define RX_EN_GPIO_Port GPIOB
 #define SPI2_CS_Pin LL_GPIO_PIN_12
 #define SPI2_CS_GPIO_Port GPIOB
 #define LED1_Pin LL_GPIO_PIN_8
