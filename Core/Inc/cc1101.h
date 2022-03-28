@@ -30,6 +30,7 @@ typedef enum { BROADCAST, ADDRESS_CHECK} TX_DATA_MODE;
 #define	_TX_WAIT_TIME			         500 // cc1101 tx wait time
 #define	_RFID_SIZE                 6   // RFID size
 #define	_BATTERY_SIZE              2   // battery size
+#define	_RESETCNT_SIZE             2   // resetCnt size
 #define	_INDEX_SIZE                1   // index size
 #define	_CRC32_SIZE                4   // CRC32 size
 
@@ -45,6 +46,7 @@ typedef struct
 }cc1101_t;
 
 extern cc1101_t cc1101;
+extern uint16_t resetCnt;
 
 /*===========================================================================
 -------------------------------------exported APIs---------------------------

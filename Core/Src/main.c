@@ -106,12 +106,6 @@ int main(void)
   /* USER CODE BEGIN 2 */
   System_Initial();
   Show_Message();
-	
-			adc_detect();
-			RNG_Init();
-      RNG_Gen();
-			MX_CRC_Init();
-			CC1101SendHandler();
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -313,6 +307,10 @@ void System_Initial(void)
 	rfid_printf("%04x\n",(uint16_t)(0x0000FFFF & device.deviceSerial1>>16));
 	RFIDInitial(0x00, 0x1234, IDLE_MODE);
 	
+	resetCnt = (uint16_t)(0x0000FFFF & DATAEEPROM_Read(EEPROM_START_ADDR+12));
+	resetCnt++;
+	DATAEEPROM_Program(EEPROM_START_ADDR+12, (uint32_t)resetCnt);
+	
 	for(uint8_t i=0; i<_STEP_LOOPNUM; i++){
 		step.stepArray[i] = (uint16_t)(0x0000FFFF & DATAEEPROM_Read(EEPROM_START_ADDR+0x100+4*i));
 	}
@@ -320,6 +318,7 @@ void System_Initial(void)
 		step.ingestionArray[i] = (uint16_t)(0x0000FFFF & DATAEEPROM_Read(EEPROM_START_ADDR+0x200+4*i));
 	}
 	step.stepStage = (uint8_t)(0x000000FF & DATAEEPROM_Read(EEPROM_START_ADDR+8));
+	
 	
 	for(uint8_t i=0; i<_STEP_LOOPNUM; i++)
 	{	rfid_printf("%x ",step.stepArray[i]);}
