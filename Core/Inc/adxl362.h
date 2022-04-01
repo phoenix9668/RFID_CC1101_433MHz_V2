@@ -24,9 +24,9 @@
  * \note            SPI
  */
 extern uint8_t fifo[1024];
-static short int xAxis[5];
-static short int yAxis[5];
-static short int zAxis[5];
+static short int xAxis[170];
+static short int yAxis[170];
+static short int zAxis[170];
 static short int temp[5];
 static double angle[5];
 static uint8_t angle_num;
@@ -37,6 +37,7 @@ typedef struct
 {
 	__IO uint8_t stepStage;
 	__IO FlagStatus stepState;
+	__IO FlagStatus fifoOverrun;
 	__IO uint16_t stepNum;
 	__IO uint16_t stepArray[_STEP_LOOPNUM];
 	__IO uint16_t ingestionNum;
@@ -44,7 +45,6 @@ typedef struct
 } step_t;
 
 extern step_t step;
-extern __IO FlagStatus freeFallDetection;
 
 /* ------- Register names ------- */
 

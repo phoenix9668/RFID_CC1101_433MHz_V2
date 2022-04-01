@@ -116,14 +116,6 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-		if (freeFallDetection == SET)
-		{
-			RNG_Init();
-      RNG_Gen();
-			MX_CRC_Init();
-			CC1101SendFreeFallHandler();
-			freeFallDetection = RESET;
-		}
 		
 		if(lptim.twentyMinuteIndex == SET)
 		{
@@ -146,6 +138,8 @@ int main(void)
 		
 		if(lptim.oneHourIndex == SET)
 		{
+			MX_SPI1_Init();
+			Activate_SPI(SPI1);
 			adc_detect();
 			RNG_Init();
       RNG_Gen();
@@ -164,11 +158,28 @@ int main(void)
 		#endif
 		if(step.stepState == SET)
 		{
-			ADXL362FifoProcess();
+			MX_SPI2_Init();
+			Activate_SPI(SPI2);
 			step.stepState = RESET;
+			rfid_printf("XL362_STATUS1: %x\n",ADXL362RegisterRead(XL362_STATUS));
 		}
+
+		if(step.fifoOverrun == SET)
+		{
+			MX_SPI2_Init();
+			Activate_SPI(SPI2);
+			rfid_printf("XL362_STATUS2: %x\n",ADXL362RegisterRead(XL362_STATUS));
+			memset(fifo, 0, sizeof(fifo));
+			LL_IWDG_ReloadCounter(IWDG);
+			ADXL362FifoRead(1024, fifo);
+			ADXL362RegisterWrite(XL362_FIFO_CONTROL, 0x00);//select fifo is disabled
+			ADXL362RegisterWrite(XL362_FIFO_CONTROL, 0x03);//select fifo triggered mode
+			ADXL362FifoProcess();
+			step.fifoOverrun = RESET;
+		}
+		
 		#if (_DEBUG == 0)
-			if(usart.rxState == RESET && step.stepState == RESET && lptim.twentyMinuteIndex == RESET && lptim.oneHourIndex == RESET && freeFallDetection == RESET)
+			if(usart.rxState == RESET && step.stepState == RESET && step.fifoOverrun == RESET && lptim.twentyMinuteIndex == RESET && lptim.oneHourIndex == RESET)
 			{
 				MX_SPI1_DeInit();
 				MX_SPI2_DeInit();
@@ -176,8 +187,6 @@ int main(void)
 				/* Enter Stop Mode */
 				HAL_PWR_EnterSTOPMode(PWR_LOWPOWERREGULATOR_ON, PWR_STOPENTRY_WFI);
 				SystemClock_Config();
-				MX_SPI1_Init();
-				Activate_SPI(SPI1);
 			}
 		#endif
   }

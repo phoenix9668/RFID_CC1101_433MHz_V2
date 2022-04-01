@@ -31,7 +31,6 @@ typedef enum { BROADCAST, ADDRESS_CHECK} TX_DATA_MODE;
 #define	_RFID_SIZE                 6   // RFID size
 #define	_BATTERY_SIZE              2   // battery size
 #define	_RESETCNT_SIZE             2   // resetCnt size
-#define	_INDEX_SIZE                1   // index size
 #define	_CRC32_SIZE                4   // CRC32 size
 
 typedef struct
@@ -47,6 +46,8 @@ typedef struct
 
 extern cc1101_t cc1101;
 extern uint16_t resetCnt;
+extern __IO ITStatus txFiFoUnFlow;
+extern __IO ITStatus rxCatch;
 
 /*===========================================================================
 -------------------------------------exported APIs---------------------------
@@ -123,7 +124,7 @@ uint8_t CC1101RecvHandler(void);
 
 /*Send RF Single*/
 void CC1101SendHandler(void);
-void CC1101SendFreeFallHandler(void);
+void CC1101Send3AxisHandler(void);
 
 #endif // _CC1101_H_
 

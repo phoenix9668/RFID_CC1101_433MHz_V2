@@ -165,10 +165,10 @@ void MX_SPI1_DeInit(void)
   LL_APB2_GRP1_DisableClock(LL_APB2_GRP1_PERIPH_SPI1);
 	
   LL_IOP_GRP1_EnableClock(LL_IOP_GRP1_PERIPH_GPIOA);
-  /**SPI1 GPIO Configuration  
+  /**SPI1 GPIO Configuration
   PA5   ------> SPI1_SCK
   PA6   ------> SPI1_MISO
-  PA7   ------> SPI1_MOSI 
+  PA7   ------> SPI1_MOSI
   */
 	GPIO_InitStruct.Pin = LL_GPIO_PIN_5;
   GPIO_InitStruct.Mode = LL_GPIO_MODE_ANALOG;
