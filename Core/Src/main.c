@@ -136,15 +136,15 @@ int main(void)
 			lptim.twentyMinuteIndex = RESET;
 		}
 		
-		if(lptim.oneHourIndex == SET)
+		if(lptim.oneHourIndex == SET)//delete 20min send once
 		{
 			MX_SPI1_Init();
-			Activate_SPI(SPI1);
 			adc_detect();
 			RNG_Init();
       RNG_Gen();
 			MX_CRC_Init();
 			CC1101SendHandler();
+			MX_SPI1_DeInit();
 			lptim.oneHourIndex = RESET;
 		}
 		#if (_DEBUG == 1)
@@ -156,33 +156,33 @@ int main(void)
 			HAL_Delay(100);
 			LED_GREEN_TOG();
 		#endif
-		if(step.stepState == SET)
+		if(step.stepState == SET)//delete
 		{
 			MX_SPI2_Init();
-			Activate_SPI(SPI2);
 			step.stepState = RESET;
 			rfid_printf("XL362_STATUS1: %x\n",ADXL362RegisterRead(XL362_STATUS));
+			MX_SPI2_DeInit();
 		}
 
 		if(step.fifoOverrun == SET)
 		{
+			MX_SPI1_Init();
 			MX_SPI2_Init();
-			Activate_SPI(SPI2);
 			rfid_printf("XL362_STATUS2: %x\n",ADXL362RegisterRead(XL362_STATUS));
 			memset(fifo, 0, sizeof(fifo));
 			LL_IWDG_ReloadCounter(IWDG);
 			ADXL362FifoRead(1024, fifo);
 			ADXL362RegisterWrite(XL362_FIFO_CONTROL, 0x00);//select fifo is disabled
 			ADXL362RegisterWrite(XL362_FIFO_CONTROL, 0x03);//select fifo triggered mode
+			MX_SPI2_DeInit();
 			ADXL362FifoProcess();
+			MX_SPI1_DeInit();
 			step.fifoOverrun = RESET;
 		}
 		
 		#if (_DEBUG == 0)
 			if(usart.rxState == RESET && step.stepState == RESET && step.fifoOverrun == RESET && lptim.twentyMinuteIndex == RESET && lptim.oneHourIndex == RESET)
 			{
-				MX_SPI1_DeInit();
-				MX_SPI2_DeInit();
 				SystemPower_Config();
 				/* Enter Stop Mode */
 				HAL_PWR_EnterSTOPMode(PWR_LOWPOWERREGULATOR_ON, PWR_STOPENTRY_WFI);
@@ -223,7 +223,7 @@ void SystemClock_Config(void)
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
   RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
   RCC_OscInitStruct.PLL.PLLMUL = RCC_PLLMUL_8;
-  RCC_OscInitStruct.PLL.PLLDIV = RCC_PLLDIV_2;
+  RCC_OscInitStruct.PLL.PLLDIV = RCC_PLLDIV_3;
   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
   {
     Error_Handler();
@@ -306,15 +306,12 @@ void System_Initial(void)
 	#else
 		MX_USART1_UART_DeInit();
 	#endif
-	Activate_SPI(SPI1);
-	Activate_SPI(SPI2);
 	LPTIM1_Counter_Start_IT();
 	Get_SerialNum();
 	ADXL362_Init();
 	/*##-2- initial CC1101 peripheral,configure it's address and sync code ##*/
-	rfid_printf("deviceCode = %08x",device.deviceSerial0);
-	rfid_printf("%04x\n",(uint16_t)(0x0000FFFF & device.deviceSerial1>>16));
 	RFIDInitial(0x00, 0x1234, IDLE_MODE);
+	CC1101_POWER_DOWN();
 	
 	resetCnt = (uint16_t)(0x0000FFFF & DATAEEPROM_Read(EEPROM_START_ADDR+12));
 	resetCnt++;
@@ -328,7 +325,7 @@ void System_Initial(void)
 	}
 	step.stepStage = (uint8_t)(0x000000FF & DATAEEPROM_Read(EEPROM_START_ADDR+8));
 	
-	
+	rfid_printf("\nstepArray = ");
 	for(uint8_t i=0; i<_STEP_LOOPNUM; i++)
 	{	rfid_printf("%x ",step.stepArray[i]);}
 	rfid_printf("\nstepStage = %d\n",step.stepStage);
@@ -361,17 +358,20 @@ void Get_SerialNum(void)
 void Show_Message(void)
 {
 	unsigned int  ReadValueTemp;
-	rfid_printf("CC1101 chip transfer program \n");
-	rfid_printf("using USART1,configuration:%d 8-N-1 \n",115200);
-	rfid_printf("when in transfer mode,the data can exceed 60 bytes!!\r\n");
+	rfid_printf("\n|***********************************************************|\n");
+	rfid_printf("|*-------------------RFID collar program-------------------*|\n");
+	rfid_printf("|*---------using USART1,configuration:%d 8-N-1---------*|\n",115200);
+	rfid_printf("|*-when in transfer mode,the data can't exceed 256 bytes!!-*|\n");
+	rfid_printf("|*-----------deviceCode in eeprom = %08x",device.deviceSerial0);
+	rfid_printf("%04x-----------*|\n",(uint16_t)(0x0000FFFF & device.deviceSerial1>>16));
+	rfid_printf("|***********************************************************|\n");
 	
 	#if (_DEBUG == 1)
-		printf("EEPROM INIT DATA:\n");
-		printf("deviceCode = %08x",device.deviceSerial0);
-		printf("%04x\n",(uint16_t)(0x0000FFFF & device.deviceSerial1>>16));
-		printf("\nplease configure eeprom,include addrEeprom,syncEeprom and deviceCode\n");
-		printf("|------Header-------|---addr--|---sync--|------------------------device code------------------------|---Tail--|\n");
-		printf("|0x41 0x42 0x43 0x44|0x00 0xXX|0xXX 0xXX|0xXX 0xXX 0xXX 0xXX 0xXX 0xXX 0xXX 0xXX 0xXX 0xXX 0xXX 0xXX|0x0D 0x0A|\n");
+	  printf("\n|*************************************************************|\n");
+		printf("|*-----------please configure deviceCode in eeprom-----------*|\n");
+		printf("|*------Header-------|---------device code---------|---Tail--*|\n");
+		printf("|*0x41 0x42 0x43 0x44|0xXX 0xXX 0xXX 0xXX 0xXX 0xXX|0x0D 0x0A*|\n");
+	  printf("|*************************************************************|\n");
 	#endif
 
 	ReadValueTemp = ADXL362RegisterRead(XL362_DEVID_AD);     	//Analog Devices device ID, 0xAD
@@ -380,27 +380,33 @@ void Show_Message(void)
 		LED_GREEN_ON();
 		HAL_Delay(500);
 	}
-	rfid_printf("Analog Devices device ID: %x\n",ReadValueTemp);	 	//send via UART
+	rfid_printf("\n|*************************************|\n");
+	rfid_printf("|*---------ADXL362 CHIP INFO---------*|\n");
+	rfid_printf("|*-Analog Devices device ID: %x------*|\n",ReadValueTemp);	 	//send via UART
 	ReadValueTemp = ADXL362RegisterRead(XL362_DEVID_MST);    	//Analog Devices MEMS device ID, 0x1D
 	if(ReadValueTemp == 0x1D)
 	{
 		LED_GREEN_OFF();
 		HAL_Delay(500);
 	}
-	rfid_printf("Analog Devices MEMS device ID: %x\n",ReadValueTemp);	//send via UART
+	rfid_printf("|*-Analog Devices MEMS device ID: %x-*|\n",ReadValueTemp);	//send via UART
 	ReadValueTemp = ADXL362RegisterRead(XL362_PARTID);       	//part ID, 0xF2
 	if(ReadValueTemp == 0xF2)
 	{
 		LED_GREEN_ON();
 		HAL_Delay(500);
 	}
-	rfid_printf("Part ID: %x\n",ReadValueTemp);										//send via UART
+	rfid_printf("|*-Part ID: %x-----------------------*|\n",ReadValueTemp);										//send via UART
 	ReadValueTemp = ADXL362RegisterRead(XL362_REVID);       	//version ID, 0x03
 	if(ReadValueTemp == 0x02 || ReadValueTemp == 0x03)
 	{
 		LED_GREEN_OFF();
 	}
-	rfid_printf("Version ID: %x\n",ReadValueTemp);									//send via UART
+	rfid_printf("|*-Version ID: %x---------------------*|\n",ReadValueTemp);									//send via UART
+	rfid_printf("|*************************************|\n");
+	
+	MX_SPI1_DeInit();
+	MX_SPI2_DeInit();
 }
 
 /**
@@ -423,11 +429,73 @@ void Set_DeviceInfo(void)
 		Get_SerialNum();
 
 		#if (_DEBUG == 1)
-			printf("eeprom program end\n");
+			printf("\neeprom program end\n");
 			printf("deviceCode = %08x",device.deviceSerial0);
 			printf("%04x\n",(uint16_t)(0x0000FFFF & device.deviceSerial1>>16));
 		#endif
 	}
+}
+
+int min(short int x, short int y) {
+	return x < y ? x : y;
+}
+
+int max(short int x, short int y) {
+	return x > y ? x : y;
+}
+
+void convolution(short int* input1, short int* input2, short int* output, uint16_t mm, uint16_t nn)
+{
+	//store memory
+	short int* xx = (short int*)malloc(sizeof(short int) * (mm + nn - 1));
+	//begin conv
+	for (uint16_t i = 0; i < mm + nn - 1; i++)
+	{
+		xx[i] = 0;
+		for (uint16_t j = 0; j < min(mm,nn) ; j++) {
+			if (mm <= nn) {
+				if (i - j >= 0 && i - j < max(mm, nn)) {
+					printf("%d ", input1[j]);
+					printf("%d ", input2[i-j]);
+					xx[i] += input1[j] * input2[i - j];
+				}
+			}
+			else {
+				if (i - j >= 0 && i - j < max(mm, nn)) {
+					printf("%d ", input1[i-j]);
+					printf("%d ", input2[j]);
+					xx[i] += input2[j] * input1[i - j];
+				}
+			}
+			printf("\n");
+		}
+	}
+	printf("\n");
+	for (uint16_t i = 0; i < mm+nn-1; i++) {
+		output[i] = xx[i];
+	}
+	free(xx);
+}
+
+void convolution2(short int* input1, short int* input2, short int* output, uint16_t mm, uint16_t nn)
+{
+	//store memory
+	short int* xx = (short int*)malloc(sizeof(short int) * (mm + nn - 1));
+	for (uint16_t i = 0; i < mm + nn - 1; i++) {
+		xx[i] = 0;
+	}
+
+	//Using the delay effect, after recording all the products, the result with same time position come to sum
+	for (uint16_t i = 0; i < mm; i++) {
+		for (uint16_t j = 0; j < nn; j++) {
+			xx[i + j] += input1[i] * input2[j];
+		}
+	}
+
+	for (uint16_t i = 0; i < mm + nn - 1; i++) {
+		output[i] = xx[i];
+	}
+	free(xx);
 }
 
 /**

@@ -47,6 +47,7 @@ extern "C" {
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "stdio.h"
+#include "stdlib.h"
 #include <string.h>
 #include <stdbool.h>
 /* USER CODE END Includes */
@@ -77,7 +78,7 @@ extern device_t device;
 /* Exported macro ------------------------------------------------------------*/
 /* USER CODE BEGIN EM */
 #define _DEBUG              0        //  set device info
-#define _RFID_PRINT_DEBUG   1        //  use printf debug
+#define _RFID_PRINT_DEBUG   0        //  use printf debug
 #define _Original_Data_Algorithm   1 //  use original data algorithm
 
 #if (_RFID_PRINT_DEBUG == 1)
@@ -118,17 +119,19 @@ void Error_Handler(void);
 #define RX_EN_GPIO_Port GPIOB
 #define SPI2_CS_Pin LL_GPIO_PIN_12
 #define SPI2_CS_GPIO_Port GPIOB
-#define LED1_Pin LL_GPIO_PIN_8
-#define LED1_GPIO_Port GPIOA
-#define LED2_Pin LL_GPIO_PIN_11
-#define LED2_GPIO_Port GPIOA
 #define LED_GREEN_Pin LL_GPIO_PIN_12
 #define LED_GREEN_GPIO_Port GPIOA
+#define PA15_Pin LL_GPIO_PIN_15
+#define PA15_GPIO_Port GPIOA
 /* USER CODE BEGIN Private defines */
 void System_Initial(void);
 void Get_SerialNum(void);
 void Show_Message(void);
 void Set_DeviceInfo(void);
+int min(short int x, short int y);
+int max(short int x, short int y);
+void convolution(short int* input1, short int* input2, short int* output, uint16_t mm, uint16_t nn);
+void convolution2(short int* input1, short int* input2, short int* output, uint16_t mm, uint16_t nn);
 void DATAEEPROM_Program(uint32_t Address, uint32_t Data);
 uint32_t DATAEEPROM_Read(uint32_t Address);
 void LED_Blinking(uint32_t Period);

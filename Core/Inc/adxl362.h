@@ -18,20 +18,15 @@
 #define _ADXL362DRIVER_H_
 
 #define _STEP_LOOPNUM    36  // 20min per step,have 36 steps,equal 12 hours
+#define _FIFO_LEN        1024
+#define _AXIS_LEN        170
+#define _FIR_LEN         5
 
 /**
  * \brief           Buffer for FIFO
  * \note            SPI
  */
-extern uint8_t fifo[1024];
-static short int xAxis[170];
-static short int yAxis[170];
-static short int zAxis[170];
-static short int temp[5];
-static double angle[5];
-static uint8_t angle_num;
-static double angle_sum;
-static double angle_avg;
+extern uint8_t fifo[_FIFO_LEN];
 
 typedef struct
 {

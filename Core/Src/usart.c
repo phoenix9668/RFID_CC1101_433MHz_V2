@@ -258,6 +258,7 @@ void MX_USART1_UART_DeInit(void)
   GPIO_InitStruct.Pull = LL_GPIO_PULL_NO;
   LL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 	
+	NVIC_DisableIRQ(USART1_IRQn);
 	LL_USART_Disable(USART1);
   LL_USART_DeInit(USART1);
 }

@@ -187,25 +187,25 @@ OUTPUT   : None
 */
 void CC1101WORInit(void)
 {
-    CC1101WriteReg(CC1101_MCSM0, 0x18);
-    CC1101WriteReg(CC1101_WORCTRL, 0x78); //EVENT1 = 7,RC_CAL = 1,WOR_RES = 0
-																					//tEvent1 = 750/fXOSC * 7 = 48*750/(26*10^6) = 1.385ms
+	CC1101WriteReg(CC1101_MCSM0, 0x18);
+	CC1101WriteReg(CC1101_WORCTRL, 0x78); //EVENT1 = 7,RC_CAL = 1,WOR_RES = 0
+																				//tEvent1 = 750/fXOSC * 7 = 48*750/(26*10^6) = 1.385ms
 //    CC1101WriteReg(CC1101_MCSM2, 0x00);		//RX_TIME = 0,Duty cycle = 12.5%
-																					//tRXtimeout = tEvent0 * Duty cycle = 129.75ms
+																				//tRXtimeout = tEvent0 * Duty cycle = 129.75ms
 //		CC1101WriteReg(CC1101_MCSM2, 0x01);		//RX_TIME = 1,Duty cycle = 6.25%
-																					//tRXtimeout = tEvent0 * Duty cycle = 64.875ms
+																				//tRXtimeout = tEvent0 * Duty cycle = 64.875ms
 //		CC1101WriteReg(CC1101_MCSM2, 0x02);		//RX_TIME = 2,Duty cycle = 3.125%
-																					//tRXtimeout = tEvent0 * Duty cycle = 32.4375ms
-		CC1101WriteReg(CC1101_MCSM2, 0x03);		//RX_TIME = 3,Duty cycle = 1.563%
-																					//tRXtimeout = tEvent0 * Duty cycle = 16.21875ms
+																				//tRXtimeout = tEvent0 * Duty cycle = 32.4375ms
+	CC1101WriteReg(CC1101_MCSM2, 0x03);		//RX_TIME = 3,Duty cycle = 1.563%
+																				//tRXtimeout = tEvent0 * Duty cycle = 16.21875ms
 //		CC1101WriteReg(CC1101_MCSM2, 0x04);		//RX_TIME = 4,Duty cycle = 0.781%
-																					//tRXtimeout = tEvent0 * Duty cycle = 8.109375ms
+																				//tRXtimeout = tEvent0 * Duty cycle = 8.109375ms
 //		CC1101WriteReg(CC1101_MCSM2, 0x05);		//RX_TIME = 5,Duty cycle = 0.391%
-																					//tRXtimeout = tEvent0 * Duty cycle = 4.0546875ms
-    CC1101WriteReg(CC1101_WOREVT1, 0x8C);
-		CC1101WriteReg(CC1101_WOREVT0, 0xA0);	//EVENT0 = 0d36000
-																					//tEvent0 = 750/fXOSC * EVENT0 * 2^(5*WOR_RES)
-																					//tEvent0 = 750/(26*10^6) * 36000 * 2^0 = 1.038s
+																				//tRXtimeout = tEvent0 * Duty cycle = 4.0546875ms
+	CC1101WriteReg(CC1101_WOREVT1, 0x8C);
+	CC1101WriteReg(CC1101_WOREVT0, 0xA0);	//EVENT0 = 0d36000
+																				//tEvent0 = 750/fXOSC * EVENT0 * 2^(5*WOR_RES)
+																				//tEvent0 = 750/(26*10^6) * 36000 * 2^0 = 1.038s
 }
 
 //������tEvent0 = 60.495s��tRXtimeout = 1.18s�����RX״̬�µ���17.72mA��SLEEP״̬�µ���0.3uA
@@ -231,12 +231,12 @@ OUTPUT   : None
 */
 void CC1101SetWORMode(void)
 {
-		CC1101WriteReg(CC1101_IOCFG0, 0x46);
-		CC1101WriteReg(CC1101_IOCFG2, 0x00);	//rx fifo threshold
+	CC1101WriteReg(CC1101_IOCFG0, 0x46);
+	CC1101WriteReg(CC1101_IOCFG2, 0x00);	//rx fifo threshold
 //		CC1101WriteReg(CC1101_IOCFG2, 0x64);	//Event0 monitor
-		CC1101WriteCmd(CC1101_SFRX);
-		CC1101WriteCmd(CC1101_SWORRST);
-		CC1101WriteCmd(CC1101_SWOR);
+	CC1101WriteCmd(CC1101_SFRX);
+	CC1101WriteCmd(CC1101_SWORRST);
+	CC1101WriteCmd(CC1101_SWOR);
 }
 /*
 ================================================================================
@@ -248,12 +248,12 @@ OUTPUT   : the byte read from the rigister
 */
 uint8_t CC1101ReadReg(uint8_t addr)
 {
-    uint8_t d;
-    CC1101_CSN_LOW();
-    SPI_ExchangeByte(SPI1, addr | READ_SINGLE);
-    d = SPI_ExchangeByte(SPI1, 0xFF);
-    CC1101_CSN_HIGH();
-    return d;
+	uint8_t d;
+	CC1101_CSN_LOW();
+	SPI_ExchangeByte(SPI1, addr | READ_SINGLE);
+	d = SPI_ExchangeByte(SPI1, 0xFF);
+	CC1101_CSN_HIGH();
+	return d;
 }
 /*
 ================================================================================
@@ -267,14 +267,14 @@ OUTPUT   : None
 */
 void CC1101ReadMultiReg(uint8_t addr, uint8_t *buff, uint8_t size)
 {
-    CC1101_CSN_LOW();
-    SPI_ExchangeByte(SPI1, addr | READ_BURST);
-    for(uint8_t i=0; i<size; i++)
-    {
-        for(uint8_t j=0; j<20; j++);
-        *(buff+i)=SPI_ExchangeByte(SPI1, 0xFF);
-    }
-    CC1101_CSN_HIGH();
+	CC1101_CSN_LOW();
+	SPI_ExchangeByte(SPI1, addr | READ_BURST);
+	for(uint8_t i=0; i<size; i++)
+	{
+			for(uint8_t j=0; j<20; j++);
+			*(buff+i)=SPI_ExchangeByte(SPI1, 0xFF);
+	}
+	CC1101_CSN_HIGH();
 }
 /*
 ================================================================================
@@ -286,12 +286,12 @@ OUTPUT   : the value read from the status register
 */
 uint8_t CC1101ReadStatus(uint8_t addr)
 {
-    uint8_t d;
-    CC1101_CSN_LOW();
-    SPI_ExchangeByte(SPI1, addr | READ_BURST);
-    d = SPI_ExchangeByte(SPI1, 0xFF);
-    CC1101_CSN_HIGH();
-    return d;
+	uint8_t d;
+	CC1101_CSN_LOW();
+	SPI_ExchangeByte(SPI1, addr | READ_BURST);
+	d = SPI_ExchangeByte(SPI1, 0xFF);
+	CC1101_CSN_HIGH();
+	return d;
 }
 /*
 ================================================================================
@@ -303,22 +303,22 @@ OUTPUT   : None
 */
 void CC1101SetTRMode(TRMODE mode)
 {
-    if(mode == TX_MODE)
-    {
-		    RX_EN_LOW();
-        TX_EN_HIGH();
-        CC1101WriteReg(CC1101_IOCFG0, 0x46);
-				CC1101WriteReg(CC1101_IOCFG2, 0x02);	//tx fifo threshold
-        CC1101WriteCmd(CC1101_STX);
-    }
-    else if(mode == RX_MODE)
-    {
-		    TX_EN_LOW();
-			  RX_EN_HIGH();
-        CC1101WriteReg(CC1101_IOCFG0, 0x46);
-				CC1101WriteReg(CC1101_IOCFG2, 0x40);	//rx fifo threshold
-        CC1101WriteCmd(CC1101_SRX);
-    }
+	if(mode == TX_MODE)
+	{
+			RX_EN_LOW();
+			TX_EN_HIGH();
+			CC1101WriteReg(CC1101_IOCFG0, 0x46);
+			CC1101WriteReg(CC1101_IOCFG2, 0x02);	//tx fifo threshold
+			CC1101WriteCmd(CC1101_STX);
+	}
+	else if(mode == RX_MODE)
+	{
+			TX_EN_LOW();
+			RX_EN_HIGH();
+			CC1101WriteReg(CC1101_IOCFG0, 0x46);
+			CC1101WriteReg(CC1101_IOCFG2, 0x40);	//rx fifo threshold
+			CC1101WriteCmd(CC1101_SRX);
+	}
 }
 /*
 ================================================================================
@@ -331,10 +331,10 @@ OUTPUT   : None
 */
 void CC1101WriteReg(uint8_t addr, uint8_t value)
 {
-    CC1101_CSN_LOW();
-    SPI_ExchangeByte(SPI1, addr);
-    SPI_ExchangeByte(SPI1, value);
-    CC1101_CSN_HIGH();
+	CC1101_CSN_LOW();
+	SPI_ExchangeByte(SPI1, addr);
+	SPI_ExchangeByte(SPI1, value);
+	CC1101_CSN_HIGH();
 }
 /*
 ================================================================================
@@ -348,13 +348,13 @@ OUTPUT   : None
 */
 void CC1101WriteMultiReg(uint8_t addr, uint8_t *buff, uint8_t size)
 {
-    CC1101_CSN_LOW();
-    SPI_ExchangeByte(SPI1, addr | WRITE_BURST);
-    for(uint8_t i=0; i<size; i++)
-    {
-        SPI_ExchangeByte(SPI1, *(buff+i));
-    }
-    CC1101_CSN_HIGH();
+	CC1101_CSN_LOW();
+	SPI_ExchangeByte(SPI1, addr | WRITE_BURST);
+	for(uint8_t i=0; i<size; i++)
+	{
+			SPI_ExchangeByte(SPI1, *(buff+i));
+	}
+	CC1101_CSN_HIGH();
 }
 /*
 ================================================================================
@@ -366,9 +366,9 @@ OUTPUT   : None
 */
 void CC1101WriteCmd(uint8_t command)
 {
-    CC1101_CSN_LOW();
-    SPI_ExchangeByte(SPI1, command);
-    CC1101_CSN_HIGH();
+	CC1101_CSN_LOW();
+	SPI_ExchangeByte(SPI1, command);
+	CC1101_CSN_HIGH();
 }
 /*
 ================================================================================
@@ -380,16 +380,16 @@ OUTPUT   : None
 */
 void CC1101Reset(void)
 {
-    CC1101_CSN_HIGH();
-    CC1101_CSN_LOW();
-		HAL_Delay(1);
-    CC1101_CSN_HIGH();
-    HAL_Delay(1);//>40us
-		CC1101_CSN_LOW();
-		HAL_Delay(1);
-		while(CC1101_MISO_READ()){}
-    CC1101WriteCmd(CC1101_SRES);
-    HAL_Delay(1);
+	CC1101_CSN_HIGH();
+	CC1101_CSN_LOW();
+	HAL_Delay(1);
+	CC1101_CSN_HIGH();
+	HAL_Delay(1);//>40us
+	CC1101_CSN_LOW();
+	HAL_Delay(1);
+	while(CC1101_MISO_READ()){}
+	CC1101WriteCmd(CC1101_SRES);
+	HAL_Delay(1);
 }
 /*
 ================================================================================
@@ -401,7 +401,9 @@ OUTPUT   : None
 */
 void CC1101SetIdle(void)
 {
-    CC1101WriteCmd(CC1101_SIDLE);
+	TX_EN_LOW();
+	RX_EN_LOW();
+	CC1101WriteCmd(CC1101_SIDLE);
 }
 /*
 ================================================================================
@@ -413,8 +415,8 @@ OUTPUT   : None
 */
 void CC1101ClrTXBuff(void)
 {
-    CC1101SetIdle();//MUST BE IDLE MODE
-    CC1101WriteCmd(CC1101_SFTX);
+	CC1101SetIdle();//MUST BE IDLE MODE
+	CC1101WriteCmd(CC1101_SFTX);
 }
 /*
 ================================================================================
@@ -426,8 +428,8 @@ OUTPUT   : None
 */
 void CC1101ClrRXBuff(void)
 {
-    CC1101SetIdle();//MUST BE IDLE MODE
-    CC1101WriteCmd(CC1101_SFRX);
+	CC1101SetIdle();//MUST BE IDLE MODE
+	CC1101WriteCmd(CC1101_SFRX);
 }
 /*
 ================================================================================
@@ -441,50 +443,50 @@ OUTPUT   : None
 */
 void CC1101SendPacket(uint8_t *txbuffer, uint8_t size, TX_DATA_MODE mode)
 {
-    uint8_t address;
+	uint8_t address;
 
-		rxCatch = RESET;
-		txFiFoUnFlow = RESET;
+	rxCatch = RESET;
+	txFiFoUnFlow = RESET;
 
-    if(mode == BROADCAST)             {address=0;}
-    else if(mode == ADDRESS_CHECK)    {address=CC1101ReadReg(CC1101_ADDR);}
-    
-    CC1101ClrTXBuff();
-    if((CC1101ReadReg(CC1101_PKTCTRL1) & ~0x03) != 0){
-        CC1101WriteReg(CC1101_TXFIFO, size+1);
-        CC1101WriteReg(CC1101_TXFIFO, address);
-    }
-    else{
-        CC1101WriteReg(CC1101_TXFIFO, size);
-    }
+	if(mode == BROADCAST)             {address=0;}
+	else if(mode == ADDRESS_CHECK)    {address=CC1101ReadReg(CC1101_ADDR);}
+	
+	CC1101ClrTXBuff();
+	if((CC1101ReadReg(CC1101_PKTCTRL1) & ~0x03) != 0){
+			CC1101WriteReg(CC1101_TXFIFO, size+1);
+			CC1101WriteReg(CC1101_TXFIFO, address);
+	}
+	else{
+			CC1101WriteReg(CC1101_TXFIFO, size);
+	}
 
-		if(size <= 60){
-			CC1101WriteMultiReg(CC1101_TXFIFO, txbuffer, size);
-			CC1101SetTRMode(TX_MODE);
-			while(rxCatch != SET){}
-			rxCatch = RESET;
-		}
-		else{
-			CC1101WriteMultiReg(CC1101_TXFIFO, txbuffer, 60);
-			CC1101SetTRMode(TX_MODE);
-
-			for(uint8_t i=0; i<(size/60); i++){
-				if((i+1) == (size/60)){
-					while(txFiFoUnFlow != SET){}
-					CC1101WriteMultiReg(CC1101_TXFIFO, (txbuffer+(i+1)*60), (size-(i+1)*60));
-				}else{
-					while(txFiFoUnFlow != SET){}
-					txFiFoUnFlow = RESET;
-					CC1101WriteMultiReg(CC1101_TXFIFO, (txbuffer+(i+1)*60), 60);
-				}
-			}
-		}
-    rxCatch = RESET;
+	if(size <= 60){
+		CC1101WriteMultiReg(CC1101_TXFIFO, txbuffer, size);
+		CC1101SetTRMode(TX_MODE);
 		while(rxCatch != SET){}
 		rxCatch = RESET;
-    //i = CC1101ReadStatus( CC1101_TXBYTES );//for test, TX status
+	}
+	else{
+		CC1101WriteMultiReg(CC1101_TXFIFO, txbuffer, 60);
+		CC1101SetTRMode(TX_MODE);
 
-    CC1101ClrTXBuff();
+		for(uint8_t i=0; i<(size/60); i++){
+			if((i+1) == (size/60)){
+				while(txFiFoUnFlow != SET){}
+				CC1101WriteMultiReg(CC1101_TXFIFO, (txbuffer+(i+1)*60), (size-(i+1)*60));
+			}else{
+				while(txFiFoUnFlow != SET){}
+				txFiFoUnFlow = RESET;
+				CC1101WriteMultiReg(CC1101_TXFIFO, (txbuffer+(i+1)*60), 60);
+			}
+		}
+	}
+	rxCatch = RESET;
+	while(rxCatch != SET){}
+	rxCatch = RESET;
+	//i = CC1101ReadStatus( CC1101_TXBYTES );//for test, TX status
+
+	CC1101ClrTXBuff();
 }
 /*
 ================================================================================
@@ -496,7 +498,7 @@ OUTPUT   : How many bytes hae been received
 */
 uint8_t CC1101GetRXCnt(void)
 {
-    return (CC1101ReadStatus(CC1101_RXBYTES) & BYTES_IN_RXFIFO);
+	return (CC1101ReadStatus(CC1101_RXBYTES) & BYTES_IN_RXFIFO);
 }
 /*
 ================================================================================
@@ -509,12 +511,12 @@ OUTPUT   : None
 */
 void CC1101SetAddress(uint8_t address, ADDR_MODE AddressMode)
 {
-    uint8_t btmp=CC1101ReadReg(CC1101_PKTCTRL1) & ~0x03;
-    CC1101WriteReg(CC1101_ADDR, address);
-    if(AddressMode == BROAD_ALL)        {}
-    else if(AddressMode == BROAD_NO)    {btmp |= 0x01;}
-    else if(AddressMode == BROAD_0)     {btmp |= 0x02;}
-    else if(AddressMode == BROAD_0AND255)   {btmp |= 0x03;}  
+	uint8_t btmp=CC1101ReadReg(CC1101_PKTCTRL1) & ~0x03;
+	CC1101WriteReg(CC1101_ADDR, address);
+	if(AddressMode == BROAD_ALL)        {}
+	else if(AddressMode == BROAD_NO)    {btmp |= 0x01;}
+	else if(AddressMode == BROAD_0)     {btmp |= 0x02;}
+	else if(AddressMode == BROAD_0AND255)   {btmp |= 0x03;}  
 }
 /*
 ================================================================================
@@ -526,8 +528,8 @@ OUTPUT   : None
 */
 void CC1101SetSYNC(uint16_t sync)
 {
-    CC1101WriteReg(CC1101_SYNC1, 0xFF & (sync>>8));
-    CC1101WriteReg(CC1101_SYNC0, 0xFF & sync);
+	CC1101WriteReg(CC1101_SYNC1, 0xFF & (sync>>8));
+	CC1101WriteReg(CC1101_SYNC0, 0xFF & sync);
 }
 /*
 ================================================================================
@@ -539,28 +541,28 @@ OUTPUT   : 1:received count, 0:no data
 */
 uint8_t CC1101RecPacket(uint8_t *rxBuffer, uint8_t *addr, uint8_t *rssi)
 {
-    uint8_t status[2];
-    uint8_t pktLen;
+	uint8_t status[2];
+	uint8_t pktLen;
 
-		if(CC1101GetRXCnt() != 0)
+	if(CC1101GetRXCnt() != 0)
+	{
+		pktLen=CC1101ReadReg(CC1101_RXFIFO);                    // Read length byte
+		if((CC1101ReadReg(CC1101_PKTCTRL1) & ~0x03) != 0)
 		{
-			pktLen=CC1101ReadReg(CC1101_RXFIFO);                    // Read length byte
-			if((CC1101ReadReg(CC1101_PKTCTRL1) & ~0x03) != 0)
-			{
-				*addr = CC1101ReadReg(CC1101_RXFIFO);
-			}
-			if(pktLen == 0) {return 0;}
-			else    {pktLen--;}
-			CC1101ReadMultiReg(CC1101_RXFIFO, rxBuffer, pktLen);    // Pull data
-			CC1101ReadMultiReg(CC1101_RXFIFO, status, 2);           // Read status bytes
-			*rssi = status[0];
-
-			CC1101ClrRXBuff();
-
-			if(status[1] & CRC_OK)  {return pktLen;}
-			else    {return 1;}
+			*addr = CC1101ReadReg(CC1101_RXFIFO);
 		}
-		else	{return 0;}
+		if(pktLen == 0) {return 0;}
+		else    {pktLen--;}
+		CC1101ReadMultiReg(CC1101_RXFIFO, rxBuffer, pktLen);    // Pull data
+		CC1101ReadMultiReg(CC1101_RXFIFO, status, 2);           // Read status bytes
+		*rssi = status[0];
+
+		CC1101ClrRXBuff();
+
+		if(status[1] & CRC_OK)  {return pktLen;}
+		else    {return 1;}
+	}
+	else	{return 0;}
 }
 /*
 ================================================================================
@@ -572,21 +574,21 @@ OUTPUT   : None
 */
 void CC1101Init(uint8_t addr, uint16_t sync)
 {
-		NVIC_DisableIRQ(EXTI2_3_IRQn);
-    CC1101Reset();
+	NVIC_DisableIRQ(EXTI2_3_IRQn);
+	CC1101Reset();
 
-    for(uint8_t i=0; i<47; i++)
-    {
-        CC1101WriteReg(CC1101InitData[i][0], CC1101InitData[i][1]);
-    }
-    CC1101SetAddress(addr, BROAD_0AND255);
-    CC1101SetSYNC(sync);
+	for(uint8_t i=0; i<47; i++)
+	{
+			CC1101WriteReg(CC1101InitData[i][0], CC1101InitData[i][1]);
+	}
+	CC1101SetAddress(addr, BROAD_0AND255);
+	CC1101SetSYNC(sync);
 
-    CC1101WriteMultiReg(CC1101_PATABLE, PaTabel, 8);
-		NVIC_EnableIRQ(EXTI2_3_IRQn);
+	CC1101WriteMultiReg(CC1101_PATABLE, PaTabel, 8);
+	NVIC_EnableIRQ(EXTI2_3_IRQn);
 
-		rfid_printf("CC1101_PKTCTRL1 = %d\n",CC1101ReadStatus(CC1101_PARTNUM));//for test, must be 0x00
-		rfid_printf("CC1101_VERSION = %d\n",CC1101ReadStatus(CC1101_VERSION));//for test, refer to the datasheet,must be 0x14
+	rfid_printf("CC1101_PKTCTRL1 = %d\n",CC1101ReadStatus(CC1101_PARTNUM));//for test, must be 0x00
+	rfid_printf("CC1101_VERSION = %d\n",CC1101ReadStatus(CC1101_VERSION));//for test, refer to the datasheet,must be 0x14
 }
 /*
 ================================================================================
@@ -601,20 +603,14 @@ void RFIDInitial(uint8_t addr, uint16_t sync, TRMODE mode)
 	CC1101Init(addr, sync);
 	if(mode == RX_MODE)
 	{
-	  TX_EN_LOW();
-		RX_EN_HIGH();
 	  CC1101SetTRMode(RX_MODE);
 	}
 	else if(mode == TX_MODE)
 	{
-	  RX_EN_LOW();
-		TX_EN_HIGH();
 		CC1101SetTRMode(TX_MODE);
 	}
 	else if(mode == IDLE_MODE)
 	{
-	  TX_EN_LOW();
-		RX_EN_LOW();
 	  CC1101SetIdle();
 	}
 	else if(mode == WOR_Mode)
@@ -783,10 +779,14 @@ void CC1101SendHandler(void)
 	for(uint8_t i=0; i<3; i++)
 	{
 		HAL_Delay(_TX_WAIT_TIME);
+		CC1101_POWER_ON();
+		MX_SPI1_Init();
 		RFIDInitial(0x00, 0x1234, IDLE_MODE);
 		CC1101SendPacket(cc1101.sendBuffer, _RFID_SIZE + sizeof(RandomString) + 4*_STEP_LOOPNUM + sizeof(step.stepStage) + _BATTERY_SIZE + _RESETCNT_SIZE + _CRC32_SIZE, ADDRESS_CHECK);
 		CC1101SetIdle();
 		CC1101WriteCmd(CC1101_SXOFF);
+		CC1101_POWER_DOWN();
+		MX_SPI1_DeInit();
 	}
 	memset(&cc1101, 0, sizeof(cc1101));
 	
@@ -802,46 +802,53 @@ INPUT    : None
 OUTPUT   : None
 ================================================================================
 */
-//void CC1101Send3AxisHandler(void)
-//{
-//	#if (_DEBUG == 1)
-//		LED_GREEN_ON();
-//	#endif
-//	
-//	cc1101.sendBuffer[0] = device.deviceCode1;
-//	cc1101.sendBuffer[1] = device.deviceCode2;
-//	cc1101.sendBuffer[2] = device.deviceCode3;
-//	cc1101.sendBuffer[3] = device.deviceCode4;
-//	cc1101.sendBuffer[4] = device.deviceCode5;
-//	cc1101.sendBuffer[5] = device.deviceCode6;
-//	
-//	for(uint8_t i = 0;i < sizeof(fifo); i++){
-//		cc1101.sendBuffer[_RFID_SIZE + i] = fifo[i];
-//	}
+void CC1101Send3AxisHandler(void)
+{
+	#if (_DEBUG == 1)
+		LED_GREEN_ON();
+	#endif
 
-//  cc1101.crcValue = ~HAL_CRC_Calculate(&hcrc, (uint32_t *)cc1101.sendBuffer, (uint32_t)(_RFID_SIZE + sizeof(fifo)));
-//	rfid_printf("BufferLength = %d\n",_RFID_SIZE + sizeof(fifo));
-//	rfid_printf("crcValue = %x\n",cc1101.crcValue);
+	for(uint8_t j = 0;j < 6; j++)
+	{
+		cc1101.sendBuffer[0] = device.deviceCode1;
+		cc1101.sendBuffer[1] = device.deviceCode2;
+		cc1101.sendBuffer[2] = device.deviceCode3;
+		cc1101.sendBuffer[3] = device.deviceCode4;
+		cc1101.sendBuffer[4] = device.deviceCode5;
+		cc1101.sendBuffer[5] = device.deviceCode6;
+	  cc1101.sendBuffer[6] = j;
+		
+		for(uint8_t i = 0;i < sizeof(fifo)/6; i++){
+			cc1101.sendBuffer[_RFID_SIZE + 1 + i] = fifo[i + 170*j];
+		}
 
-//	cc1101.sendBuffer[_RFID_SIZE + sizeof(fifo)] = (uint8_t)(0xFF & cc1101.crcValue>>24);
-//	cc1101.sendBuffer[_RFID_SIZE + sizeof(fifo) + 1] = (uint8_t)(0xFF & cc1101.crcValue>>16);
-//	cc1101.sendBuffer[_RFID_SIZE + sizeof(fifo) + 2] = (uint8_t)(0xFF & cc1101.crcValue>>8);
-//	cc1101.sendBuffer[_RFID_SIZE + sizeof(fifo) + 3] = (uint8_t)(0xFF & cc1101.crcValue);
+		cc1101.crcValue = ~HAL_CRC_Calculate(&hcrc, (uint32_t *)cc1101.sendBuffer, (uint32_t)(_RFID_SIZE + 1 + sizeof(fifo)/6));
+		rfid_printf("BufferLength = %d\n",(_RFID_SIZE + 1 + sizeof(fifo)/6));
+		rfid_printf("crcValue = %x\n",cc1101.crcValue);
 
-//	for(uint16_t i=0; i<sizeof(cc1101.sendBuffer); i++)
-//	{	rfid_printf("%02x ",cc1101.sendBuffer[i]);}
-//	rfid_printf("\n");
+		cc1101.sendBuffer[_RFID_SIZE + 1 + sizeof(fifo)/6] = (uint8_t)(0xFF & cc1101.crcValue>>24);
+		cc1101.sendBuffer[_RFID_SIZE + 1 + sizeof(fifo)/6 + 1] = (uint8_t)(0xFF & cc1101.crcValue>>16);
+		cc1101.sendBuffer[_RFID_SIZE + 1 + sizeof(fifo)/6 + 2] = (uint8_t)(0xFF & cc1101.crcValue>>8);
+		cc1101.sendBuffer[_RFID_SIZE + 1 + sizeof(fifo)/6 + 3] = (uint8_t)(0xFF & cc1101.crcValue);
 
-//	RFIDInitial(0x00, 0x1234, IDLE_MODE);
-//	CC1101SendPacket(cc1101.sendBuffer, _RFID_SIZE + sizeof(fifo) + _CRC32_SIZE, ADDRESS_CHECK);
-//	CC1101SetIdle();
-//	CC1101WriteCmd(CC1101_SXOFF);
-//	memset(&cc1101, 0, sizeof(cc1101));
-//	
-//	#if (_DEBUG == 1)
-//		LED_GREEN_OFF();
-//	#endif
-//}
+		for(uint16_t i=0; i<sizeof(cc1101.sendBuffer); i++)
+		{	rfid_printf("%02x ",cc1101.sendBuffer[i]);}
+		rfid_printf("\n");
+
+		CC1101_POWER_ON();
+		RFIDInitial(0x00, 0x1234, IDLE_MODE);
+		CC1101SendPacket(cc1101.sendBuffer, _RFID_SIZE + 1 + sizeof(fifo)/6 + _CRC32_SIZE, ADDRESS_CHECK);
+		CC1101SetIdle();
+		CC1101WriteCmd(CC1101_SXOFF);
+		CC1101_POWER_DOWN();
+		HAL_Delay(100);
+		memset(&cc1101, 0, sizeof(cc1101));
+	 }
+	
+	#if (_DEBUG == 1)
+		LED_GREEN_OFF();
+	#endif
+}
 /*
 ================================================================================
 ------------------------------------THE END-------------------------------------
