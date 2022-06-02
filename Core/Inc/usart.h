@@ -37,9 +37,9 @@ extern "C" {
 
 typedef struct
 {
-	__IO uint8_t rxBuffer[RXBUFFERSIZE];
-	__IO uint8_t rxCounter;
-	__IO FlagStatus rxState;
+    __IO uint8_t rxBuffer[RXBUFFERSIZE];
+    __IO uint8_t rxCounter;
+    __IO FlagStatus rxState;
 
 } usart_t;
 

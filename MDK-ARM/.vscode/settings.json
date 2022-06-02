@@ -1,0 +1,10 @@
+{
+    "files.associations": {
+        "main.h": "c",
+        "adxl362.h": "c",
+        "gpio.h": "c",
+        "cc1101.h": "c",
+        "usart.h": "c",
+        "xutility": "c"
+    }
+}

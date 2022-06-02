@@ -37,12 +37,13 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* Entropy String. Uniformly distributed random bit string 1*/
-uint8_t entropy_data[32] = {
-                             0x9d, 0x20, 0x1a, 0x18, 0x9b, 0x6d, 0x1a, 0xa7, 0x0e,
-                             0x79, 0x57, 0x6f, 0x36, 0xb6, 0xaa, 0x88, 0x55, 0xfd,
-                             0x4a, 0x7f, 0x97, 0xe9, 0x71, 0x69, 0xb6, 0x60, 0x88,
-                             0x78, 0xe1, 0x9c, 0x8b, 0xa5
-                           };
+uint8_t entropy_data[32] =
+{
+    0x9d, 0x20, 0x1a, 0x18, 0x9b, 0x6d, 0x1a, 0xa7, 0x0e,
+    0x79, 0x57, 0x6f, 0x36, 0xb6, 0xaa, 0x88, 0x55, 0xfd,
+    0x4a, 0x7f, 0x97, 0xe9, 0x71, 0x69, 0xb6, 0x60, 0x88,
+    0x78, 0xe1, 0x9c, 0x8b, 0xa5
+};
 /* Nonce. Non repeating sequence, such as a timestamp */
 uint8_t nonce[] = {0xFE, 0xA9, 0x96, 0xD4, 0x62, 0xC5};
 /* Personalization String */
@@ -62,68 +63,75 @@ int32_t status = RNG_SUCCESS;
 /* RNG init function */
 void RNG_Init(void)
 {
-  for(uint8_t i=0; i<sizeof( nonce ); i++){
-		srand(HAL_GetTick());
-    nonce[i] = rand()%255;
-		rfid_printf("nonce[%d] = %02x ",i, nonce[i]);
-	}
-	rfid_printf("\n");
-	
-  /* Enable CRC clock */
-//	__CRC_CLK_ENABLE();
-	
-  /* Set the values of EntropyData, Nonce, Personalization String and their sizes inside the RNGinit_st structure */
-  RNGinit_st.pmEntropyData = entropy_data;
-  RNGinit_st.mEntropyDataSize = sizeof(entropy_data);
-  RNGinit_st.pmNonce =  nonce;
-  RNGinit_st.mNonceSize = sizeof( nonce );
-  RNGinit_st.pmPersData = personalization_String;
-  RNGinit_st.mPersDataSize = sizeof( personalization_String );
+    for(uint8_t i = 0; i < sizeof( nonce ); i++)
+    {
+        srand(HAL_GetTick());
+        nonce[i] = rand() % 255;
+        rfid_printf("nonce[%d] = %02x ", i, nonce[i]);
+    }
 
-  status = RNGinit(&RNGinit_st, &RNGstate);
-  if  ( status != RNG_SUCCESS )
-	{
-    /* In case of randomization not success possible values of status:
-     * RNG_ERR_BAD_ENTROPY_SIZE, RNG_ERR_BAD_PERS_STRING_SIZE
-     */
+    rfid_printf("\n");
 
-    Error_Handler();
-  }
+    /* Enable CRC clock */
+    __CRC_CLK_ENABLE();
+
+    /* Set the values of EntropyData, Nonce, Personalization String and their sizes inside the RNGinit_st structure */
+    RNGinit_st.pmEntropyData = entropy_data;
+    RNGinit_st.mEntropyDataSize = sizeof(entropy_data);
+    RNGinit_st.pmNonce =  nonce;
+    RNGinit_st.mNonceSize = sizeof( nonce );
+    RNGinit_st.pmPersData = personalization_String;
+    RNGinit_st.mPersDataSize = sizeof( personalization_String );
+
+    status = RNGinit(&RNGinit_st, &RNGstate);
+
+    if  ( status != RNG_SUCCESS )
+    {
+        /* In case of randomization not success possible values of status:
+         * RNG_ERR_BAD_ENTROPY_SIZE, RNG_ERR_BAD_PERS_STRING_SIZE
+         */
+
+        Error_Handler();
+    }
 
 }
 
 /* RNG gen function */
 void RNG_Gen(void)
 {
-  /* The Random engine has been initialized, the status is in RNGstate */
+    /* The Random engine has been initialized, the status is in RNGstate */
 
-	/* Now fill the random string with random bytes */
-	status = RNGgenBytes(&RNGstate, NULL, RandomString, sizeof(RandomString));
+    /* Now fill the random string with random bytes */
+    status = RNGgenBytes(&RNGstate, NULL, RandomString, sizeof(RandomString));
 
-	if (status == RNG_SUCCESS)
-	{
-		/* Random Generated Succefully, free the state before returning */
-		for(uint16_t i=0; i<sizeof(RandomString); i++)
-		{	rfid_printf("%02x ",RandomString[i]);}
-	  rfid_printf("\n");
-		
-		status = RNGfree(&RNGstate);
-		if  ( status == RNG_SUCCESS )
-		{
-		}
-		else
-		{
-			Error_Handler();
-		}
-	}
-	else
-	{
-		/* In case of randomization not success possible values of status:
-		 * RNG_ERR_BAD_PARAMETER, RNG_ERR_UNINIT_STATE
-		 */
-		
-		Error_Handler();
-	}
+    if (status == RNG_SUCCESS)
+    {
+        /* Random Generated Succefully, free the state before returning */
+        for(uint16_t i = 0; i < sizeof(RandomString); i++)
+        {
+            rfid_printf("%02x ", RandomString[i]);
+        }
+
+        rfid_printf("\n");
+
+        status = RNGfree(&RNGstate);
+
+        if  ( status == RNG_SUCCESS )
+        {
+        }
+        else
+        {
+            Error_Handler();
+        }
+    }
+    else
+    {
+        /* In case of randomization not success possible values of status:
+         * RNG_ERR_BAD_PARAMETER, RNG_ERR_UNINIT_STATE
+         */
+
+        Error_Handler();
+    }
 }
 
 

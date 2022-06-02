@@ -2,17 +2,17 @@ close all;
 clc;
 fs = 25;%采样率32kHz
 Ts = 1/fs;%采样周期
-N = 2890;%采样点数168个
+N = 340;%采样点数168个
 m = 0:N-1;%时域采样信号序列编号，也是频域分析频率的序列编号
 t = m*Ts;%时域信号横坐标
 f = m*fs/N;%频域横坐标
 
-origin=xlsread('origin_data.xlsx','Sheet1','A2:C2891');
+origin=xlsread('origin_datas28.xlsx','Sheet1','A2:C341');
 Xn=origin(1:N,1);
 Yn=origin(1:N,2);
 Zn=origin(1:N,3);
 
-fir1=[0.2,0.2,0.2,0.2,0.2,0,2,0,2];
+fir1=[0.3,0.3,0.3];
 
 XRn=conv(Xn,fir1);
 Nx=length(XRn);

@@ -21,8 +21,8 @@
 #include "rtc.h"
 
 /* USER CODE BEGIN 0 */
-RTC_TimeTypeDef UTC_Time = {0};
-RTC_DateTypeDef UTC_Date = {0};
+#include "adxl362.h"
+rtc_t rtc;
 /* USER CODE END 0 */
 
 RTC_HandleTypeDef hrtc;
@@ -31,78 +31,80 @@ RTC_HandleTypeDef hrtc;
 void MX_RTC_Init(void)
 {
 
-  /* USER CODE BEGIN RTC_Init 0 */
+    /* USER CODE BEGIN RTC_Init 0 */
 
-  /* USER CODE END RTC_Init 0 */
+    /* USER CODE END RTC_Init 0 */
 
-  /* USER CODE BEGIN RTC_Init 1 */
+    /* USER CODE BEGIN RTC_Init 1 */
 
-  /* USER CODE END RTC_Init 1 */
+    /* USER CODE END RTC_Init 1 */
 
-  /** Initialize RTC Only
-  */
-  hrtc.Instance = RTC;
-  hrtc.Init.HourFormat = RTC_HOURFORMAT_24;
-  hrtc.Init.AsynchPrediv = 127;
-  hrtc.Init.SynchPrediv = 255;
-  hrtc.Init.OutPut = RTC_OUTPUT_DISABLE;
-  hrtc.Init.OutPutRemap = RTC_OUTPUT_REMAP_NONE;
-  hrtc.Init.OutPutPolarity = RTC_OUTPUT_POLARITY_HIGH;
-  hrtc.Init.OutPutType = RTC_OUTPUT_TYPE_OPENDRAIN;
-  if (HAL_RTC_Init(&hrtc) != HAL_OK)
-  {
-    Error_Handler();
-  }
+    /** Initialize RTC Only
+    */
+    hrtc.Instance = RTC;
+    hrtc.Init.HourFormat = RTC_HOURFORMAT_24;
+    hrtc.Init.AsynchPrediv = 127;
+    hrtc.Init.SynchPrediv = 255;
+    hrtc.Init.OutPut = RTC_OUTPUT_DISABLE;
+    hrtc.Init.OutPutRemap = RTC_OUTPUT_REMAP_NONE;
+    hrtc.Init.OutPutPolarity = RTC_OUTPUT_POLARITY_HIGH;
+    hrtc.Init.OutPutType = RTC_OUTPUT_TYPE_OPENDRAIN;
 
-  /** Enable the WakeUp
-  */
-  if (HAL_RTCEx_SetWakeUpTimer_IT(&hrtc, 0xa000, RTC_WAKEUPCLOCK_RTCCLK_DIV16) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  /* USER CODE BEGIN RTC_Init 2 */
+    if (HAL_RTC_Init(&hrtc) != HAL_OK)
+    {
+        Error_Handler();
+    }
 
-  /* USER CODE END RTC_Init 2 */
+    /** Enable the WakeUp
+    */
+    if (HAL_RTCEx_SetWakeUpTimer_IT(&hrtc, 0x5000, RTC_WAKEUPCLOCK_RTCCLK_DIV16) != HAL_OK)
+    {
+        Error_Handler();
+    }
+
+    /* USER CODE BEGIN RTC_Init 2 */
+
+    /* USER CODE END RTC_Init 2 */
 
 }
 
 void HAL_RTC_MspInit(RTC_HandleTypeDef* rtcHandle)
 {
 
-  if(rtcHandle->Instance==RTC)
-  {
-  /* USER CODE BEGIN RTC_MspInit 0 */
+    if(rtcHandle->Instance == RTC)
+    {
+        /* USER CODE BEGIN RTC_MspInit 0 */
 
-  /* USER CODE END RTC_MspInit 0 */
-    /* RTC clock enable */
-    __HAL_RCC_RTC_ENABLE();
+        /* USER CODE END RTC_MspInit 0 */
+        /* RTC clock enable */
+        __HAL_RCC_RTC_ENABLE();
 
-    /* RTC interrupt Init */
-    HAL_NVIC_SetPriority(RTC_IRQn, 2, 0);
-    HAL_NVIC_EnableIRQ(RTC_IRQn);
-  /* USER CODE BEGIN RTC_MspInit 1 */
+        /* RTC interrupt Init */
+        HAL_NVIC_SetPriority(RTC_IRQn, 2, 0);
+        HAL_NVIC_EnableIRQ(RTC_IRQn);
+        /* USER CODE BEGIN RTC_MspInit 1 */
 
-  /* USER CODE END RTC_MspInit 1 */
-  }
+        /* USER CODE END RTC_MspInit 1 */
+    }
 }
 
 void HAL_RTC_MspDeInit(RTC_HandleTypeDef* rtcHandle)
 {
 
-  if(rtcHandle->Instance==RTC)
-  {
-  /* USER CODE BEGIN RTC_MspDeInit 0 */
+    if(rtcHandle->Instance == RTC)
+    {
+        /* USER CODE BEGIN RTC_MspDeInit 0 */
 
-  /* USER CODE END RTC_MspDeInit 0 */
-    /* Peripheral clock disable */
-    __HAL_RCC_RTC_DISABLE();
+        /* USER CODE END RTC_MspDeInit 0 */
+        /* Peripheral clock disable */
+        __HAL_RCC_RTC_DISABLE();
 
-    /* RTC interrupt Deinit */
-    HAL_NVIC_DisableIRQ(RTC_IRQn);
-  /* USER CODE BEGIN RTC_MspDeInit 1 */
+        /* RTC interrupt Deinit */
+        HAL_NVIC_DisableIRQ(RTC_IRQn);
+        /* USER CODE BEGIN RTC_MspDeInit 1 */
 
-  /* USER CODE END RTC_MspDeInit 1 */
-  }
+        /* USER CODE END RTC_MspDeInit 1 */
+    }
 }
 
 /* USER CODE BEGIN 1 */
@@ -114,8 +116,21 @@ void HAL_RTC_MspDeInit(RTC_HandleTypeDef* rtcHandle)
   */
 void HAL_RTCEx_WakeUpTimerEventCallback(RTC_HandleTypeDef *hrtc)
 {
-  /* Clear Wake Up Flag */
-  __HAL_PWR_CLEAR_FLAG(PWR_FLAG_WU);
+    /* Clear Wake Up Flag */
+    __HAL_PWR_CLEAR_FLAG(PWR_FLAG_WU);
+
+    rtc.tenSecTick++;
+
+    if(rtc.tenSecTick % 6 == 0) //1200s
+    {
+        rtc.tenSecIndex = SET;
+    }
+
+    if(rtc.tenSecTick == 12)//1200s
+    {
+        rtc.twentyMinIndex = SET;
+        rtc.tenSecTick = 0x00;
+    }
 }
 
 /* USER CODE END 1 */

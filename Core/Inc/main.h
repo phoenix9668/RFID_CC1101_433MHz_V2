@@ -31,7 +31,6 @@ extern "C" {
 #include "stm32l0xx_hal.h"
 
 #include "stm32l0xx_ll_iwdg.h"
-#include "stm32l0xx_ll_lptim.h"
 #include "stm32l0xx_ll_spi.h"
 #include "stm32l0xx_ll_usart.h"
 #include "stm32l0xx_ll_rcc.h"
@@ -56,14 +55,14 @@ extern "C" {
 /* USER CODE BEGIN ET */
 typedef struct
 {
-	uint32_t deviceSerial0;
-	uint32_t deviceSerial1;
-	uint8_t deviceCode1;
-	uint8_t deviceCode2;
-	uint8_t deviceCode3;
-	uint8_t deviceCode4;
-	uint8_t deviceCode5;
-	uint8_t deviceCode6;
+    uint32_t deviceSerial0;
+    uint32_t deviceSerial1;
+    uint8_t deviceCode1;
+    uint8_t deviceCode2;
+    uint8_t deviceCode3;
+    uint8_t deviceCode4;
+    uint8_t deviceCode5;
+    uint8_t deviceCode6;
 } device_t;
 
 extern device_t device;
@@ -79,7 +78,7 @@ extern device_t device;
 /* USER CODE BEGIN EM */
 #define _DEBUG              0        //  set device info
 #define _RFID_PRINT_DEBUG   0        //  use printf debug
-#define _Original_Data_Algorithm   1 //  use original data algorithm
+#define _Original_Data_Algorithm   0 //  use original data algorithm
 
 #if (_RFID_PRINT_DEBUG == 1)
 #define rfid_printf(...)     			printf(__VA_ARGS__)
@@ -93,7 +92,10 @@ extern device_t device;
 void Error_Handler(void);
 
 /* USER CODE BEGIN EFP */
-
+/**
+ * \brief           Calculate length of statically allocated array
+ */
+#define ARRAY_LEN(x)       (sizeof(x) / sizeof((x)[0]))
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
@@ -109,9 +111,6 @@ void Error_Handler(void);
 #define GDO2_Pin LL_GPIO_PIN_4
 #define GDO2_GPIO_Port GPIOA
 #define GDO2_EXTI_IRQn EXTI4_15_IRQn
-#define INT1_Pin LL_GPIO_PIN_0
-#define INT1_GPIO_Port GPIOB
-#define INT1_EXTI_IRQn EXTI0_1_IRQn
 #define INT2_Pin LL_GPIO_PIN_1
 #define INT2_GPIO_Port GPIOB
 #define INT2_EXTI_IRQn EXTI0_1_IRQn

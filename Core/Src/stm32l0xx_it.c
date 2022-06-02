@@ -27,7 +27,6 @@
 #include "cc1101.h"
 #include "adxl362.h"
 #include "spi.h"
-#include "lptim.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -75,12 +74,12 @@ extern RTC_HandleTypeDef hrtc;
   */
 void NMI_Handler(void)
 {
-  /* USER CODE BEGIN NonMaskableInt_IRQn 0 */
+    /* USER CODE BEGIN NonMaskableInt_IRQn 0 */
 
-  /* USER CODE END NonMaskableInt_IRQn 0 */
-  /* USER CODE BEGIN NonMaskableInt_IRQn 1 */
+    /* USER CODE END NonMaskableInt_IRQn 0 */
+    /* USER CODE BEGIN NonMaskableInt_IRQn 1 */
 
-  /* USER CODE END NonMaskableInt_IRQn 1 */
+    /* USER CODE END NonMaskableInt_IRQn 1 */
 }
 
 /**
@@ -88,14 +87,14 @@ void NMI_Handler(void)
   */
 void HardFault_Handler(void)
 {
-  /* USER CODE BEGIN HardFault_IRQn 0 */
+    /* USER CODE BEGIN HardFault_IRQn 0 */
 
-  /* USER CODE END HardFault_IRQn 0 */
-  while (1)
-  {
-    /* USER CODE BEGIN W1_HardFault_IRQn 0 */
-    /* USER CODE END W1_HardFault_IRQn 0 */
-  }
+    /* USER CODE END HardFault_IRQn 0 */
+    while (1)
+    {
+        /* USER CODE BEGIN W1_HardFault_IRQn 0 */
+        /* USER CODE END W1_HardFault_IRQn 0 */
+    }
 }
 
 /**
@@ -103,12 +102,12 @@ void HardFault_Handler(void)
   */
 void SVC_Handler(void)
 {
-  /* USER CODE BEGIN SVC_IRQn 0 */
+    /* USER CODE BEGIN SVC_IRQn 0 */
 
-  /* USER CODE END SVC_IRQn 0 */
-  /* USER CODE BEGIN SVC_IRQn 1 */
+    /* USER CODE END SVC_IRQn 0 */
+    /* USER CODE BEGIN SVC_IRQn 1 */
 
-  /* USER CODE END SVC_IRQn 1 */
+    /* USER CODE END SVC_IRQn 1 */
 }
 
 /**
@@ -116,12 +115,12 @@ void SVC_Handler(void)
   */
 void PendSV_Handler(void)
 {
-  /* USER CODE BEGIN PendSV_IRQn 0 */
+    /* USER CODE BEGIN PendSV_IRQn 0 */
 
-  /* USER CODE END PendSV_IRQn 0 */
-  /* USER CODE BEGIN PendSV_IRQn 1 */
+    /* USER CODE END PendSV_IRQn 0 */
+    /* USER CODE BEGIN PendSV_IRQn 1 */
 
-  /* USER CODE END PendSV_IRQn 1 */
+    /* USER CODE END PendSV_IRQn 1 */
 }
 
 /**
@@ -129,13 +128,13 @@ void PendSV_Handler(void)
   */
 void SysTick_Handler(void)
 {
-  /* USER CODE BEGIN SysTick_IRQn 0 */
+    /* USER CODE BEGIN SysTick_IRQn 0 */
 
-  /* USER CODE END SysTick_IRQn 0 */
-  HAL_IncTick();
-  /* USER CODE BEGIN SysTick_IRQn 1 */
+    /* USER CODE END SysTick_IRQn 0 */
+    HAL_IncTick();
+    /* USER CODE BEGIN SysTick_IRQn 1 */
 
-  /* USER CODE END SysTick_IRQn 1 */
+    /* USER CODE END SysTick_IRQn 1 */
 }
 
 /******************************************************************************/
@@ -150,13 +149,13 @@ void SysTick_Handler(void)
   */
 void RTC_IRQHandler(void)
 {
-  /* USER CODE BEGIN RTC_IRQn 0 */
+    /* USER CODE BEGIN RTC_IRQn 0 */
 
-  /* USER CODE END RTC_IRQn 0 */
-  HAL_RTCEx_WakeUpTimerIRQHandler(&hrtc);
-  /* USER CODE BEGIN RTC_IRQn 1 */
+    /* USER CODE END RTC_IRQn 0 */
+    HAL_RTCEx_WakeUpTimerIRQHandler(&hrtc);
+    /* USER CODE BEGIN RTC_IRQn 1 */
 
-  /* USER CODE END RTC_IRQn 1 */
+    /* USER CODE END RTC_IRQn 1 */
 }
 
 /**
@@ -164,26 +163,20 @@ void RTC_IRQHandler(void)
   */
 void EXTI0_1_IRQHandler(void)
 {
-  /* USER CODE BEGIN EXTI0_1_IRQn 0 */
+    /* USER CODE BEGIN EXTI0_1_IRQn 0 */
 
-  /* USER CODE END EXTI0_1_IRQn 0 */
-  if (LL_EXTI_IsActiveFlag_0_31(LL_EXTI_LINE_0) != RESET)
-  {
-    LL_EXTI_ClearFlag_0_31(LL_EXTI_LINE_0);
-    /* USER CODE BEGIN LL_EXTI_LINE_0 */
-		step.stepState = SET;
-    /* USER CODE END LL_EXTI_LINE_0 */
-  }
-  if (LL_EXTI_IsActiveFlag_0_31(LL_EXTI_LINE_1) != RESET)
-  {
-    LL_EXTI_ClearFlag_0_31(LL_EXTI_LINE_1);
-    /* USER CODE BEGIN LL_EXTI_LINE_1 */
-		step.fifoOverrun = SET;
-    /* USER CODE END LL_EXTI_LINE_1 */
-  }
-  /* USER CODE BEGIN EXTI0_1_IRQn 1 */
+    /* USER CODE END EXTI0_1_IRQn 0 */
+    if (LL_EXTI_IsActiveFlag_0_31(LL_EXTI_LINE_1) != RESET)
+    {
+        LL_EXTI_ClearFlag_0_31(LL_EXTI_LINE_1);
+        /* USER CODE BEGIN LL_EXTI_LINE_1 */
+        step.fifoOverrun = SET;
+        /* USER CODE END LL_EXTI_LINE_1 */
+    }
 
-  /* USER CODE END EXTI0_1_IRQn 1 */
+    /* USER CODE BEGIN EXTI0_1_IRQn 1 */
+
+    /* USER CODE END EXTI0_1_IRQn 1 */
 }
 
 /**
@@ -191,19 +184,20 @@ void EXTI0_1_IRQHandler(void)
   */
 void EXTI2_3_IRQHandler(void)
 {
-  /* USER CODE BEGIN EXTI2_3_IRQn 0 */
+    /* USER CODE BEGIN EXTI2_3_IRQn 0 */
 
-  /* USER CODE END EXTI2_3_IRQn 0 */
-  if (LL_EXTI_IsActiveFlag_0_31(LL_EXTI_LINE_3) != RESET)
-  {
-    LL_EXTI_ClearFlag_0_31(LL_EXTI_LINE_3);
-    /* USER CODE BEGIN LL_EXTI_LINE_3 */
-		rxCatch = SET;
-    /* USER CODE END LL_EXTI_LINE_3 */
-  }
-  /* USER CODE BEGIN EXTI2_3_IRQn 1 */
+    /* USER CODE END EXTI2_3_IRQn 0 */
+    if (LL_EXTI_IsActiveFlag_0_31(LL_EXTI_LINE_3) != RESET)
+    {
+        LL_EXTI_ClearFlag_0_31(LL_EXTI_LINE_3);
+        /* USER CODE BEGIN LL_EXTI_LINE_3 */
+        rxCatch = SET;
+        /* USER CODE END LL_EXTI_LINE_3 */
+    }
 
-  /* USER CODE END EXTI2_3_IRQn 1 */
+    /* USER CODE BEGIN EXTI2_3_IRQn 1 */
+
+    /* USER CODE END EXTI2_3_IRQn 1 */
 }
 
 /**
@@ -211,19 +205,20 @@ void EXTI2_3_IRQHandler(void)
   */
 void EXTI4_15_IRQHandler(void)
 {
-  /* USER CODE BEGIN EXTI4_15_IRQn 0 */
+    /* USER CODE BEGIN EXTI4_15_IRQn 0 */
 
-  /* USER CODE END EXTI4_15_IRQn 0 */
-  if (LL_EXTI_IsActiveFlag_0_31(LL_EXTI_LINE_4) != RESET)
-  {
-    LL_EXTI_ClearFlag_0_31(LL_EXTI_LINE_4);
-    /* USER CODE BEGIN LL_EXTI_LINE_4 */
-		txFiFoUnFlow = SET;
-    /* USER CODE END LL_EXTI_LINE_4 */
-  }
-  /* USER CODE BEGIN EXTI4_15_IRQn 1 */
+    /* USER CODE END EXTI4_15_IRQn 0 */
+    if (LL_EXTI_IsActiveFlag_0_31(LL_EXTI_LINE_4) != RESET)
+    {
+        LL_EXTI_ClearFlag_0_31(LL_EXTI_LINE_4);
+        /* USER CODE BEGIN LL_EXTI_LINE_4 */
+        txFiFoUnFlow = SET;
+        /* USER CODE END LL_EXTI_LINE_4 */
+    }
 
-  /* USER CODE END EXTI4_15_IRQn 1 */
+    /* USER CODE BEGIN EXTI4_15_IRQn 1 */
+
+    /* USER CODE END EXTI4_15_IRQn 1 */
 }
 
 /**
@@ -231,34 +226,13 @@ void EXTI4_15_IRQHandler(void)
   */
 void ADC1_COMP_IRQHandler(void)
 {
-  /* USER CODE BEGIN ADC1_COMP_IRQn 0 */
+    /* USER CODE BEGIN ADC1_COMP_IRQn 0 */
 
-  /* USER CODE END ADC1_COMP_IRQn 0 */
-  HAL_ADC_IRQHandler(&hadc);
-  /* USER CODE BEGIN ADC1_COMP_IRQn 1 */
+    /* USER CODE END ADC1_COMP_IRQn 0 */
+    HAL_ADC_IRQHandler(&hadc);
+    /* USER CODE BEGIN ADC1_COMP_IRQn 1 */
 
-  /* USER CODE END ADC1_COMP_IRQn 1 */
-}
-
-/**
-  * @brief This function handles LPTIM1 global interrupt / LPTIM1 wake-up interrupt through EXTI line 29.
-  */
-void LPTIM1_IRQHandler(void)
-{
-  /* USER CODE BEGIN LPTIM1_IRQn 0 */
-	/* Check whether Autoreload match interrupt is pending */
-  if(LL_LPTIM_IsActiveFlag_ARRM(LPTIM1) == 1)
-  {
-    /* Clear the Autoreload match interrupt flag */
-    LL_LPTIM_ClearFLAG_ARRM(LPTIM1);
-    
-    /* LPTIM1 Autoreload match interrupt processing */
-    LPTimerAutoreloadMatch_Callback();
-  }
-  /* USER CODE END LPTIM1_IRQn 0 */
-  /* USER CODE BEGIN LPTIM1_IRQn 1 */
-
-  /* USER CODE END LPTIM1_IRQn 1 */
+    /* USER CODE END ADC1_COMP_IRQn 1 */
 }
 
 /**
@@ -266,23 +240,24 @@ void LPTIM1_IRQHandler(void)
   */
 void USART1_IRQHandler(void)
 {
-  /* USER CODE BEGIN USART1_IRQn 0 */
-  /* Check RXNE flag value in ISR register */
-  if(LL_USART_IsActiveFlag_RXNE(USART1) && LL_USART_IsEnabledIT_RXNE(USART1))
-  {
-    /* RXNE flag will be cleared by reading of RDR register (done in call) */
-    /* Call function in charge of handling Character reception */
-    USART_CharReception_Callback();
-  }
-  else
-  {
-    /* Call Error function */
-    Error_Callback();
-  }
-  /* USER CODE END USART1_IRQn 0 */
-  /* USER CODE BEGIN USART1_IRQn 1 */
+    /* USER CODE BEGIN USART1_IRQn 0 */
+    /* Check RXNE flag value in ISR register */
+    if(LL_USART_IsActiveFlag_RXNE(USART1) && LL_USART_IsEnabledIT_RXNE(USART1))
+    {
+        /* RXNE flag will be cleared by reading of RDR register (done in call) */
+        /* Call function in charge of handling Character reception */
+        USART_CharReception_Callback();
+    }
+    else
+    {
+        /* Call Error function */
+        Error_Callback();
+    }
 
-  /* USER CODE END USART1_IRQn 1 */
+    /* USER CODE END USART1_IRQn 0 */
+    /* USER CODE BEGIN USART1_IRQn 1 */
+
+    /* USER CODE END USART1_IRQn 1 */
 }
 
 /* USER CODE BEGIN 1 */

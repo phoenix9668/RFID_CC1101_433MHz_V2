@@ -10,7 +10,7 @@
   * @attention
   *
   ******************************************************************************
-  */ 
+  */
 
 #ifndef _CC1101_H_
 #define _CC1101_H_
@@ -27,7 +27,7 @@ typedef enum { BROADCAST, ADDRESS_CHECK} TX_DATA_MODE;
 
 #define _RECV_LENGTH               128
 #define _SEND_LENGTH               256
-#define	_TX_WAIT_TIME			         500 // cc1101 tx wait time
+#define	_TX_WAIT_TIME			   500 // cc1101 tx wait time
 #define	_RFID_SIZE                 6   // RFID size
 #define	_BATTERY_SIZE              2   // battery size
 #define	_RESETCNT_SIZE             2   // resetCnt size
@@ -35,17 +35,16 @@ typedef enum { BROADCAST, ADDRESS_CHECK} TX_DATA_MODE;
 
 typedef struct
 {
-	uint8_t  recvBuffer[_RECV_LENGTH];
-	uint8_t  sendBuffer[_SEND_LENGTH];
-	uint32_t crcValue;
-  uint8_t  length;
-	uint8_t  addr;
-  uint8_t  rssi;
-	int16_t  rssidBm;
-}cc1101_t;
+    uint8_t  recvBuffer[_RECV_LENGTH];
+    uint8_t  sendBuffer[_SEND_LENGTH];
+    uint32_t crcValue;
+    uint8_t  length;
+    uint8_t  addr;
+    uint8_t  rssi;
+    int16_t  rssidBm;
+} cc1101_t;
 
 extern cc1101_t cc1101;
-extern uint16_t resetCnt;
 extern __IO ITStatus txFiFoUnFlow;
 extern __IO ITStatus rxCatch;
 
@@ -124,6 +123,7 @@ uint8_t CC1101RecvHandler(void);
 
 /*Send RF Single*/
 void CC1101SendHandler(void);
+void CC1101SendStepHandler(void);
 void CC1101Send3AxisHandler(void);
 
 #endif // _CC1101_H_

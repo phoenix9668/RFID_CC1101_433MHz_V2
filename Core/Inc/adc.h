@@ -37,10 +37,10 @@ extern ADC_HandleTypeDef hadc;
 /* USER CODE BEGIN Private defines */
 typedef struct
 {
-	__IO bool refresh;
-	__IO uint8_t times;
-	__IO uint32_t value[16];
-	__IO uint32_t avgValue;
+    __IO bool refresh;
+    __IO uint8_t times;
+    __IO uint32_t value[16];
+    __IO uint32_t avgValue;
 } adc_t;
 
 extern adc_t adc;

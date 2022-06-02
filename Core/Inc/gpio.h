@@ -59,6 +59,9 @@ extern "C" {
 
 #define CC1101_MISO_READ()		HAL_GPIO_ReadPin(GPIOA, LL_GPIO_PIN_6)
 
+#define PC13_OFF()				    HAL_GPIO_WritePin(PC13_GPIO_Port, PC13_Pin, GPIO_PIN_RESET)
+#define PC13_ON()				      HAL_GPIO_WritePin(PC13_GPIO_Port, PC13_Pin, GPIO_PIN_SET)
+
 /* USER CODE END Private defines */
 
 void MX_GPIO_Init(void);

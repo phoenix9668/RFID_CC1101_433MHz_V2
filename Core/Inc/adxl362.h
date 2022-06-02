@@ -1,13 +1,13 @@
 /********************************************************************************
- Author : CAC (China Applications Support Team) 
+ Author : CAC (China Applications Support Team)
 
  Date :   May, 2014
 
- File name :  ADXL362.h 
+ File name :  ADXL362.h
 
- Description :	 ADXL362 Registers                 
+ Description :	 ADXL362 Registers
 
- Hardware plateform : 	EVAL-ADuCM360MKZ and EVAL-ADXL362Z 
+ Hardware plateform : 	EVAL-ADuCM360MKZ and EVAL-ADXL362Z
 ********************************************************************************/
 
 #include "stm32l0xx.h"
@@ -27,16 +27,17 @@
  * \note            SPI
  */
 extern uint8_t fifo[_FIFO_LEN];
+extern short int yAxis[_AXIS_LEN];
+extern short int yStepFilter[_AXIS_LEN-2];
 
 typedef struct
 {
-	__IO uint8_t stepStage;
-	__IO FlagStatus stepState;
-	__IO FlagStatus fifoOverrun;
-	__IO uint16_t stepNum;
-	__IO uint16_t stepArray[_STEP_LOOPNUM];
-	__IO uint16_t ingestionNum;
-	__IO uint16_t ingestionArray[_STEP_LOOPNUM];
+    __IO uint8_t stepStage;
+    __IO FlagStatus fifoOverrun;
+    __IO uint16_t stepNum;
+    __IO uint16_t stepArray[_STEP_LOOPNUM];
+    __IO uint16_t ingestionNum;
+    __IO uint16_t ingestionArray[_STEP_LOOPNUM];
 } step_t;
 
 extern step_t step;
