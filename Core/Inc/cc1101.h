@@ -88,6 +88,12 @@ void CC1101SetWORMode(void);
 /*Initialize the CC1101, User can modify it*/
 void CC1101Init(uint8_t addr, uint16_t sync);
 
+/*Initialize the CC1101 GDO0/2, User can modify it*/
+void CC1101_GDO_Init(void);
+
+/*Disable the CC1101 GDO0/2, User can modify it*/
+void CC1101_GDO_DeInit(void);
+
 /*Initialize the CC1101, Configure addr&sync&mode*/
 void RFIDInitial(uint8_t addr, uint16_t sync, TRMODE mode);
 

@@ -631,8 +631,7 @@ OUTPUT   : None
 */
 void CC1101Init(uint8_t addr, uint16_t sync)
 {
-    NVIC_DisableIRQ(EXTI2_3_IRQn);
-    NVIC_DisableIRQ(EXTI4_15_IRQn);
+	CC1101_GDO_Init();
     CC1101Reset();
 
     for(uint8_t i = 0; i < 47; i++)
@@ -644,11 +643,94 @@ void CC1101Init(uint8_t addr, uint16_t sync)
     CC1101SetSYNC(sync);
 
     CC1101WriteMultiReg(CC1101_PATABLE, PaTabel, 8);
-    NVIC_EnableIRQ(EXTI2_3_IRQn);
-    NVIC_EnableIRQ(EXTI4_15_IRQn);
 
     rfid_printf("CC1101_PKTCTRL1 = %d\n", CC1101ReadStatus(CC1101_PARTNUM)); //for test, must be 0x00
     rfid_printf("CC1101_VERSION = %d\n", CC1101ReadStatus(CC1101_VERSION)); //for test, refer to the datasheet,must be 0x14
+}
+
+/*
+================================================================================
+Function : CC1101_GDO_Init()
+    Initialize the CC1101 GDO0/2, User can modify it
+INPUT    : None
+OUTPUT   : None
+================================================================================
+*/
+void CC1101_GDO_Init(void)
+{
+    LL_EXTI_InitTypeDef EXTI_InitStruct = {0};
+
+    /* GPIO Ports Clock Enable */
+    LL_IOP_GRP1_EnableClock(LL_IOP_GRP1_PERIPH_GPIOA);
+
+    /**/
+    LL_SYSCFG_SetEXTISource(LL_SYSCFG_EXTI_PORTA, LL_SYSCFG_EXTI_LINE3);
+
+    /**/
+    LL_SYSCFG_SetEXTISource(LL_SYSCFG_EXTI_PORTA, LL_SYSCFG_EXTI_LINE4);
+
+    /**/
+    LL_GPIO_SetPinPull(GDO0_GPIO_Port, GDO0_Pin, LL_GPIO_PULL_NO);
+
+    /**/
+    LL_GPIO_SetPinPull(GDO2_GPIO_Port, GDO2_Pin, LL_GPIO_PULL_NO);
+
+    /**/
+    LL_GPIO_SetPinMode(GDO0_GPIO_Port, GDO0_Pin, LL_GPIO_MODE_INPUT);
+
+    /**/
+    LL_GPIO_SetPinMode(GDO2_GPIO_Port, GDO2_Pin, LL_GPIO_MODE_INPUT);
+
+    /**/
+    EXTI_InitStruct.Line_0_31 = LL_EXTI_LINE_3;
+    EXTI_InitStruct.LineCommand = ENABLE;
+    EXTI_InitStruct.Mode = LL_EXTI_MODE_IT;
+    EXTI_InitStruct.Trigger = LL_EXTI_TRIGGER_RISING_FALLING;
+    LL_EXTI_Init(&EXTI_InitStruct);
+
+    /**/
+    EXTI_InitStruct.Line_0_31 = LL_EXTI_LINE_4;
+    EXTI_InitStruct.LineCommand = ENABLE;
+    EXTI_InitStruct.Mode = LL_EXTI_MODE_IT;
+    EXTI_InitStruct.Trigger = LL_EXTI_TRIGGER_FALLING;
+    LL_EXTI_Init(&EXTI_InitStruct);
+
+    /* EXTI interrupt init*/
+    NVIC_SetPriority(EXTI2_3_IRQn, 1);
+    NVIC_EnableIRQ(EXTI2_3_IRQn);
+    NVIC_SetPriority(EXTI4_15_IRQn, 1);
+    NVIC_EnableIRQ(EXTI4_15_IRQn);
+}
+
+/*
+================================================================================
+Function : CC1101_GDO_DeInit()
+    Disable the CC1101 GDO0/2, User can modify it
+INPUT    : None
+OUTPUT   : None
+================================================================================
+*/
+void CC1101_GDO_DeInit(void)
+{
+    LL_GPIO_InitTypeDef GPIO_InitStruct = {0};
+
+    LL_IOP_GRP1_EnableClock(LL_IOP_GRP1_PERIPH_GPIOA);
+    /**LPUART1 GPIO Configuration
+    PA3   ------> GDO0
+    PA4   ------> GDO2
+    */
+    GPIO_InitStruct.Pin = GDO0_Pin;
+    GPIO_InitStruct.Mode = LL_GPIO_MODE_ANALOG;
+    GPIO_InitStruct.Pull = LL_GPIO_PULL_NO;
+    LL_GPIO_Init(GDO0_GPIO_Port, &GPIO_InitStruct);
+
+    GPIO_InitStruct.Pin = GDO2_Pin;
+    GPIO_InitStruct.Mode = LL_GPIO_MODE_ANALOG;
+    GPIO_InitStruct.Pull = LL_GPIO_PULL_NO;
+    LL_GPIO_Init(GDO2_GPIO_Port, &GPIO_InitStruct);
+
+    NVIC_DisableIRQ(EXTI2_3_IRQn);
+    NVIC_DisableIRQ(EXTI4_15_IRQn);
 }
 /*
 ================================================================================
@@ -868,6 +950,7 @@ void CC1101SendHandler(void)
     CC1101SendPacket(cc1101.sendBuffer, _RFID_SIZE + sizeof(RandomString) + 4 * _STEP_LOOPNUM + sizeof(step.stepStage) + _BATTERY_SIZE + _RESETCNT_SIZE + _CRC32_SIZE, ADDRESS_CHECK);
     CC1101SetIdle();
     CC1101WriteCmd(CC1101_SXOFF);
+    CC1101_GDO_DeInit();
     CC1101_POWER_DOWN();
     memset(&cc1101, 0, sizeof(cc1101));
 
