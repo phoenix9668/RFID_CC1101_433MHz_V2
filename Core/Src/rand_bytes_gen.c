@@ -63,7 +63,7 @@ int32_t status = RNG_SUCCESS;
 /* RNG init function */
 void RNG_Init(void)
 {
-    for(uint8_t i = 0; i < sizeof( nonce ); i++)
+    for(uint8_t i = 0; i < sizeof(nonce); i++)
     {
         srand(HAL_GetTick());
         nonce[i] = rand() % 255;

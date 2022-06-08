@@ -31,7 +31,8 @@ uint8_t fifo[_FIFO_LEN];
 short int yAxis[_AXIS_LEN];
 short int yStepAverage[_AXIS_LEN - 2];
 short int yStepFilter[_AXIS_LEN - 2];
-short int yIngestionAverage[_AXIS_LEN / 25 + 1];
+short int yIngestionAverage[_AXIS_LEN / 25 + 1 + 2];
+short int yIngestionAverageOld[2];
 //static short int zAxis[_AXIS_LEN];
 //static uint16_t threeAxisUnity[_AXIS_LEN];
 //uint16_t threeAxisAverage;
@@ -219,7 +220,7 @@ void ADXL362FifoProcess(void)
             else
                 yAxis[i / 3] = (short int)(fifo[2 * i] + (0x0f00 & (fifo[2 * i + 1] << 8)));
 
-//            rfid_printf("samples[%d] :%hd\n", i / 3, yAxis[i / 3]);
+            rfid_printf("samples[%d] :%hd\n", i / 3, yAxis[i / 3]);
         }
     }
 
@@ -265,13 +266,13 @@ void ADXL362FifoProcess(void)
     }
 
     // 7.Calculate ingestion average values array
-    for (uint8_t i = 0; i < ARRAY_LEN(yIngestionAverage); i++)
+    for (uint8_t i = 2; i < ARRAY_LEN(yIngestionAverage); i++)
     {
         for (uint8_t j = 0; j < 25; j++)
         {
-            if((i * 25 + j) < 170)
+            if(((i - 2) * 25 + j) < 170)
             {
-                yIngestionAverage[i] += yAxis[i * 25 + j];
+                yIngestionAverage[i] += yAxis[(i - 2) * 25 + j];
             }
         }
 
@@ -279,8 +280,14 @@ void ADXL362FifoProcess(void)
             yIngestionAverage[i] = yIngestionAverage[i] / 20;
         else
             yIngestionAverage[i] = yIngestionAverage[i] / 25;
+    }
 
-//        rfid_printf("yIngestionAverage[%d] :%hd\n", i, yIngestionAverage[i]);
+    yIngestionAverage[0] = yIngestionAverageOld[0];
+    yIngestionAverage[1] = yIngestionAverageOld[1];
+
+    for (uint8_t i = 0; i < ARRAY_LEN(yIngestionAverage); i++)
+    {
+        rfid_printf("yIngestionAverage[%d] :%hd\n", i, yIngestionAverage[i]);
     }
 
     // 8.Calculate the ingestionNum
@@ -302,6 +309,10 @@ void ADXL362FifoProcess(void)
             thresholdMark = false;
         }
     }
+
+    // 9.Store the yIngestionAverage
+    yIngestionAverageOld[0] = yIngestionAverage[(ARRAY_LEN(yIngestionAverage) - 2)];
+    yIngestionAverageOld[1] = yIngestionAverage[(ARRAY_LEN(yIngestionAverage) - 1)];
 
     #else
     memset(xAxis, 0, sizeof(xAxis));
@@ -414,11 +425,11 @@ void ADXL362_Init(void)
         Error_Handler();
     }
 
-    ADXL362RegisterWrite(XL362_TIME_ACT, 0x06);						//set active time equip 6/25s
+    ADXL362RegisterWrite(XL362_TIME_ACT, 0x03);						//set active time equip 3/12.5s
     ReadValueTemp = ADXL362RegisterRead(XL362_TIME_ACT);
     rfid_printf("|*-set TIME_ACT register = 0x%02x-------*|\n", ReadValueTemp);
 
-    if(ReadValueTemp != 0x06)
+    if(ReadValueTemp != 0x03)
     {
         ErrorIndex = 0x03;
         Error_Handler();
@@ -444,11 +455,11 @@ void ADXL362_Init(void)
         Error_Handler();
     }
 
-    ADXL362RegisterWrite(XL362_TIME_INACT_L, 0x06);						//set inactive time equip 6/25s
+    ADXL362RegisterWrite(XL362_TIME_INACT_L, 0x03);						//set inactive time equip 3/12.5s
     ReadValueTemp = ADXL362RegisterRead(XL362_TIME_INACT_L);
     rfid_printf("|*-set TIME_INACT_L register = 0x%02x---*|\n", ReadValueTemp);
 
-    if(ReadValueTemp != 0x06)
+    if(ReadValueTemp != 0x03)
     {
         ErrorIndex = 0x03;
         Error_Handler();
@@ -514,11 +525,11 @@ void ADXL362_Init(void)
         Error_Handler();
     }
 
-    ADXL362RegisterWrite(XL362_FILTER_CTL, 0x11);             	//select 2g range,ODR:25Hz
+    ADXL362RegisterWrite(XL362_FILTER_CTL, 0x10);             	//select 2g range,ODR:12.5Hz
     ReadValueTemp = ADXL362RegisterRead(XL362_FILTER_CTL);
     rfid_printf("|*-set FILTER_CTL register = 0x%02x-----*|\n", ReadValueTemp);
 
-    if(ReadValueTemp != 0x11)
+    if(ReadValueTemp != 0x10)
     {
         ErrorIndex = 0x03;
         Error_Handler();
