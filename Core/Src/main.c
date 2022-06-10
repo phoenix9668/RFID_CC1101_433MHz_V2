@@ -19,7 +19,6 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-#include "adc.h"
 #include "crc.h"
 #include "iwdg.h"
 #include "rtc.h"
@@ -102,7 +101,6 @@ int main(void)
     MX_IWDG_Init();
     MX_RTC_Init();
     MX_CRC_Init();
-    MX_ADC_Init();
     /* USER CODE BEGIN 2 */
     System_Initial();
     Show_Message();
@@ -130,9 +128,9 @@ int main(void)
 
         if(rtc.twentyMinIndex == SET)
         {
-						delayRand = rand() % 10;
-						rfid_printf("delayRand = %d\n", delayRand);
-						HAL_Delay(delayRand);
+            delayRand = rand() % 10;
+            rfid_printf("delayRand = %d\n", delayRand);
+            HAL_Delay(delayRand);
             step.stepNum = 0;
             step.ingestionNum = 0;
 
@@ -154,14 +152,20 @@ int main(void)
 
             DATAEEPROM_Program(EEPROM_START_ADDR + 8, step.stepStage);
 
-            MX_SPI1_Init();
-            adc_detect();
-            RNG_Init();
-            RNG_Gen();
-            MX_CRC_Init();
-            CC1101SendHandler();
-            HAL_CRC_DeInit(&hcrc);
-            MX_SPI1_DeInit();
+            for(uint8_t i = 0; i < _STEP_LOOPNUM; i++)
+            {
+                if(step.stepArray[i] != 0)
+                {
+                    MX_SPI1_Init();
+                    RNG_Init();
+                    RNG_Gen();
+                    MX_CRC_Init();
+                    CC1101SendHandler();
+                    HAL_CRC_DeInit(&hcrc);
+                    MX_SPI1_DeInit();
+                    break;
+                }
+            }
 
             rtc.twentyMinIndex = RESET;
         }
@@ -241,7 +245,7 @@ void SystemClock_Config(void)
     RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
     RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
     RCC_OscInitStruct.PLL.PLLMUL = RCC_PLLMUL_8;
-    RCC_OscInitStruct.PLL.PLLDIV = RCC_PLLDIV_3;
+    RCC_OscInitStruct.PLL.PLLDIV = RCC_PLLDIV_2;
 
     if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
     {
@@ -311,9 +315,8 @@ void System_Initial(void)
     Get_SerialNum();
     ADXL362_Init();
     /*##-2- initial CC1101 peripheral,configure it's address and sync code ##*/
-    CC1101_POWER_ON();
     RFIDInitial(0x00, 0x1234, IDLE_MODE);
-    CC1101_POWER_DOWN();
+    CC1101WriteCmd(CC1101_SPWD);
 
     resetCnt = (uint16_t)(0x0000FFFF & DATAEEPROM_Read(EEPROM_START_ADDR + 12));
     resetCnt++;
@@ -331,6 +334,8 @@ void System_Initial(void)
 
     step.stepStage = (uint8_t)(0x000000FF & DATAEEPROM_Read(EEPROM_START_ADDR + 8));
     rtc.tenSecTick = (uint8_t)(0x000000FF & DATAEEPROM_Read(EEPROM_START_ADDR + 16));
+    rtc.tenSecIndex = RESET;
+    rtc.twentyMinIndex = RESET;
 
     rfid_printf("\nstepArray = ");
 

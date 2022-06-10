@@ -37,7 +37,7 @@ extern RTC_HandleTypeDef hrtc;
 /* USER CODE BEGIN Private defines */
 typedef struct
 {
-    __IO ITStatus twentyMinIndex;
+  __IO ITStatus twentyMinIndex;
 	__IO ITStatus tenSecIndex;
     uint8_t tenSecTick;    //one step == 10s
 
