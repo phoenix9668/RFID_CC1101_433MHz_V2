@@ -126,7 +126,7 @@ void HAL_RTCEx_WakeUpTimerEventCallback(RTC_HandleTypeDef *hrtc)
         rtc.tenSecIndex = SET;
     }
 
-    if(rtc.tenSecTick == 120)//1200s
+    if(rtc.tenSecTick >= 120)//1200s
     {
         rtc.twentyMinIndex = SET;
         rtc.tenSecTick = 0x00;
