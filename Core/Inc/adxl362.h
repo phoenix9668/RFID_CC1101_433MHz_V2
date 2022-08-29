@@ -17,18 +17,46 @@
 #ifndef _ADXL362DRIVER_H_
 #define _ADXL362DRIVER_H_
 
-#define _STEP_LOOPNUM    36  // 20min per step,have 36 steps,equal 12 hours
-#define _FIFO_LEN        1024
-#define _AXIS_LEN        170
-#define _FIR_LEN         5
+#define max(a,b) ((a) > (b) ? (a) : (b))
+#define min(a,b) ((a) < (b) ? (a) : (b))
+
+#define MOST_ACTIVE_NULL      0
+#define MOST_ACTIVE_X					1
+#define MOST_ACTIVE_Y					2
+#define MOST_ACTIVE_Z					3
+
+#define _STEP_LOOPNUM         36  // 20min per step,have 36 steps,equal 12 hours
+#define _FIFO_LEN             1024
+#define _FIFO_SAMPLES_LEN     900
+#define _AXIS_LEN             170
+#define _FIR_LEN              5
+#define _FILTER_CNT			      4
+#define _SAMPLE_SIZE          50
+#define _DYNAMIC_PRECISION		30
+#define _ACTIVE_PRECISION     60
+
+typedef struct
+{
+    int16_t x;
+    int16_t y;
+    int16_t z;
+} axis_info_t;
+
+typedef struct
+{
+    int16_t yStepAverage[_AXIS_LEN - 2];
+    int16_t yStepFilter[_AXIS_LEN - 2];
+    int16_t yIngestionAverage[_AXIS_LEN / 25 + 1 + 2];
+    int16_t yIngestionAverageOld[2];
+} y_axis_calc_t;
 
 /**
  * \brief           Buffer for FIFO
  * \note            SPI
  */
 extern uint8_t fifo[_FIFO_LEN];
-extern short int yAxis[_AXIS_LEN];
-extern short int yStepFilter[_AXIS_LEN-2];
+extern axis_info_t three_axis_info[_AXIS_LEN];
+extern y_axis_calc_t y_axis_calc;
 
 typedef struct
 {
@@ -87,6 +115,5 @@ void ADXL362FifoRead(unsigned int NumberofRegisters, unsigned char *RegisterData
 uint16_t ADXL362FifoEntries(void);
 void ADXL362FifoProcess(void);
 void ADXL362_Init(void);
-void ADXL362_ReInit(uint8_t thresh_act_h, uint8_t thresh_act_l, uint8_t time_act, uint8_t thresh_inact_h, uint8_t thresh_inact_l, uint8_t time_inact_h, uint8_t time_inact_l, uint8_t filter_ctl);
 
 #endif
