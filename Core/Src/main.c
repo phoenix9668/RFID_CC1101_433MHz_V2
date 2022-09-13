@@ -195,9 +195,21 @@ int main(void)
             MX_SPI2_DeInit();
             ADXL362FifoProcess();
             #elif (_Original_Data_Algorithm == 1)
-						ADXL362FifoRead(900, fifo);
+            ADXL362FifoRead(900, fifo);
             MX_SPI2_DeInit();
+						MX_SPI1_Init();
+						MX_CRC_Init();
             ADXL362FifoProcess();
+						HAL_CRC_DeInit(&hcrc);
+						MX_SPI1_DeInit();
+            #else
+            ADXL362FifoRead(900, fifo);
+            MX_SPI2_DeInit();
+						MX_SPI1_Init();
+						MX_CRC_Init();
+            ADXL362FifoProcess();
+						HAL_CRC_DeInit(&hcrc);
+						MX_SPI1_DeInit();
             #endif
             step.fifoOverrun = RESET;
         }

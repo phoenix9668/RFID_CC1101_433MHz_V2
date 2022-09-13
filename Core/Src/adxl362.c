@@ -46,12 +46,6 @@ typedef struct
     axis_info_t old_sample;
 } slid_reg_t;
 
-typedef struct
-{
-    uint32_t sample_num;
-    uint32_t valid_step_num;
-} valid_step_filter_t;
-
 axis_info_t axis_info;
 axis_info_t three_axis_info[_AXIS_LEN];
 filter_avg_t filter_avg;
@@ -388,6 +382,150 @@ void ADXL362_Init(void)
         Error_Handler();
     }
 
+    ADXL362RegisterWrite(XL362_TIME_ACT, 0x06);						//set active time equip 6/25s
+    ReadValueTemp = ADXL362RegisterRead(XL362_TIME_ACT);
+    rfid_printf("|*-set TIME_ACT register = 0x%02x-------*|\n", ReadValueTemp);
+
+    if(ReadValueTemp != 0x06)
+    {
+        ErrorIndex = 0x03;
+        Error_Handler();
+    }
+
+    ADXL362RegisterWrite(XL362_THRESH_INACT_L, 0x64);					//set inactive threshold equip 200mg
+    ReadValueTemp = ADXL362RegisterRead(XL362_THRESH_INACT_L);
+    rfid_printf("|*-set THRESH_INACT_L register = 0x%02x-*|\n", ReadValueTemp);
+
+    if(ReadValueTemp != 0x64)
+    {
+        ErrorIndex = 0x03;
+        Error_Handler();
+    }
+
+    ADXL362RegisterWrite(XL362_THRESH_INACT_H, 0x00);
+    ReadValueTemp = ADXL362RegisterRead(XL362_THRESH_INACT_H);
+    rfid_printf("|*-set THRESH_INACT_H register = 0x%02x-*|\n", ReadValueTemp);
+
+    if(ReadValueTemp != 0x00)
+    {
+        ErrorIndex = 0x03;
+        Error_Handler();
+    }
+
+    ADXL362RegisterWrite(XL362_TIME_INACT_L, 0x06);						//set inactive time equip 6/25s
+    ReadValueTemp = ADXL362RegisterRead(XL362_TIME_INACT_L);
+    rfid_printf("|*-set TIME_INACT_L register = 0x%02x---*|\n", ReadValueTemp);
+
+    if(ReadValueTemp != 0x06)
+    {
+        ErrorIndex = 0x03;
+        Error_Handler();
+    }
+
+    ADXL362RegisterWrite(XL362_TIME_INACT_H, 0x00);
+    ReadValueTemp = ADXL362RegisterRead(XL362_TIME_INACT_H);
+    rfid_printf("|*-set TIME_INACT_H register = 0x%02x---*|\n", ReadValueTemp);
+
+    if(ReadValueTemp != 0x00)
+    {
+        ErrorIndex = 0x03;
+        Error_Handler();
+    }
+
+    ADXL362RegisterWrite(XL362_ACT_INACT_CTL, 0x3F);						//configure loop mode,enable active and inactive
+    ReadValueTemp = ADXL362RegisterRead(XL362_ACT_INACT_CTL);
+    rfid_printf("|*-set ACT_INACT_CTL register = 0x%02x--*|\n", ReadValueTemp);
+
+    if(ReadValueTemp != 0x3F)
+    {
+        ErrorIndex = 0x03;
+        Error_Handler();
+    }
+
+    ADXL362RegisterWrite(XL362_INTMAP1, 0x10);									//configure act map INT1
+    ReadValueTemp = ADXL362RegisterRead(XL362_INTMAP1);
+    rfid_printf("|*-set INTMAP1 register = 0x%02x--------*|\n", ReadValueTemp);
+
+    if(ReadValueTemp != 0x10)
+    {
+        ErrorIndex = 0x03;
+        Error_Handler();
+    }
+
+    ADXL362RegisterWrite(XL362_INTMAP2, 0x04);									//configure fifo_watermark map INT2
+    ReadValueTemp = ADXL362RegisterRead(XL362_INTMAP2);
+    rfid_printf("|*-set INTMAP2 register = 0x%02x--------*|\n", ReadValueTemp);
+
+    if(ReadValueTemp != 0x04)
+    {
+        ErrorIndex = 0x03;
+        Error_Handler();
+    }
+
+    ADXL362RegisterWrite(XL362_FIFO_CONTROL, 0x0A);						//Above Half, select fifo Steam Mode, not store Temperature Data to FIFO
+    ReadValueTemp = ADXL362RegisterRead(XL362_FIFO_CONTROL);
+    rfid_printf("|*-set FIFO_CONTROL register = 0x%02x---*|\n", ReadValueTemp);
+
+    if(ReadValueTemp != 0x0A)
+    {
+        ErrorIndex = 0x03;
+        Error_Handler();
+    }
+
+    ADXL362RegisterWrite(XL362_FIFO_SAMPLES, 0xC2);						//select fifo sample number//0x1C2 = 450
+    ReadValueTemp = ADXL362RegisterRead(XL362_FIFO_SAMPLES);
+    rfid_printf("|*-set FIFO_SAMPLES register = 0x%02x---*|\n", ReadValueTemp);
+
+    if(ReadValueTemp != 0xC2)
+    {
+        ErrorIndex = 0x03;
+        Error_Handler();
+    }
+
+    ADXL362RegisterWrite(XL362_FILTER_CTL, 0x51);             	//select 4g range,ODR:25Hz
+    ReadValueTemp = ADXL362RegisterRead(XL362_FILTER_CTL);
+    rfid_printf("|*-set FILTER_CTL register = 0x%02x-----*|\n", ReadValueTemp);
+
+    if(ReadValueTemp != 0x51)
+    {
+        ErrorIndex = 0x03;
+        Error_Handler();
+    }
+
+    //any changes to the registers before the POWER_CTL register (Register 0x00 to Register 0x2C) should be made with the device in standby
+    ADXL362RegisterWrite(XL362_POWER_CTL, 0x02);              	//select measurement mode
+    ReadValueTemp = ADXL362RegisterRead(XL362_POWER_CTL);
+    rfid_printf("|*-set POWER_CTL register = 0x%02x------*|\n", ReadValueTemp);
+
+    if(ReadValueTemp != 0x02)
+    {
+        ErrorIndex = 0x03;
+        Error_Handler();
+    }
+
+    #else
+
+    rfid_printf("\n|********ADXL362 CONFIGURE INFO********|\n");
+    ADXL362RegisterWrite(XL362_THRESH_ACT_L, 0x64);						//set active threshold equip 200mg
+    ReadValueTemp = ADXL362RegisterRead(XL362_THRESH_ACT_L);
+    rfid_printf("|*-set THRESH_ACT_L register = 0x%02x---*|\n", ReadValueTemp);
+
+    if(ReadValueTemp != 0x64)
+    {
+        ErrorIndex = 0x03;
+        Error_Handler();
+    }
+
+    ADXL362RegisterWrite(XL362_THRESH_ACT_H, 0x00);
+    ReadValueTemp = ADXL362RegisterRead(XL362_THRESH_ACT_H);
+    rfid_printf("|*-set THRESH_ACT_H register = 0x%02x---*|\n", ReadValueTemp);
+
+    if(ReadValueTemp != 0x00)
+    {
+        ErrorIndex = 0x03;
+        Error_Handler();
+    }
+
     ADXL362RegisterWrite(XL362_TIME_ACT, 0x0C);						//set active time equip 12/50s
     ReadValueTemp = ADXL362RegisterRead(XL362_TIME_ACT);
     rfid_printf("|*-set TIME_ACT register = 0x%02x-------*|\n", ReadValueTemp);
@@ -508,8 +646,6 @@ void ADXL362_Init(void)
         ErrorIndex = 0x03;
         Error_Handler();
     }
-
-    #else
 
     #endif
 
@@ -728,9 +864,9 @@ void ADXL362FifoProcess(void)
             filter_avg.count++;
             filter_calculate(&filter_avg, &axis_info);
             three_axis_info[i - (_FILTER_CNT - 1)] = axis_info;
-            rfid_printf("average filter[%d] :%hd,", i - (_FILTER_CNT - 1), three_axis_info[i - (_FILTER_CNT - 1)].x);
-            rfid_printf("%hd,", three_axis_info[i - (_FILTER_CNT - 1)].y);
-            rfid_printf("%hd\n", three_axis_info[i - (_FILTER_CNT - 1)].z);
+//            rfid_printf("average filter[%d] :%hd,", i - (_FILTER_CNT - 1), three_axis_info[i - (_FILTER_CNT - 1)].x);
+//            rfid_printf("%hd,", three_axis_info[i - (_FILTER_CNT - 1)].y);
+//            rfid_printf("%hd\n", three_axis_info[i - (_FILTER_CNT - 1)].z);
         }
     }
 
@@ -746,11 +882,11 @@ void ADXL362FifoProcess(void)
             detect_step(&peak_value, &slid_reg, &valid_step_filter);
         }
     }
+		
+		CC1101Send3AxisHandler();
 
     #else
-    memset(xAxis, 0, sizeof(xAxis));
-    memset(yAxis, 0, sizeof(yAxis));
-    memset(zAxis, 0, sizeof(zAxis));
+    memset(three_axis_info, 0, sizeof(three_axis_info));
 
     // If the fifo data is not aligned. Organize the data
     if ((fifo[1] >> 6 & 0x03) == 0x1)
@@ -1005,7 +1141,7 @@ void detect_step(peak_value_t *peak, slid_reg_t *slid, valid_step_filter_t *vsf)
             {
                 rfid_printf("X vsf->sample_num = %d\n", vsf->sample_num);
 
-                if (vsf->sample_num >= 10 && vsf->sample_num <= 100)
+                if (vsf->sample_num >= 5 && vsf->sample_num <= 50)
                 {
                     vsf->valid_step_num++;
                     rfid_printf("X vsf->valid_step_num = %d\n", vsf->valid_step_num);
@@ -1015,11 +1151,11 @@ void detect_step(peak_value_t *peak, slid_reg_t *slid, valid_step_filter_t *vsf)
                         step.stepNum = step.stepNum + 4;
                         rfid_printf("X step.stepNum = %d\n", step.stepNum);
                     }
-										else if(vsf->valid_step_num > 4)
-										{
-												step.stepNum++;
+                    else if(vsf->valid_step_num > 4)
+                    {
+                        step.stepNum++;
                         rfid_printf("X step.stepNum = %d\n", step.stepNum);
-										}
+                    }
                 }
                 else
                 {
@@ -1040,7 +1176,7 @@ void detect_step(peak_value_t *peak, slid_reg_t *slid, valid_step_filter_t *vsf)
             {
                 rfid_printf("Y vsf->sample_num = %d\n", vsf->sample_num);
 
-                if (vsf->sample_num >= 10 && vsf->sample_num <= 100)
+                if (vsf->sample_num >= 5 && vsf->sample_num <= 50)
                 {
                     vsf->valid_step_num++;
                     rfid_printf("Y vsf->valid_step_num = %d\n", vsf->valid_step_num);
@@ -1050,11 +1186,11 @@ void detect_step(peak_value_t *peak, slid_reg_t *slid, valid_step_filter_t *vsf)
                         step.stepNum = step.stepNum + 4;
                         rfid_printf("Y step.stepNum = %d\n", step.stepNum);
                     }
-										else if(vsf->valid_step_num > 4)
-										{
-												step.stepNum++;
+                    else if(vsf->valid_step_num > 4)
+                    {
+                        step.stepNum++;
                         rfid_printf("Y step.stepNum = %d\n", step.stepNum);
-										}
+                    }
                 }
                 else
                 {
@@ -1075,7 +1211,7 @@ void detect_step(peak_value_t *peak, slid_reg_t *slid, valid_step_filter_t *vsf)
             {
                 rfid_printf("Z vsf->sample_num = %d\n", vsf->sample_num);
 
-                if (vsf->sample_num >= 10 && vsf->sample_num <= 100)
+                if (vsf->sample_num >= 5 && vsf->sample_num <= 50)
                 {
                     vsf->valid_step_num++;
                     rfid_printf("Z vsf->valid_step_num = %d\n", vsf->valid_step_num);
@@ -1085,11 +1221,11 @@ void detect_step(peak_value_t *peak, slid_reg_t *slid, valid_step_filter_t *vsf)
                         step.stepNum = step.stepNum + 4;
                         rfid_printf("Z step.stepNum = %d\n", step.stepNum);
                     }
-										else if(vsf->valid_step_num > 4)
-										{
-												step.stepNum++;
+                    else if(vsf->valid_step_num > 4)
+                    {
+                        step.stepNum++;
                         rfid_printf("Z step.stepNum = %d\n", step.stepNum);
-										}
+                    }
                 }
                 else
                 {

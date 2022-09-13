@@ -44,6 +44,12 @@ typedef struct
 
 typedef struct
 {
+    uint32_t sample_num;
+    uint16_t valid_step_num;
+} valid_step_filter_t;
+
+typedef struct
+{
     int16_t yStepAverage[_AXIS_LEN - 2];
     int16_t yStepFilter[_AXIS_LEN - 2];
     int16_t yIngestionAverage[_AXIS_LEN / 25 + 1 + 2];
@@ -56,6 +62,7 @@ typedef struct
  */
 extern uint8_t fifo[_FIFO_LEN];
 extern axis_info_t three_axis_info[_AXIS_LEN];
+extern valid_step_filter_t valid_step_filter;
 extern y_axis_calc_t y_axis_calc;
 
 typedef struct
