@@ -48,6 +48,7 @@ typedef struct
 
 axis_info_t axis_info;
 axis_info_t three_axis_info[_AXIS_LEN];
+axis_info_t diff_reg_axis_info[_DIFF_CNT];
 filter_avg_t filter_avg;
 peak_value_t peak_value;
 slid_reg_t slid_reg;
@@ -207,6 +208,8 @@ void ADXL362_Init(void)
 {
     unsigned int ReadValueTemp;
     memset(&step, 0, sizeof(step));
+    memset(three_axis_info, 0, sizeof(three_axis_info));
+    memset(&filter_avg, 0, sizeof(filter_avg));
     memset(&peak_value, 0, sizeof(peak_value));
     peak_value_init(&peak_value);
     memset(&slid_reg, 0, sizeof(slid_reg));
@@ -526,11 +529,11 @@ void ADXL362_Init(void)
         Error_Handler();
     }
 
-    ADXL362RegisterWrite(XL362_TIME_ACT, 0x0C);						//set active time equip 12/50s
+    ADXL362RegisterWrite(XL362_TIME_ACT, 0x06);						//set active time equip 6/25s
     ReadValueTemp = ADXL362RegisterRead(XL362_TIME_ACT);
     rfid_printf("|*-set TIME_ACT register = 0x%02x-------*|\n", ReadValueTemp);
 
-    if(ReadValueTemp != 0x0C)
+    if(ReadValueTemp != 0x06)
     {
         ErrorIndex = 0x03;
         Error_Handler();
@@ -556,11 +559,11 @@ void ADXL362_Init(void)
         Error_Handler();
     }
 
-    ADXL362RegisterWrite(XL362_TIME_INACT_L, 0x0C);						//set inactive time equip 12/50s
+    ADXL362RegisterWrite(XL362_TIME_INACT_L, 0x06);						//set inactive time equip 6/25s
     ReadValueTemp = ADXL362RegisterRead(XL362_TIME_INACT_L);
     rfid_printf("|*-set TIME_INACT_L register = 0x%02x---*|\n", ReadValueTemp);
 
-    if(ReadValueTemp != 0x0C)
+    if(ReadValueTemp != 0x06)
     {
         ErrorIndex = 0x03;
         Error_Handler();
@@ -626,11 +629,11 @@ void ADXL362_Init(void)
         Error_Handler();
     }
 
-    ADXL362RegisterWrite(XL362_FILTER_CTL, 0x52);             	//select 4g range,ODR:50Hz
+    ADXL362RegisterWrite(XL362_FILTER_CTL, 0x51);             	//select 4g range,ODR:25Hz
     ReadValueTemp = ADXL362RegisterRead(XL362_FILTER_CTL);
     rfid_printf("|*-set FILTER_CTL register = 0x%02x-----*|\n", ReadValueTemp);
 
-    if(ReadValueTemp != 0x52)
+    if(ReadValueTemp != 0x51)
     {
         ErrorIndex = 0x03;
         Error_Handler();
@@ -882,79 +885,112 @@ void ADXL362FifoProcess(void)
             detect_step(&peak_value, &slid_reg, &valid_step_filter);
         }
     }
-		
-		CC1101Send3AxisHandler();
-
-    #else
-    memset(three_axis_info, 0, sizeof(three_axis_info));
-
-    // If the fifo data is not aligned. Organize the data
-    if ((fifo[1] >> 6 & 0x03) == 0x1)
-    {
-        for(uint16_t i = 0; i < sizeof(fifo) - 4; i++)
-        {
-            fifo[i] = fifo[i + 4];
-        }
-    }
-    else if ((fifo[1] >> 6 & 0x03) == 0x2)
-    {
-        for(uint16_t i = 0; i < sizeof(fifo) - 2; i++)
-        {
-            fifo[i] = fifo[i + 2];
-        }
-    }
 
     CC1101Send3AxisHandler();
 
-    /*
-    for(uint16_t i = 0; i < sizeof(fifo) / 6; i++)
-    {
-        rfid_printf("F[%d] = %x ", 6 * i, fifo[6 * i]);
-        rfid_printf("F[%d] = %x ", 6 * i + 1, fifo[6 * i + 1]);
-        rfid_printf("F[%d] = %x ", 6 * i + 2, fifo[6 * i + 2]);
-        rfid_printf("F[%d] = %x ", 6 * i + 3, fifo[6 * i + 3]);
-        rfid_printf("F[%d] = %x ", 6 * i + 4, fifo[6 * i + 4]);
-        rfid_printf("F[%d] = %x\n", 6 * i + 5, fifo[6 * i + 5]);
-    }
+    #else
+    // 1.init acceler array
 
-    // 1.To 16-bit complement
-    for(uint16_t i = 0; i < (sizeof(fifo) / 6) * 3; i++)
+
+    // 2.To 16-bit complement
+    for(uint16_t i = 0; i < (_FIFO_SAMPLES_LEN / 6) * 3; i++)
     {
         if ((fifo[2 * i + 1] >> 6 & 0x03) == 0x0)
         {
             if ((fifo[2 * i + 1] & 0x08))
-                xAxis[i / 3] = (short int)(fifo[2 * i] + (0x0f00 & (fifo[2 * i + 1] << 8)) + 0xf000);
+                three_axis_info[i / 3].x = (short int)(fifo[2 * i] + (0x0f00 & (fifo[2 * i + 1] << 8)) + 0xf000);
             else
-                xAxis[i / 3] = (short int)(fifo[2 * i] + (0x0f00 & (fifo[2 * i + 1] << 8)));
+                three_axis_info[i / 3].x = (short int)(fifo[2 * i] + (0x0f00 & (fifo[2 * i + 1] << 8)));
 
-    //				rfid_printf("X[%d] = %hd, %hx ", i/3, xAxis[i/3], xAxis[i/3]);
-            rfid_printf("samples[%d] :%hd,", i / 3, xAxis[i / 3]);
+            //				rfid_printf("X[%d] = %hd, %hx ", i/3, xAxis[i/3], xAxis[i/3]);
+//            rfid_printf("samples[%d] :%hd,", i / 3, three_axis_info[i / 3].x);
         }
         else if ((fifo[2 * i + 1] >> 6 & 0x03) == 0x1)
         {
             if ((fifo[2 * i + 1] & 0x08))
-                yAxis[i / 3] = (short int)(fifo[2 * i] + (0x0f00 & (fifo[2 * i + 1] << 8)) + 0xf000);
+                three_axis_info[i / 3].y = (short int)(fifo[2 * i] + (0x0f00 & (fifo[2 * i + 1] << 8)) + 0xf000);
             else
-                yAxis[i / 3] = (short int)(fifo[2 * i] + (0x0f00 & (fifo[2 * i + 1] << 8)));
+                three_axis_info[i / 3].y = (short int)(fifo[2 * i] + (0x0f00 & (fifo[2 * i + 1] << 8)));
 
-    //				rfid_printf("Y[%d] = %hd, %hx ", i/3, yAxis[i/3], yAxis[i/3]);
-            rfid_printf("%hd,", yAxis[i / 3]);
+            //				rfid_printf("Y[%d] = %hd, %hx ", i/3, yAxis[i/3], yAxis[i/3]);
+//            rfid_printf("%hd,", three_axis_info[i / 3].y);
         }
         else if ((fifo[2 * i + 1] >> 6 & 0x03) == 0x2)
         {
             if ((fifo[2 * i + 1] & 0x08))
-                zAxis[i / 3] = (short int)(fifo[2 * i] + (0x0f00 & (fifo[2 * i + 1] << 8)) + 0xf000);
+                three_axis_info[i / 3].z = (short int)(fifo[2 * i] + (0x0f00 & (fifo[2 * i + 1] << 8)) + 0xf000);
             else
-                zAxis[i / 3] = (short int)(fifo[2 * i] + (0x0f00 & (fifo[2 * i + 1] << 8)));
+                three_axis_info[i / 3].z = (short int)(fifo[2 * i] + (0x0f00 & (fifo[2 * i + 1] << 8)));
 
-    //				rfid_printf("Z[%d] = %hd, %hx\n", i/3, zAxis[i/3], zAxis[i/3]);
-            rfid_printf("%hd\n", zAxis[i / 3]);
+            //				rfid_printf("Z[%d] = %hd, %hx\n", i/3, zAxis[i/3], zAxis[i/3]);
+//            rfid_printf("%hd\n", three_axis_info[i / 3].z);
         }
     }
 
-    ADXL362RegisterRead(XL362_STATUS);
-    rfid_printf("XL362_STATUS: %x\n", ADXL362RegisterRead(XL362_STATUS));
-    */
+    // 3.Average Filter
+    for(uint16_t i = 0; i < (_FIFO_SAMPLES_LEN / 6); i++)
+    {
+        filter_avg.info[2] =  filter_avg.info[1];
+        filter_avg.info[1] =  filter_avg.info[0];
+        filter_avg.info[0] =  three_axis_info[i];
+
+        filter_calculate(&filter_avg, &axis_info);
+        three_axis_info[i] = axis_info;
+        filter_avg.count++;
+//        rfid_printf("average filter[%d] :%hd,%hd,%hd\n", i, three_axis_info[i].x, three_axis_info[i].y, three_axis_info[i].z);
+    }
+
+    rfid_printf("filter_avg.count = %d\n", filter_avg.count);
+    filter_avg.count = 0;
+
+    // 4.Difference Derivation And Threshold Judge
+    for(uint16_t i = 0; i < (_FIFO_SAMPLES_LEN / 6); i++)
+    {
+        diff_reg_axis_info[1] = diff_reg_axis_info[0];
+        diff_reg_axis_info[0] = three_axis_info[i];
+
+        three_axis_info[i].x = diff_reg_axis_info[0].x - diff_reg_axis_info[1].x;
+        three_axis_info[i].y = diff_reg_axis_info[0].y - diff_reg_axis_info[1].y;
+        three_axis_info[i].z = diff_reg_axis_info[0].z - diff_reg_axis_info[1].z;
+				rfid_printf("difference[%d] :%hd,%hd,%hd\n", i, three_axis_info[i].x, three_axis_info[i].y, three_axis_info[i].z);
+
+        if (abs(three_axis_info[i].x) >= 200)
+        {
+            step.stepNum = step.stepNum + abs(three_axis_info[i].x) / 128;
+						rfid_printf("X step.stepNum = %d\n", step.stepNum);
+        }
+        if (abs(three_axis_info[i].y) >= 200)
+        {
+            step.stepNum = step.stepNum + abs(three_axis_info[i].y) / 128;
+						rfid_printf("Y step.stepNum = %d\n", step.stepNum);
+        }
+        if (abs(three_axis_info[i].z) >= 200)
+        {
+            step.stepNum = step.stepNum + abs(three_axis_info[i].z) / 128;
+						rfid_printf("Z step.stepNum = %d\n", step.stepNum);
+        }
+				
+        if (abs(three_axis_info[i].x) >= 150)
+        {
+            step.ingestionNum = step.ingestionNum + abs(three_axis_info[i].x) / 64;
+						rfid_printf("X step.ingestionNum = %d\n", step.ingestionNum);
+        }
+        if (abs(three_axis_info[i].y) >= 150)
+        {
+            step.ingestionNum = step.ingestionNum + abs(three_axis_info[i].y) / 64;
+						rfid_printf("Y step.ingestionNum = %d\n", step.ingestionNum);
+        }
+        if (abs(three_axis_info[i].z) >= 150)
+        {
+            step.ingestionNum = step.ingestionNum + abs(three_axis_info[i].z) / 64;
+						rfid_printf("Z step.ingestionNum = %d\n", step.ingestionNum);
+        }
+    }
+
+
+//    ADXL362RegisterRead(XL362_STATUS);
+//    rfid_printf("XL362_STATUS: %x\n", ADXL362RegisterRead(XL362_STATUS));
+
     #endif
 }
 

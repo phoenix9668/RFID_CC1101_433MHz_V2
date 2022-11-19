@@ -30,7 +30,8 @@
 #define _FIFO_SAMPLES_LEN     900
 #define _AXIS_LEN             170
 #define _FIR_LEN              5
-#define _FILTER_CNT			      4
+#define _FILTER_CNT			      3
+#define _DIFF_CNT			        2
 #define _SAMPLE_SIZE          50
 #define _DYNAMIC_PRECISION		30
 #define _ACTIVE_PRECISION     60
