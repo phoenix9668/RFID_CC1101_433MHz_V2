@@ -133,6 +133,7 @@ int main(void)
             HAL_Delay(delayRand);
             step.stepNum = 0;
             step.ingestionNum = 0;
+						memset(&action_classify, 0, sizeof(action_classify));
 
             for(uint8_t i = 0; i < _STEP_LOOPNUM; i++)
             {

@@ -45,17 +45,36 @@ typedef struct
 
 typedef struct
 {
-    uint32_t sample_num;
-    uint16_t valid_step_num;
-} valid_step_filter_t;
+    int32_t x;
+    int32_t y;
+    int32_t z;
+		uint16_t num;
+} average_info_t;
 
 typedef struct
 {
-    int16_t yStepAverage[_AXIS_LEN - 2];
-    int16_t yStepFilter[_AXIS_LEN - 2];
-    int16_t yIngestionAverage[_AXIS_LEN / 25 + 1 + 2];
-    int16_t yIngestionAverageOld[2];
-} y_axis_calc_t;
+	  uint16_t climb;
+    uint16_t movement;
+    uint16_t rest;
+    uint16_t ingestion;
+    uint16_t other;
+} action_classify_t;
+
+extern action_classify_t action_classify;
+
+typedef struct
+{
+    uint16_t low;
+    uint16_t normal;
+    uint16_t abovenormal;
+    uint16_t high;
+} threshold_judge_t;
+
+typedef struct
+{
+    uint32_t sample_num;
+    uint16_t valid_step_num;
+} valid_step_filter_t;
 
 /**
  * \brief           Buffer for FIFO
@@ -63,8 +82,10 @@ typedef struct
  */
 extern uint8_t fifo[_FIFO_LEN];
 extern axis_info_t three_axis_info[_AXIS_LEN];
+extern axis_info_t three_axis_average_info;
 extern valid_step_filter_t valid_step_filter;
-extern y_axis_calc_t y_axis_calc;
+extern uint8_t action_classify_array[6];
+
 
 typedef struct
 {
