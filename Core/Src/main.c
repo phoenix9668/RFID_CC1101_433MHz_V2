@@ -130,11 +130,12 @@ int main(void)
 
         if(rtc.twentyMinIndex == SET)
         {
-						delayRand = rand() % 10;
-						rfid_printf("delayRand = %d\n", delayRand);
-						HAL_Delay(delayRand);
+            delayRand = rand() % 10;
+            rfid_printf("delayRand = %d\n", delayRand);
+            HAL_Delay(delayRand);
             step.stepNum = 0;
             step.ingestionNum = 0;
+            memset(&action_classify, 0, sizeof(action_classify));
 
             for(uint8_t i = 0; i < _STEP_LOOPNUM; i++)
             {
@@ -154,14 +155,21 @@ int main(void)
 
             DATAEEPROM_Program(EEPROM_START_ADDR + 8, step.stepStage);
 
-            MX_SPI1_Init();
-            adc_detect();
-            RNG_Init();
-            RNG_Gen();
-            MX_CRC_Init();
-            CC1101SendHandler();
-            HAL_CRC_DeInit(&hcrc);
-            MX_SPI1_DeInit();
+            for(uint8_t i = 0; i < _STEP_LOOPNUM; i++)
+            {
+                if(step.stepArray[i] != 0)
+                {
+                    MX_SPI1_Init();
+                    adc_detect();
+                    RNG_Init();
+                    RNG_Gen();
+                    MX_CRC_Init();
+                    CC1101SendHandler();
+                    HAL_CRC_DeInit(&hcrc);
+                    MX_SPI1_DeInit();
+                    break;
+                }
+            }
 
             rtc.twentyMinIndex = RESET;
         }
@@ -184,11 +192,25 @@ int main(void)
             rfid_printf("XL362_STATUS2: %x\n", ADXL362RegisterRead(XL362_STATUS));
             memset(fifo, 0, sizeof(fifo));
             LL_IWDG_ReloadCounter(IWDG);
+            #if (_Original_Data_Algorithm == 0)
             ADXL362FifoRead(1024, fifo);
             ADXL362RegisterWrite(XL362_FIFO_CONTROL, 0x00);//select fifo is disabled
             ADXL362RegisterWrite(XL362_FIFO_CONTROL, 0x03);//select fifo triggered mode
             MX_SPI2_DeInit();
             ADXL362FifoProcess();
+            #elif (_Original_Data_Algorithm == 1)
+            ADXL362FifoRead(900, fifo);
+            MX_SPI2_DeInit();
+            MX_SPI1_Init();
+            MX_CRC_Init();
+            ADXL362FifoProcess();
+            HAL_CRC_DeInit(&hcrc);
+            MX_SPI1_DeInit();
+            #else
+            ADXL362FifoRead(900, fifo);
+            MX_SPI2_DeInit();
+            ADXL362FifoProcess();
+            #endif
             step.fifoOverrun = RESET;
         }
 
@@ -312,7 +334,7 @@ void System_Initial(void)
     ADXL362_Init();
     /*##-2- initial CC1101 peripheral,configure it's address and sync code ##*/
     CC1101_POWER_ON();
-    RFIDInitial(0x00, 0x1234, IDLE_MODE);
+    RFIDInitial(0x07, 0x7890, IDLE_MODE);
     CC1101_POWER_DOWN();
 
     resetCnt = (uint16_t)(0x0000FFFF & DATAEEPROM_Read(EEPROM_START_ADDR + 12));
@@ -331,6 +353,8 @@ void System_Initial(void)
 
     step.stepStage = (uint8_t)(0x000000FF & DATAEEPROM_Read(EEPROM_START_ADDR + 8));
     rtc.tenSecTick = (uint8_t)(0x000000FF & DATAEEPROM_Read(EEPROM_START_ADDR + 16));
+    rtc.tenSecIndex = RESET;
+    rtc.twentyMinIndex = RESET;
 
     rfid_printf("\nstepArray = ");
 

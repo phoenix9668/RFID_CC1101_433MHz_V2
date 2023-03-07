@@ -17,18 +17,61 @@
 #ifndef _ADXL362DRIVER_H_
 #define _ADXL362DRIVER_H_
 
-#define _STEP_LOOPNUM    36  // 20min per step,have 36 steps,equal 12 hours
-#define _FIFO_LEN        1024
-#define _AXIS_LEN        170
-#define _FIR_LEN         5
+#define max(a,b) ((a) > (b) ? (a) : (b))
+#define min(a,b) ((a) < (b) ? (a) : (b))
+
+#define _STEP_LOOPNUM         36  // 20min per step,have 36 steps,equal 12 hours
+#define _FIFO_LEN             1024
+#define _FIFO_SAMPLES_LEN     900
+#define _AXIS_LEN             170
+#define _FILTER_CNT			      3
+#define _DIFF_CNT			        2
+#define _MEM_ROWS			        18
+#define _MEM_COLS			        3
+
+typedef struct
+{
+    int16_t x;
+    int16_t y;
+    int16_t z;
+} axis_info_int16_t;
+
+typedef struct
+{
+    int32_t x;
+    int32_t y;
+    int32_t z;
+} axis_info_int32_t;
+
+typedef struct
+{
+    uint16_t low;
+    uint16_t normal;
+    uint16_t abovenormal;
+    uint16_t high;
+} threshold_judge_t;
+
+typedef struct
+{
+    uint16_t rest;
+    uint16_t ingestion;
+    uint16_t movement;
+    uint16_t climb;
+    uint16_t ruminate;
+    uint16_t other;
+} action_classify_t;
+
+extern action_classify_t action_classify;
 
 /**
  * \brief           Buffer for FIFO
  * \note            SPI
  */
 extern uint8_t fifo[_FIFO_LEN];
-extern short int yAxis[_AXIS_LEN];
-extern short int yStepFilter[_AXIS_LEN-2];
+extern axis_info_int16_t three_axis_info[_AXIS_LEN];
+extern axis_info_int32_t three_axis_average_info;
+extern int32_t memory_array[_MEM_ROWS][_MEM_COLS];
+extern uint8_t action_classify_array[6];
 
 typedef struct
 {
@@ -87,6 +130,5 @@ void ADXL362FifoRead(unsigned int NumberofRegisters, unsigned char *RegisterData
 uint16_t ADXL362FifoEntries(void);
 void ADXL362FifoProcess(void);
 void ADXL362_Init(void);
-void ADXL362_ReInit(uint8_t thresh_act_h, uint8_t thresh_act_l, uint8_t time_act, uint8_t thresh_inact_h, uint8_t thresh_inact_l, uint8_t time_inact_h, uint8_t time_inact_l, uint8_t filter_ctl);
 
 #endif
