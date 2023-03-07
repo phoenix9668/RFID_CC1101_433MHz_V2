@@ -938,7 +938,7 @@ void CC1101SendHandler(void)
 
     rfid_printf("\n");
 
-    RFIDInitial(0x00, 0x1234, IDLE_MODE);
+    RFIDInitial(0x07, 0x7890, IDLE_MODE);
     CC1101SendPacket(cc1101.sendBuffer, _RFID_SIZE + sizeof(RandomString) + 4 * _STEP_LOOPNUM + sizeof(step.stepStage) + _BATTERY_SIZE + _RESETCNT_SIZE + _CRC32_SIZE, ADDRESS_CHECK);
     CC1101SetIdle();
     CC1101WriteCmd(CC1101_SPWD);
@@ -974,18 +974,37 @@ void CC1101Send3AxisHandler(void)
         cc1101.sendBuffer[6] = j;
 
         cc1101.sendBuffer[7] = action_classify_array[j];
-				cc1101.sendBuffer[8] = (uint8_t)(0xFF & action_classify.climb >> 8);
-				cc1101.sendBuffer[9] = (uint8_t)(0xFF & action_classify.climb);
-				cc1101.sendBuffer[10] = (uint8_t)(0xFF & action_classify.movement >> 8);
-				cc1101.sendBuffer[11] = (uint8_t)(0xFF & action_classify.movement);
-				cc1101.sendBuffer[12] = (uint8_t)(0xFF & action_classify.rest >> 8);
-				cc1101.sendBuffer[13] = (uint8_t)(0xFF & action_classify.rest);
-				cc1101.sendBuffer[14] = (uint8_t)(0xFF & action_classify.ingestion >> 8);
-				cc1101.sendBuffer[15] = (uint8_t)(0xFF & action_classify.ingestion);
-				cc1101.sendBuffer[16] = (uint8_t)(0xFF & action_classify.other >> 8);
-				cc1101.sendBuffer[17] = (uint8_t)(0xFF & action_classify.other);
-				cc1101.sendBuffer[18] = (uint8_t)(0xFF & (int16_t)old_all_average_info.y >> 8);
-				cc1101.sendBuffer[19] = (uint8_t)(0xFF & (int16_t)old_all_average_info.y);
+				cc1101.sendBuffer[8] = (uint8_t)(0xFF & action_classify.rest >> 8);
+				cc1101.sendBuffer[9] = (uint8_t)(0xFF & action_classify.rest);
+				cc1101.sendBuffer[10] = (uint8_t)(0xFF & action_classify.ingestion >> 8);
+				cc1101.sendBuffer[11] = (uint8_t)(0xFF & action_classify.ingestion);
+				cc1101.sendBuffer[12] = (uint8_t)(0xFF & action_classify.movement >> 8);
+				cc1101.sendBuffer[13] = (uint8_t)(0xFF & action_classify.movement);
+				cc1101.sendBuffer[14] = (uint8_t)(0xFF & action_classify.climb >> 8);
+				cc1101.sendBuffer[15] = (uint8_t)(0xFF & action_classify.climb);
+				cc1101.sendBuffer[16] = (uint8_t)(0xFF & action_classify.ruminate >> 8);
+				cc1101.sendBuffer[17] = (uint8_t)(0xFF & action_classify.ruminate);
+				cc1101.sendBuffer[18] = (uint8_t)(0xFF & action_classify.other >> 8);
+				cc1101.sendBuffer[19] = (uint8_t)(0xFF & action_classify.other);
+				
+//				cc1101.sendBuffer[20] = (uint8_t)(0xFF & memory_array[0][0]);
+//				cc1101.sendBuffer[21] = (uint8_t)(0xFF & memory_array[1][0]);
+//				cc1101.sendBuffer[22] = (uint8_t)(0xFF & memory_array[2][0]);
+//				cc1101.sendBuffer[23] = (uint8_t)(0xFF & memory_array[3][0]);
+//				cc1101.sendBuffer[24] = (uint8_t)(0xFF & memory_array[4][0]);
+//				cc1101.sendBuffer[25] = (uint8_t)(0xFF & memory_array[5][0]);
+//				cc1101.sendBuffer[26] = (uint8_t)(0xFF & memory_array[6][0]);
+//				cc1101.sendBuffer[27] = (uint8_t)(0xFF & memory_array[7][0]);
+//				cc1101.sendBuffer[28] = (uint8_t)(0xFF & memory_array[8][0]);
+//				cc1101.sendBuffer[29] = (uint8_t)(0xFF & memory_array[9][0]);
+//				cc1101.sendBuffer[30] = (uint8_t)(0xFF & memory_array[10][0]);
+//				cc1101.sendBuffer[31] = (uint8_t)(0xFF & memory_array[11][0]);
+//				cc1101.sendBuffer[32] = (uint8_t)(0xFF & memory_array[12][0]);
+//				cc1101.sendBuffer[33] = (uint8_t)(0xFF & memory_array[13][0]);
+//				cc1101.sendBuffer[34] = (uint8_t)(0xFF & memory_array[14][0]);
+//				cc1101.sendBuffer[35] = (uint8_t)(0xFF & memory_array[15][0]);
+//				cc1101.sendBuffer[36] = (uint8_t)(0xFF & memory_array[16][0]);
+//				cc1101.sendBuffer[37] = (uint8_t)(0xFF & memory_array[17][0]);
 
         for(uint8_t i = 0; i < (_FIFO_SAMPLES_LEN / 6); i++)
         {
@@ -1008,7 +1027,7 @@ void CC1101Send3AxisHandler(void)
 
         rfid_printf("\n");
 
-        RFIDInitial(0x00, 0x1234, IDLE_MODE);
+        RFIDInitial(0x07, 0x7890, IDLE_MODE);
         CC1101SendPacket(cc1101.sendBuffer, _RFID_SIZE + 14 + _FIFO_SAMPLES_LEN / 6 + _CRC32_SIZE, ADDRESS_CHECK);
         CC1101SetIdle();
         CC1101WriteCmd(CC1101_SPWD);

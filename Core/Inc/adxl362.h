@@ -20,47 +20,28 @@
 #define max(a,b) ((a) > (b) ? (a) : (b))
 #define min(a,b) ((a) < (b) ? (a) : (b))
 
-#define MOST_ACTIVE_NULL      0
-#define MOST_ACTIVE_X					1
-#define MOST_ACTIVE_Y					2
-#define MOST_ACTIVE_Z					3
-
 #define _STEP_LOOPNUM         36  // 20min per step,have 36 steps,equal 12 hours
 #define _FIFO_LEN             1024
 #define _FIFO_SAMPLES_LEN     900
 #define _AXIS_LEN             170
-#define _FIR_LEN              5
 #define _FILTER_CNT			      3
 #define _DIFF_CNT			        2
-#define _SAMPLE_SIZE          50
-#define _DYNAMIC_PRECISION		30
-#define _ACTIVE_PRECISION     60
+#define _MEM_ROWS			        18
+#define _MEM_COLS			        3
 
 typedef struct
 {
     int16_t x;
     int16_t y;
     int16_t z;
-} axis_info_t;
+} axis_info_int16_t;
 
 typedef struct
 {
     int32_t x;
     int32_t y;
     int32_t z;
-		uint16_t num;
-} average_info_t;
-
-typedef struct
-{
-	  uint16_t climb;
-    uint16_t movement;
-    uint16_t rest;
-    uint16_t ingestion;
-    uint16_t other;
-} action_classify_t;
-
-extern action_classify_t action_classify;
+} axis_info_int32_t;
 
 typedef struct
 {
@@ -72,20 +53,25 @@ typedef struct
 
 typedef struct
 {
-    uint32_t sample_num;
-    uint16_t valid_step_num;
-} valid_step_filter_t;
+    uint16_t rest;
+    uint16_t ingestion;
+    uint16_t movement;
+    uint16_t climb;
+    uint16_t ruminate;
+    uint16_t other;
+} action_classify_t;
+
+extern action_classify_t action_classify;
 
 /**
  * \brief           Buffer for FIFO
  * \note            SPI
  */
 extern uint8_t fifo[_FIFO_LEN];
-extern axis_info_t three_axis_info[_AXIS_LEN];
-extern axis_info_t three_axis_average_info;
-extern valid_step_filter_t valid_step_filter;
+extern axis_info_int16_t three_axis_info[_AXIS_LEN];
+extern axis_info_int32_t three_axis_average_info;
+extern int32_t memory_array[_MEM_ROWS][_MEM_COLS];
 extern uint8_t action_classify_array[6];
-
 
 typedef struct
 {

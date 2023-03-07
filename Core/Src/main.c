@@ -324,7 +324,7 @@ void System_Initial(void)
     Get_SerialNum();
     ADXL362_Init();
     /*##-2- initial CC1101 peripheral,configure it's address and sync code ##*/
-    RFIDInitial(0x00, 0x1234, IDLE_MODE);
+    RFIDInitial(0x07, 0x7890, IDLE_MODE);
     CC1101WriteCmd(CC1101_SPWD);
 
     resetCnt = (uint16_t)(0x0000FFFF & DATAEEPROM_Read(EEPROM_START_ADDR + 12));
