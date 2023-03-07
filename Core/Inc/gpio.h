@@ -37,16 +37,8 @@ extern "C" {
 #define LED_GREEN_ON()				HAL_GPIO_WritePin(LED_GREEN_GPIO_Port, LED_GREEN_Pin, GPIO_PIN_SET)
 #define LED_GREEN_TOG()				HAL_GPIO_TogglePin(LED_GREEN_GPIO_Port, LED_GREEN_Pin)
 
-#define LED1_OFF()						HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, GPIO_PIN_RESET)
-#define LED1_ON()			        HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, GPIO_PIN_SET)
-#define LED1_TOG()				    HAL_GPIO_TogglePin(LED1_GPIO_Port, LED1_Pin)
-
-#define LED2_OFF()				    HAL_GPIO_WritePin(LED2_GPIO_Port, LED2_Pin, GPIO_PIN_RESET)
-#define LED2_ON()				      HAL_GPIO_WritePin(LED2_GPIO_Port, LED2_Pin, GPIO_PIN_SET)
-#define LED2_TOG()				    HAL_GPIO_TogglePin(LED2_GPIO_Port, LED2_Pin)
-
-#define CC1101_POWER_DOWN()		HAL_GPIO_WritePin(PA15_GPIO_Port, PA15_Pin, GPIO_PIN_RESET)
-#define CC1101_POWER_ON()		  HAL_GPIO_WritePin(PA15_GPIO_Port, PA15_Pin, GPIO_PIN_SET)
+#define CC1101_POWER_DOWN()		HAL_GPIO_WritePin(PB5_GPIO_Port, PB5_Pin, GPIO_PIN_RESET)
+#define CC1101_POWER_ON()		  HAL_GPIO_WritePin(PB5_GPIO_Port, PB5_Pin, GPIO_PIN_SET)
 #define TX_EN_LOW()			      HAL_GPIO_WritePin(TX_EN_GPIO_Port, TX_EN_Pin, GPIO_PIN_RESET)
 #define TX_EN_HIGH()			    HAL_GPIO_WritePin(TX_EN_GPIO_Port, TX_EN_Pin, GPIO_PIN_SET)
 #define RX_EN_LOW()			      HAL_GPIO_WritePin(RX_EN_GPIO_Port, RX_EN_Pin, GPIO_PIN_RESET)
@@ -58,9 +50,6 @@ extern "C" {
 #define ADXL362_CSN_HIGH()		HAL_GPIO_WritePin(SPI2_CS_GPIO_Port, SPI2_CS_Pin, GPIO_PIN_SET)
 
 #define CC1101_MISO_READ()		HAL_GPIO_ReadPin(GPIOA, LL_GPIO_PIN_6)
-
-#define PC13_OFF()				    HAL_GPIO_WritePin(PC13_GPIO_Port, PC13_Pin, GPIO_PIN_RESET)
-#define PC13_ON()				      HAL_GPIO_WritePin(PC13_GPIO_Port, PC13_Pin, GPIO_PIN_SET)
 
 /* USER CODE END Private defines */
 

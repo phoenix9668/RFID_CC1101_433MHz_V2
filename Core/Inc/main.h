@@ -122,6 +122,8 @@ void Error_Handler(void);
 #define LED_GREEN_GPIO_Port GPIOA
 #define PA15_Pin LL_GPIO_PIN_15
 #define PA15_GPIO_Port GPIOA
+#define PB5_Pin LL_GPIO_PIN_5
+#define PB5_GPIO_Port GPIOB
 /* USER CODE BEGIN Private defines */
 void System_Initial(void);
 void Get_SerialNum(void);
