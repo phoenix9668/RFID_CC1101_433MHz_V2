@@ -36,6 +36,7 @@ uint8_t action;
 
 int32_t memory_array[_MEM_ROWS][_MEM_COLS];
 uint8_t memory_index = 0;
+uint8_t memory_index_o;
 uint8_t ingestion_cnt = 0;
 uint8_t rest_cnt = 0;
 uint8_t deta_a_cnt = 0;
@@ -609,33 +610,18 @@ void ADXL362FifoProcess(void)
             rfid_printf("average_info.y = %d\n", three_axis_average_info.y);
             rfid_printf("sum_info.y = %d\n", sum_info.y);
 
-            if (threshold_judge.low >= 24 && abs(three_axis_average_info.y) < 200)
-            {
-                action_classify.rest ++;
+            if (threshold_judge.low >= 24)
                 action = 1;																											// rest
-            }
             else if ((threshold_judge.normal + threshold_judge.abovenormal) > 11 && threshold_judge.high == 0 && three_axis_average_info.y >= 200)
-            {
-                action_classify.ingestion ++;
                 action = 2;																											// ingestion
-            }
             else if (three_axis_average_info.y > -200 && three_axis_average_info.y < 100 && sum_info.y > 400)
-            {
-                action_classify.movement ++;
                 action = 3;																											// movement
-            }
             else if (threshold_judge.high > 0 && three_axis_average_info.y <= -200)
-            {
-                action_classify.climb ++;
                 action = 4;																											// climb
-            }
             else
-            {
-                action_classify.other ++;
                 action = 6;																											//other
-            }
 
-            action_classify_array[((i + 1) / 25) - 1] = action;
+//            action_classify_array[((i + 1) / 25) - 1] = action;
 
             rfid_printf("action = %d\n", action);
             rfid_printf("action_classify.rest = %d\n", action_classify.rest);
@@ -644,12 +630,14 @@ void ADXL362FifoProcess(void)
             rfid_printf("action_classify.climb = %d\n", action_classify.climb);
             rfid_printf("action_classify.other = %d\n", action_classify.other);
 
+            // circular storage
             memory_array[memory_index][0] = action;
             memory_array[memory_index][1] = three_axis_average_info.y;
             memory_array[memory_index][2] = sum_info.y;
 
             rfid_printf("memory_array1:\n");
 
+            // print memory_array
             for (uint8_t i = 0; i < _MEM_ROWS; i++)
             {
                 for (uint8_t j = 0; j < _MEM_COLS; j++)
@@ -665,6 +653,7 @@ void ADXL362FifoProcess(void)
             else
                 memory_index += 1;
 
+            // eliminate redundant climb
             for (uint8_t i = 0; i < _MEM_ROWS; i++)
                 if(memory_array[i][0] == 4)
                 {
@@ -676,6 +665,7 @@ void ADXL362FifoProcess(void)
 
                     rfid_printf("memory_array2:\n");
 
+                    // print memory_array
                     for (uint8_t i = 0; i < _MEM_ROWS; i++)
                     {
                         for (uint8_t j = 0; j < _MEM_COLS; j++)
@@ -687,6 +677,7 @@ void ADXL362FifoProcess(void)
                     }
                 }
 
+            // if 2 >= 2 ==> 3 to 6
             ingestion_cnt = 0;
 
             for (uint8_t i = 0; i < _MEM_ROWS; i++)
@@ -698,6 +689,7 @@ void ADXL362FifoProcess(void)
                     if(memory_array[i][0] == 3)
                         memory_array[i][0] = 6;
 
+            // ruminate logic
             rest_cnt = 0;
             deta_a_cnt = 0;
             eighteen_average = 0;
@@ -723,15 +715,36 @@ void ADXL362FifoProcess(void)
                     for (uint8_t i = 0; i < _MEM_ROWS; i++)
                         sum_eighteen_average += abs(eighteen_average - memory_array[i][1]);
 
-                    if (sum_eighteen_average <= 400)
+                    if (sum_eighteen_average <= 400 && abs(eighteen_average) < 150)
                         for (uint8_t i = 0; i < _MEM_ROWS; i++)
                             memory_array[i][0] = 5;
                 }
+
+//                for (uint8_t i = 0; i < _MEM_ROWS; i++)
+//                    if(memory_array[i][0] == 5)
+//                        action_classify.ruminate ++;
             }
 
-            for (uint8_t i = 0; i < _MEM_ROWS; i++)
-                if(memory_array[i][0] == 5)
-                    action_classify.ruminate ++;
+            // delay 18s output
+            if (memory_index == 17)
+                memory_index_o = 0;
+            else
+                memory_index_o = memory_index + 1;
+
+            action_classify_array[((i + 1) / 25) - 1] = memory_array[memory_index_o][0];
+
+            if (memory_array[memory_index_o][0] == 1) // rest
+                action_classify.rest ++;
+            else if (memory_array[memory_index_o][0] == 2) // ingestion
+                action_classify.ingestion ++;
+            else if (memory_array[memory_index_o][0] == 3) // movement
+                action_classify.movement ++;
+            else if (memory_array[memory_index_o][0] == 4) // climb
+                action_classify.climb ++;
+            else if (memory_array[memory_index_o][0] == 5) // ruminate
+                action_classify.ruminate ++;
+            else //other
+                action_classify.other ++;
 
             memset(&threshold_judge, 0, sizeof(threshold_judge));
             memset(&three_axis_average_info, 0, sizeof(three_axis_average_info));
