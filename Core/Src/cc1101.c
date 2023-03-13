@@ -894,14 +894,38 @@ void CC1101SendHandler(void)
 
     for(uint8_t i = 0; i < _STEP_LOOPNUM; i++)
     {
-        cc1101.sendBuffer[_RFID_SIZE + sizeof(RandomString) + i * 2] = (uint8_t)(0xFF & step.stepArray[i] >> 8);
-        cc1101.sendBuffer[_RFID_SIZE + sizeof(RandomString) + i * 2 + 1] = (uint8_t)(0xFF & step.stepArray[i]);
+        cc1101.sendBuffer[_RFID_SIZE + sizeof(RandomString) + i * 2] = (uint8_t)(0xFF & step.restArray[i] >> 8);
+        cc1101.sendBuffer[_RFID_SIZE + sizeof(RandomString) + i * 2 + 1] = (uint8_t)(0xFF & step.restArray[i]);
     }
-
+		
     for(uint8_t i = 0; i < _STEP_LOOPNUM; i++)
     {
         cc1101.sendBuffer[_RFID_SIZE + sizeof(RandomString) + 2 * _STEP_LOOPNUM + i * 2] = (uint8_t)(0xFF & step.ingestionArray[i] >> 8);
         cc1101.sendBuffer[_RFID_SIZE + sizeof(RandomString) + 2 * _STEP_LOOPNUM + i * 2 + 1] = (uint8_t)(0xFF & step.ingestionArray[i]);
+    }
+		
+		for(uint8_t i = 0; i < _STEP_LOOPNUM; i++)
+    {
+        cc1101.sendBuffer[_RFID_SIZE + sizeof(RandomString) + 4 * _STEP_LOOPNUM + i * 2] = (uint8_t)(0xFF & step.movementArray[i] >> 8);
+        cc1101.sendBuffer[_RFID_SIZE + sizeof(RandomString) + 4 * _STEP_LOOPNUM + i * 2 + 1] = (uint8_t)(0xFF & step.movementArray[i]);
+    }
+
+    for(uint8_t i = 0; i < _STEP_LOOPNUM; i++)
+    {
+        cc1101.sendBuffer[_RFID_SIZE + sizeof(RandomString) + 6 * _STEP_LOOPNUM + i * 2] = (uint8_t)(0xFF & step.climbArray[i] >> 8);
+        cc1101.sendBuffer[_RFID_SIZE + sizeof(RandomString) + 6 * _STEP_LOOPNUM + i * 2 + 1] = (uint8_t)(0xFF & step.climbArray[i]);
+    }
+		
+    for(uint8_t i = 0; i < _STEP_LOOPNUM; i++)
+    {
+        cc1101.sendBuffer[_RFID_SIZE + sizeof(RandomString) + 8 * _STEP_LOOPNUM + i * 2] = (uint8_t)(0xFF & step.ruminateArray[i] >> 8);
+        cc1101.sendBuffer[_RFID_SIZE + sizeof(RandomString) + 8 * _STEP_LOOPNUM + i * 2 + 1] = (uint8_t)(0xFF & step.ruminateArray[i]);
+    }
+		
+    for(uint8_t i = 0; i < _STEP_LOOPNUM; i++)
+    {
+        cc1101.sendBuffer[_RFID_SIZE + sizeof(RandomString) + 10 * _STEP_LOOPNUM + i * 2] = (uint8_t)(0xFF & step.otherArray[i] >> 8);
+        cc1101.sendBuffer[_RFID_SIZE + sizeof(RandomString) + 10 * _STEP_LOOPNUM + i * 2 + 1] = (uint8_t)(0xFF & step.otherArray[i]);
     }
 
 //    for(uint8_t i = 0; i < _STEP_LOOPNUM; i++)
@@ -916,20 +940,20 @@ void CC1101SendHandler(void)
 //        cc1101.sendBuffer[_RFID_SIZE + sizeof(RandomString) + 2 * _STEP_LOOPNUM + i * 2 + 1] = i * 2 + 1;
 //    }
 
-    cc1101.sendBuffer[_RFID_SIZE + sizeof(RandomString) + 4 * _STEP_LOOPNUM] = step.stepStage;
-    cc1101.sendBuffer[_RFID_SIZE + sizeof(RandomString) + 4 * _STEP_LOOPNUM + sizeof(step.stepStage)] = 0xD1;
-    cc1101.sendBuffer[_RFID_SIZE + sizeof(RandomString) + 4 * _STEP_LOOPNUM + sizeof(step.stepStage) + 1] = 0xD1;
-    cc1101.sendBuffer[_RFID_SIZE + sizeof(RandomString) + 4 * _STEP_LOOPNUM + sizeof(step.stepStage) + _BATTERY_SIZE] = (uint8_t)(0xFF & resetCnt >> 8);
-    cc1101.sendBuffer[_RFID_SIZE + sizeof(RandomString) + 4 * _STEP_LOOPNUM + sizeof(step.stepStage) + _BATTERY_SIZE + 1] = (uint8_t)(0xFF & resetCnt);
+    cc1101.sendBuffer[_RFID_SIZE + sizeof(RandomString) + 12 * _STEP_LOOPNUM] = step.stepStage;
+    cc1101.sendBuffer[_RFID_SIZE + sizeof(RandomString) + 12 * _STEP_LOOPNUM + sizeof(step.stepStage)] = 0xD1;
+    cc1101.sendBuffer[_RFID_SIZE + sizeof(RandomString) + 12 * _STEP_LOOPNUM + sizeof(step.stepStage) + 1] = 0xD1;
+    cc1101.sendBuffer[_RFID_SIZE + sizeof(RandomString) + 12 * _STEP_LOOPNUM + sizeof(step.stepStage) + _BATTERY_SIZE] = (uint8_t)(0xFF & resetCnt >> 8);
+    cc1101.sendBuffer[_RFID_SIZE + sizeof(RandomString) + 12 * _STEP_LOOPNUM + sizeof(step.stepStage) + _BATTERY_SIZE + 1] = (uint8_t)(0xFF & resetCnt);
 
-    cc1101.crcValue = ~HAL_CRC_Calculate(&hcrc, (uint32_t *)cc1101.sendBuffer, (uint32_t)(_RFID_SIZE + sizeof(RandomString) + 4 * _STEP_LOOPNUM + sizeof(step.stepStage) + _BATTERY_SIZE + _RESETCNT_SIZE));
-    rfid_printf("BufferLength = %d\n", _RFID_SIZE + sizeof(RandomString) + 4 * _STEP_LOOPNUM + sizeof(step.stepStage) + _BATTERY_SIZE + _RESETCNT_SIZE);
+    cc1101.crcValue = ~HAL_CRC_Calculate(&hcrc, (uint32_t *)cc1101.sendBuffer, (uint32_t)(_RFID_SIZE + sizeof(RandomString) + 12 * _STEP_LOOPNUM + sizeof(step.stepStage) + _BATTERY_SIZE + _RESETCNT_SIZE));
+    rfid_printf("BufferLength = %d\n", _RFID_SIZE + sizeof(RandomString) + 12 * _STEP_LOOPNUM + sizeof(step.stepStage) + _BATTERY_SIZE + _RESETCNT_SIZE);
     rfid_printf("crcValue = %x\n", cc1101.crcValue);
 
-    cc1101.sendBuffer[_RFID_SIZE + sizeof(RandomString) + 4 * _STEP_LOOPNUM + sizeof(step.stepStage) + _BATTERY_SIZE + _RESETCNT_SIZE] = (uint8_t)(0xFF & cc1101.crcValue >> 24);
-    cc1101.sendBuffer[_RFID_SIZE + sizeof(RandomString) + 4 * _STEP_LOOPNUM + sizeof(step.stepStage) + _BATTERY_SIZE + _RESETCNT_SIZE + 1] = (uint8_t)(0xFF & cc1101.crcValue >> 16);
-    cc1101.sendBuffer[_RFID_SIZE + sizeof(RandomString) + 4 * _STEP_LOOPNUM + sizeof(step.stepStage) + _BATTERY_SIZE + _RESETCNT_SIZE + 2] = (uint8_t)(0xFF & cc1101.crcValue >> 8);
-    cc1101.sendBuffer[_RFID_SIZE + sizeof(RandomString) + 4 * _STEP_LOOPNUM + sizeof(step.stepStage) + _BATTERY_SIZE + _RESETCNT_SIZE + 3] = (uint8_t)(0xFF & cc1101.crcValue);
+    cc1101.sendBuffer[_RFID_SIZE + sizeof(RandomString) + 12 * _STEP_LOOPNUM + sizeof(step.stepStage) + _BATTERY_SIZE + _RESETCNT_SIZE] = (uint8_t)(0xFF & cc1101.crcValue >> 24);
+    cc1101.sendBuffer[_RFID_SIZE + sizeof(RandomString) + 12 * _STEP_LOOPNUM + sizeof(step.stepStage) + _BATTERY_SIZE + _RESETCNT_SIZE + 1] = (uint8_t)(0xFF & cc1101.crcValue >> 16);
+    cc1101.sendBuffer[_RFID_SIZE + sizeof(RandomString) + 12 * _STEP_LOOPNUM + sizeof(step.stepStage) + _BATTERY_SIZE + _RESETCNT_SIZE + 2] = (uint8_t)(0xFF & cc1101.crcValue >> 8);
+    cc1101.sendBuffer[_RFID_SIZE + sizeof(RandomString) + 12 * _STEP_LOOPNUM + sizeof(step.stepStage) + _BATTERY_SIZE + _RESETCNT_SIZE + 3] = (uint8_t)(0xFF & cc1101.crcValue);
 
     for(uint16_t i = 0; i < sizeof(cc1101.sendBuffer); i++)
     {
@@ -938,8 +962,8 @@ void CC1101SendHandler(void)
 
     rfid_printf("\n");
 
-    RFIDInitial(0x07, 0x7890, IDLE_MODE);
-    CC1101SendPacket(cc1101.sendBuffer, _RFID_SIZE + sizeof(RandomString) + 4 * _STEP_LOOPNUM + sizeof(step.stepStage) + _BATTERY_SIZE + _RESETCNT_SIZE + _CRC32_SIZE, ADDRESS_CHECK);
+    RFIDInitial(0x00, 0x1234, IDLE_MODE);
+    CC1101SendPacket(cc1101.sendBuffer, _RFID_SIZE + sizeof(RandomString) + 12 * _STEP_LOOPNUM + sizeof(step.stepStage) + _BATTERY_SIZE + _RESETCNT_SIZE + _CRC32_SIZE, ADDRESS_CHECK);
     CC1101SetIdle();
     CC1101WriteCmd(CC1101_SPWD);
     CC1101_GDO_DeInit();
@@ -1027,7 +1051,7 @@ void CC1101Send3AxisHandler(void)
 
         rfid_printf("\n");
 
-        RFIDInitial(0x07, 0x7890, IDLE_MODE);
+        RFIDInitial(0x00, 0x1234, IDLE_MODE);
         CC1101SendPacket(cc1101.sendBuffer, _RFID_SIZE + 14 + 18 + _FIFO_SAMPLES_LEN / 6 + _CRC32_SIZE, ADDRESS_CHECK);
         CC1101SetIdle();
         CC1101WriteCmd(CC1101_SPWD);

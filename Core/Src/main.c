@@ -118,11 +118,19 @@ int main(void)
         if(rtc.tenSecIndex == SET)
         {
             DATAEEPROM_Program(EEPROM_START_ADDR + 16, (uint32_t) rtc.tenSecTick);
-            step.stepArray[step.stepStage] = step.stepNum;
-            step.ingestionArray[step.stepStage] = step.ingestionNum;
+            step.restArray[step.stepStage] = action_classify.rest;
+            step.ingestionArray[step.stepStage] = action_classify.ingestion;
+						step.movementArray[step.stepStage] = action_classify.movement;
+						step.climbArray[step.stepStage] = action_classify.climb;
+						step.ruminateArray[step.stepStage] = action_classify.ruminate;
+						step.otherArray[step.stepStage] = action_classify.other;
             DATAEEPROM_Program(EEPROM_START_ADDR + 8, step.stepStage);
-            DATAEEPROM_Program((EEPROM_START_ADDR + 0x100 + 4 * step.stepStage), (uint32_t)step.stepArray[step.stepStage]);
-            DATAEEPROM_Program((EEPROM_START_ADDR + 0x200 + 4 * step.stepStage), (uint32_t)step.ingestionArray[step.stepStage]);
+            DATAEEPROM_Program((EEPROM_START_ADDR + 0x100 + 4 * step.stepStage), (uint32_t)step.restArray[step.stepStage]);
+            DATAEEPROM_Program((EEPROM_START_ADDR + 0x130 + 4 * step.stepStage), (uint32_t)step.ingestionArray[step.stepStage]);
+						DATAEEPROM_Program((EEPROM_START_ADDR + 0x160 + 4 * step.stepStage), (uint32_t)step.movementArray[step.stepStage]);
+						DATAEEPROM_Program((EEPROM_START_ADDR + 0x190 + 4 * step.stepStage), (uint32_t)step.climbArray[step.stepStage]);
+						DATAEEPROM_Program((EEPROM_START_ADDR + 0x1C0 + 4 * step.stepStage), (uint32_t)step.ruminateArray[step.stepStage]);
+						DATAEEPROM_Program((EEPROM_START_ADDR + 0x200 + 4 * step.stepStage), (uint32_t)step.otherArray[step.stepStage]);
             rtc.tenSecIndex = RESET;
         }
 
@@ -131,8 +139,6 @@ int main(void)
             delayRand = rand() % 10;
             rfid_printf("delayRand = %d\n", delayRand);
             HAL_Delay(delayRand);
-            step.stepNum = 0;
-            step.ingestionNum = 0;
             memset(&action_classify, 0, sizeof(action_classify));
 
             for(uint8_t i = 0; i < _STEP_LOOPNUM; i++)
@@ -142,7 +148,7 @@ int main(void)
 
             rfid_printf("\nstepStage = %d\n", step.stepStage);
 
-            if(step.stepStage == (_STEP_LOOPNUM - 1))
+            if(step.stepStage >= (_STEP_LOOPNUM - 1))
             {
                 step.stepStage = 0;
             }
@@ -155,7 +161,7 @@ int main(void)
 
             for(uint8_t i = 0; i < _STEP_LOOPNUM; i++)
             {
-                if(step.stepArray[i] != 0)
+                if(step.movementArray[i] != 0)
                 {
                     MX_SPI1_Init();
                     RNG_Init();
@@ -324,7 +330,7 @@ void System_Initial(void)
     Get_SerialNum();
     ADXL362_Init();
     /*##-2- initial CC1101 peripheral,configure it's address and sync code ##*/
-    RFIDInitial(0x07, 0x7890, IDLE_MODE);
+    RFIDInitial(0x00, 0x1234, IDLE_MODE);
     CC1101WriteCmd(CC1101_SPWD);
 
     resetCnt = (uint16_t)(0x0000FFFF & DATAEEPROM_Read(EEPROM_START_ADDR + 12));
@@ -333,12 +339,32 @@ void System_Initial(void)
 
     for(uint8_t i = 0; i < _STEP_LOOPNUM; i++)
     {
-        step.stepArray[i] = (uint16_t)(0x0000FFFF & DATAEEPROM_Read(EEPROM_START_ADDR + 0x100 + 4 * i));
+        step.restArray[i] = (uint16_t)(0x0000FFFF & DATAEEPROM_Read(EEPROM_START_ADDR + 0x100 + 4 * i));
+    }
+		
+    for(uint8_t i = 0; i < _STEP_LOOPNUM; i++)
+    {
+        step.ingestionArray[i] = (uint16_t)(0x0000FFFF & DATAEEPROM_Read(EEPROM_START_ADDR + 0x130 + 4 * i));
+    }
+		
+    for(uint8_t i = 0; i < _STEP_LOOPNUM; i++)
+    {
+        step.movementArray[i] = (uint16_t)(0x0000FFFF & DATAEEPROM_Read(EEPROM_START_ADDR + 0x160 + 4 * i));
+    }
+		
+    for(uint8_t i = 0; i < _STEP_LOOPNUM; i++)
+    {
+        step.climbArray[i] = (uint16_t)(0x0000FFFF & DATAEEPROM_Read(EEPROM_START_ADDR + 0x190 + 4 * i));
+    }
+		
+    for(uint8_t i = 0; i < _STEP_LOOPNUM; i++)
+    {
+        step.ruminateArray[i] = (uint16_t)(0x0000FFFF & DATAEEPROM_Read(EEPROM_START_ADDR + 0x1C0 + 4 * i));
     }
 
     for(uint8_t i = 0; i < _STEP_LOOPNUM; i++)
     {
-        step.ingestionArray[i] = (uint16_t)(0x0000FFFF & DATAEEPROM_Read(EEPROM_START_ADDR + 0x200 + 4 * i));
+        step.otherArray[i] = (uint16_t)(0x0000FFFF & DATAEEPROM_Read(EEPROM_START_ADDR + 0x200 + 4 * i));
     }
 
     step.stepStage = (uint8_t)(0x000000FF & DATAEEPROM_Read(EEPROM_START_ADDR + 8));

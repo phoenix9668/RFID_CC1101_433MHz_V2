@@ -702,7 +702,7 @@ void ADXL362FifoProcess(void)
             if (rest_cnt <= 4)
             {
                 for (uint8_t i = 0; i < _MEM_ROWS; i++)
-                    if(memory_array[i][2] > 200 && memory_array[i][2] < 700)
+                    if(memory_array[i][2] > 130 && memory_array[i][2] < 700)
                         deta_a_cnt += 1;
 
                 if (deta_a_cnt >= 14)
@@ -757,7 +757,7 @@ void ADXL362FifoProcess(void)
         rfid_printf("action_classify_array[%d] = %d\n", i, action_classify_array[i]);
     }
 
-    CC1101Send3AxisHandler();
+//    CC1101Send3AxisHandler();
 
 //    ADXL362RegisterRead(XL362_STATUS);
 //    rfid_printf("XL362_STATUS: %x\n", ADXL362RegisterRead(XL362_STATUS));
