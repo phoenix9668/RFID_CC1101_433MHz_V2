@@ -894,17 +894,17 @@ void CC1101SendHandler(void)
 
     for(uint8_t i = 0; i < _STEP_LOOPNUM; i++)
     {
-        cc1101.sendBuffer[_RFID_SIZE + sizeof(RandomString) + i * 2] = (uint8_t)(0xFF & step.restArray[i] >> 8);
-        cc1101.sendBuffer[_RFID_SIZE + sizeof(RandomString) + i * 2 + 1] = (uint8_t)(0xFF & step.restArray[i]);
+        cc1101.sendBuffer[_RFID_SIZE + sizeof(RandomString) + i * 2] = (uint8_t)(0xFF & step.resetArray[i] >> 8);
+        cc1101.sendBuffer[_RFID_SIZE + sizeof(RandomString) + i * 2 + 1] = (uint8_t)(0xFF & step.resetArray[i]);
     }
-		
+
     for(uint8_t i = 0; i < _STEP_LOOPNUM; i++)
     {
         cc1101.sendBuffer[_RFID_SIZE + sizeof(RandomString) + 2 * _STEP_LOOPNUM + i * 2] = (uint8_t)(0xFF & step.ingestionArray[i] >> 8);
         cc1101.sendBuffer[_RFID_SIZE + sizeof(RandomString) + 2 * _STEP_LOOPNUM + i * 2 + 1] = (uint8_t)(0xFF & step.ingestionArray[i]);
     }
-		
-		for(uint8_t i = 0; i < _STEP_LOOPNUM; i++)
+
+    for(uint8_t i = 0; i < _STEP_LOOPNUM; i++)
     {
         cc1101.sendBuffer[_RFID_SIZE + sizeof(RandomString) + 4 * _STEP_LOOPNUM + i * 2] = (uint8_t)(0xFF & step.movementArray[i] >> 8);
         cc1101.sendBuffer[_RFID_SIZE + sizeof(RandomString) + 4 * _STEP_LOOPNUM + i * 2 + 1] = (uint8_t)(0xFF & step.movementArray[i]);
@@ -915,13 +915,13 @@ void CC1101SendHandler(void)
         cc1101.sendBuffer[_RFID_SIZE + sizeof(RandomString) + 6 * _STEP_LOOPNUM + i * 2] = (uint8_t)(0xFF & step.climbArray[i] >> 8);
         cc1101.sendBuffer[_RFID_SIZE + sizeof(RandomString) + 6 * _STEP_LOOPNUM + i * 2 + 1] = (uint8_t)(0xFF & step.climbArray[i]);
     }
-		
+
     for(uint8_t i = 0; i < _STEP_LOOPNUM; i++)
     {
         cc1101.sendBuffer[_RFID_SIZE + sizeof(RandomString) + 8 * _STEP_LOOPNUM + i * 2] = (uint8_t)(0xFF & step.ruminateArray[i] >> 8);
         cc1101.sendBuffer[_RFID_SIZE + sizeof(RandomString) + 8 * _STEP_LOOPNUM + i * 2 + 1] = (uint8_t)(0xFF & step.ruminateArray[i]);
     }
-		
+
     for(uint8_t i = 0; i < _STEP_LOOPNUM; i++)
     {
         cc1101.sendBuffer[_RFID_SIZE + sizeof(RandomString) + 10 * _STEP_LOOPNUM + i * 2] = (uint8_t)(0xFF & step.otherArray[i] >> 8);
@@ -962,11 +962,16 @@ void CC1101SendHandler(void)
 
     rfid_printf("\n");
 
-    RFIDInitial(0x00, 0x1234, IDLE_MODE);
-    CC1101SendPacket(cc1101.sendBuffer, _RFID_SIZE + sizeof(RandomString) + 12 * _STEP_LOOPNUM + sizeof(step.stepStage) + _BATTERY_SIZE + _RESETCNT_SIZE + _CRC32_SIZE, ADDRESS_CHECK);
-    CC1101SetIdle();
-    CC1101WriteCmd(CC1101_SPWD);
-    CC1101_GDO_DeInit();
+    for(uint8_t i = 0; i < 3; i++)
+    {
+        HAL_Delay(_TX_WAIT_TIME);
+        RFIDInitial(0xEF, 0x1234, IDLE_MODE);
+        CC1101SendPacket(cc1101.sendBuffer, _RFID_SIZE + sizeof(RandomString) + 12 * _STEP_LOOPNUM + sizeof(step.stepStage) + _BATTERY_SIZE + _RESETCNT_SIZE + _CRC32_SIZE, ADDRESS_CHECK);
+        CC1101SetIdle();
+        CC1101WriteCmd(CC1101_SPWD);
+        CC1101_GDO_DeInit();
+    }
+
     memset(&cc1101, 0, sizeof(cc1101));
 
     #if (_DEBUG == 1)
@@ -998,8 +1003,8 @@ void CC1101Send3AxisHandler(void)
         cc1101.sendBuffer[6] = j;
 
         cc1101.sendBuffer[7] = action_classify_array[j];
-        cc1101.sendBuffer[8] = (uint8_t)(0xFF & action_classify.rest >> 8);
-        cc1101.sendBuffer[9] = (uint8_t)(0xFF & action_classify.rest);
+        cc1101.sendBuffer[8] = (uint8_t)(0xFF & action_classify.reset >> 8);
+        cc1101.sendBuffer[9] = (uint8_t)(0xFF & action_classify.reset);
         cc1101.sendBuffer[10] = (uint8_t)(0xFF & action_classify.ingestion >> 8);
         cc1101.sendBuffer[11] = (uint8_t)(0xFF & action_classify.ingestion);
         cc1101.sendBuffer[12] = (uint8_t)(0xFF & action_classify.movement >> 8);
@@ -1051,7 +1056,7 @@ void CC1101Send3AxisHandler(void)
 
         rfid_printf("\n");
 
-        RFIDInitial(0x00, 0x1234, IDLE_MODE);
+        RFIDInitial(0xEF, 0x1234, IDLE_MODE);
         CC1101SendPacket(cc1101.sendBuffer, _RFID_SIZE + 14 + 18 + _FIFO_SAMPLES_LEN / 6 + _CRC32_SIZE, ADDRESS_CHECK);
         CC1101SetIdle();
         CC1101WriteCmd(CC1101_SPWD);

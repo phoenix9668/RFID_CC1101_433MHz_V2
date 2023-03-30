@@ -37,9 +37,17 @@ uint8_t action;
 int32_t memory_array[_MEM_ROWS][_MEM_COLS];
 uint8_t memory_index = 0;
 uint8_t memory_index_o;
+uint8_t mid_index = 0;
+int16_t max_val = -2000;
+int16_t min_val = 2000;
+uint8_t movement_cnt = 0;
+uint8_t climb_cnt = 0;
+uint8_t rest_cnt1 = 0;
+uint8_t rest_cnt2 = 0;
 uint8_t ingestion_cnt = 0;
 uint8_t rest_cnt = 0;
 uint8_t deta_a_cnt = 0;
+uint8_t jicha_cnt = 0;
 int16_t eighteen_average = 0;
 uint16_t sum_eighteen_average = 0;
 
@@ -573,7 +581,7 @@ void ADXL362FifoProcess(void)
             else
                 three_axis_info[i / 3].y = (short int)(fifo[2 * i] + (0x0f00 & (fifo[2 * i + 1] << 8)));
 
-            rfid_printf("samples[%d] :%hd\n", i / 3, three_axis_info[i / 3].y);
+//            rfid_printf("samples[%d] :%hd\n", i / 3, three_axis_info[i / 3].y);
         }
     }
 
@@ -584,6 +592,12 @@ void ADXL362FifoProcess(void)
     {
         diff_three_axis_info[1] = diff_three_axis_info[0];
         diff_three_axis_info[0] = three_axis_info[i];
+
+        if (three_axis_info[i].y > max_val)
+            max_val = three_axis_info[i].y;
+
+        if (three_axis_info[i].y < min_val)
+            min_val = three_axis_info[i].y;
 
         three_axis_average_info.y += three_axis_info[i].y;
         three_axis_info[i].y = diff_three_axis_info[0].y - diff_three_axis_info[1].y;
@@ -624,7 +638,7 @@ void ADXL362FifoProcess(void)
 //            action_classify_array[((i + 1) / 25) - 1] = action;
 
             rfid_printf("action = %d\n", action);
-            rfid_printf("action_classify.rest = %d\n", action_classify.rest);
+            rfid_printf("action_classify.rest = %d\n", action_classify.reset);
             rfid_printf("action_classify.ingestion = %d\n", action_classify.ingestion);
             rfid_printf("action_classify.movement = %d\n", action_classify.movement);
             rfid_printf("action_classify.climb = %d\n", action_classify.climb);
@@ -634,6 +648,7 @@ void ADXL362FifoProcess(void)
             memory_array[memory_index][0] = action;
             memory_array[memory_index][1] = three_axis_average_info.y;
             memory_array[memory_index][2] = sum_info.y;
+            memory_array[memory_index][3] = max_val - min_val;
 
             rfid_printf("memory_array1:\n");
 
@@ -648,36 +663,119 @@ void ADXL362FifoProcess(void)
                 rfid_printf("\n");
             }
 
+            // redundant movement among rest
+            movement_cnt = 0;
+            rest_cnt1 = 0;
+            rest_cnt2 = 0;
+
+            if (memory_index >= 9)
+                mid_index = memory_index - 9;
+            else
+                mid_index = memory_index + 9;
+
+            rfid_printf("memory_index = %d\n", memory_index);
+            rfid_printf("mid_index = %d\n", mid_index);
+
+            if(memory_array[mid_index][0] == 3)
+            {
+                for (uint8_t i = 0; i < _MEM_ROWS; i++)
+                    if(memory_array[i][0] == 3)
+                        movement_cnt += 1;
+
+                rfid_printf("movement_cnt = %d\n", movement_cnt);
+
+                if (movement_cnt == 1)
+                {
+                    if(mid_index < memory_index)
+                    {
+                        for (uint8_t i = mid_index; i < memory_index; i++)
+                            if(memory_array[i][0] == 1)
+                                rest_cnt1 += 1;
+
+                        for (uint8_t i = 0; i < mid_index; i++)
+                            if(memory_array[i][0] == 1)
+                                rest_cnt2 += 1;
+
+                        for (uint8_t i = memory_index; i < _MEM_ROWS; i++)
+                            if(memory_array[i][0] == 1)
+                                rest_cnt2 += 1;
+                    }
+                    else if (memory_index < mid_index)
+                    {
+                        for (uint8_t i = memory_index; i < mid_index; i++)
+                            if(memory_array[i][0] == 1)
+                                rest_cnt2 += 1;
+
+                        for (uint8_t i = 0; i < memory_index; i++)
+                            if(memory_array[i][0] == 1)
+                                rest_cnt1 += 1;
+
+                        for (uint8_t i = mid_index; i < _MEM_ROWS; i++)
+                            if(memory_array[i][0] == 1)
+                                rest_cnt1 += 1;
+                    }
+
+                    rfid_printf("rest_cnt1 = %d\n", rest_cnt1);
+                    rfid_printf("rest_cnt2 = %d\n", rest_cnt2);
+
+                    if (rest_cnt1 >= 4 && rest_cnt2 >= 4)
+                        memory_array[mid_index][0] = 1;
+                }
+            }
+
+            // redundant climb if movement less than 4
+            // eliminate redundant climb
+            movement_cnt = 0;
+            climb_cnt = 0;
+
+            if(memory_array[memory_index][0] == 4)
+            {
+                for (uint8_t i = 0; i < _MEM_ROWS; i++)
+                {
+                    if(memory_array[i][0] == 3)
+                        movement_cnt += 1;
+
+                    if(memory_array[i][0] == 4)
+                        climb_cnt += 1;
+                }
+
+                if (movement_cnt < 4)
+                    memory_array[memory_index][0] = 6;
+                else if(climb_cnt >= 2)
+                    memory_array[memory_index][0] = 3;
+            }
+
+            // index update
             if (memory_index >= 17)
                 memory_index = 0;
             else
                 memory_index += 1;
 
             // eliminate redundant climb
-            for (uint8_t i = 0; i < _MEM_ROWS; i++)
-                if(memory_array[i][0] == 4)
-                {
-                    for (uint8_t j = (i + 1); j < _MEM_ROWS; j++)
-                    {
-                        if (memory_array[j][0] == 4)
-                            memory_array[j][0] = 3;
-                    }
+//            for (uint8_t i = 0; i < _MEM_ROWS; i++)
+//                if(memory_array[i][0] == 4)
+//                {
+//                    for (uint8_t j = (i + 1); j < _MEM_ROWS; j++)
+//                    {
+//                        if (memory_array[j][0] == 4)
+//                            memory_array[j][0] = 3;
+//                    }
 
-                    rfid_printf("memory_array2:\n");
+//                    rfid_printf("memory_array2:\n");
 
-                    // print memory_array
-                    for (uint8_t i = 0; i < _MEM_ROWS; i++)
-                    {
-                        for (uint8_t j = 0; j < _MEM_COLS; j++)
-                        {
-                            rfid_printf("%d ", memory_array[i][j]);
-                        }
+//                    // print memory_array
+//                    for (uint8_t i = 0; i < _MEM_ROWS; i++)
+//                    {
+//                        for (uint8_t j = 0; j < _MEM_COLS; j++)
+//                        {
+//                            rfid_printf("%d ", memory_array[i][j]);
+//                        }
 
-                        rfid_printf("\n");
-                    }
-                }
+//                        rfid_printf("\n");
+//                    }
+//                }
 
-            // if 2 >= 2 ==> 3 to 6
+            // if ingestion_cnt >= 2 ==> 3 to 6
             ingestion_cnt = 0;
 
             for (uint8_t i = 0; i < _MEM_ROWS; i++)
@@ -692,6 +790,7 @@ void ADXL362FifoProcess(void)
             // ruminate logic
             rest_cnt = 0;
             deta_a_cnt = 0;
+            jicha_cnt = 0;
             eighteen_average = 0;
             sum_eighteen_average = 0;
 
@@ -702,10 +801,15 @@ void ADXL362FifoProcess(void)
             if (rest_cnt <= 4)
             {
                 for (uint8_t i = 0; i < _MEM_ROWS; i++)
+                {
                     if(memory_array[i][2] > 130 && memory_array[i][2] < 700)
                         deta_a_cnt += 1;
 
-                if (deta_a_cnt >= 14)
+                    if(memory_array[i][3] < 100)
+                        jicha_cnt += 1;
+                }
+
+                if (deta_a_cnt >= 14 && jicha_cnt >= 14)
                 {
                     for (uint8_t i = 0; i < _MEM_ROWS; i++)
                         eighteen_average += memory_array[i][1];
@@ -715,14 +819,10 @@ void ADXL362FifoProcess(void)
                     for (uint8_t i = 0; i < _MEM_ROWS; i++)
                         sum_eighteen_average += abs(eighteen_average - memory_array[i][1]);
 
-                    if (sum_eighteen_average <= 400 && abs(eighteen_average) < 150)
+                    if (sum_eighteen_average <= 400 && eighteen_average < 150)
                         for (uint8_t i = 0; i < _MEM_ROWS; i++)
                             memory_array[i][0] = 5;
                 }
-
-//                for (uint8_t i = 0; i < _MEM_ROWS; i++)
-//                    if(memory_array[i][0] == 5)
-//                        action_classify.ruminate ++;
             }
 
             // delay 18s output
@@ -734,7 +834,7 @@ void ADXL362FifoProcess(void)
             action_classify_array[((i + 1) / 25) - 1] = memory_array[memory_index_o][0];
 
             if (memory_array[memory_index_o][0] == 1) // rest
-                action_classify.rest ++;
+                action_classify.reset ++;
             else if (memory_array[memory_index_o][0] == 2) // ingestion
                 action_classify.ingestion ++;
             else if (memory_array[memory_index_o][0] == 3) // movement
@@ -749,6 +849,8 @@ void ADXL362FifoProcess(void)
             memset(&threshold_judge, 0, sizeof(threshold_judge));
             memset(&three_axis_average_info, 0, sizeof(three_axis_average_info));
             memset(&sum_info, 0, sizeof(sum_info));
+            max_val = -2000;
+            min_val = 2000;
         }
     }
 

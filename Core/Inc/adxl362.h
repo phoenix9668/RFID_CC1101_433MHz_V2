@@ -27,7 +27,7 @@
 #define _FILTER_CNT			      3
 #define _DIFF_CNT			        2
 #define _MEM_ROWS			        18
-#define _MEM_COLS			        3
+#define _MEM_COLS			        4
 
 typedef struct
 {
@@ -53,7 +53,7 @@ typedef struct
 
 typedef struct
 {
-    uint16_t rest;
+    uint16_t reset;
     uint16_t ingestion;
     uint16_t movement;
     uint16_t climb;
@@ -77,7 +77,7 @@ typedef struct
 {
     __IO uint8_t stepStage;
     __IO FlagStatus fifoOverrun;
-    __IO uint16_t restArray[_STEP_LOOPNUM];
+    __IO uint16_t resetArray[_STEP_LOOPNUM];
     __IO uint16_t ingestionArray[_STEP_LOOPNUM];
 		__IO uint16_t movementArray[_STEP_LOOPNUM];
 		__IO uint16_t climbArray[_STEP_LOOPNUM];

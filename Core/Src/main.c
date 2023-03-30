@@ -118,14 +118,14 @@ int main(void)
         if(rtc.tenSecIndex == SET)
         {
             DATAEEPROM_Program(EEPROM_START_ADDR + 16, (uint32_t) rtc.tenSecTick);
-            step.restArray[step.stepStage] = action_classify.rest;
+            step.resetArray[step.stepStage] = action_classify.reset;
             step.ingestionArray[step.stepStage] = action_classify.ingestion;
 						step.movementArray[step.stepStage] = action_classify.movement;
 						step.climbArray[step.stepStage] = action_classify.climb;
 						step.ruminateArray[step.stepStage] = action_classify.ruminate;
 						step.otherArray[step.stepStage] = action_classify.other;
             DATAEEPROM_Program(EEPROM_START_ADDR + 8, step.stepStage);
-            DATAEEPROM_Program((EEPROM_START_ADDR + 0x100 + 4 * step.stepStage), (uint32_t)step.restArray[step.stepStage]);
+            DATAEEPROM_Program((EEPROM_START_ADDR + 0x100 + 4 * step.stepStage), (uint32_t)step.resetArray[step.stepStage]);
             DATAEEPROM_Program((EEPROM_START_ADDR + 0x130 + 4 * step.stepStage), (uint32_t)step.ingestionArray[step.stepStage]);
 						DATAEEPROM_Program((EEPROM_START_ADDR + 0x160 + 4 * step.stepStage), (uint32_t)step.movementArray[step.stepStage]);
 						DATAEEPROM_Program((EEPROM_START_ADDR + 0x190 + 4 * step.stepStage), (uint32_t)step.climbArray[step.stepStage]);
@@ -143,7 +143,7 @@ int main(void)
 
             for(uint8_t i = 0; i < _STEP_LOOPNUM; i++)
             {
-                rfid_printf("%x ", step.stepArray[i]);
+                rfid_printf("%x ", step.movementArray[i]);
             }
 
             rfid_printf("\nstepStage = %d\n", step.stepStage);
@@ -330,7 +330,7 @@ void System_Initial(void)
     Get_SerialNum();
     ADXL362_Init();
     /*##-2- initial CC1101 peripheral,configure it's address and sync code ##*/
-    RFIDInitial(0x00, 0x1234, IDLE_MODE);
+    RFIDInitial(0xEF, 0x1234, IDLE_MODE);
     CC1101WriteCmd(CC1101_SPWD);
 
     resetCnt = (uint16_t)(0x0000FFFF & DATAEEPROM_Read(EEPROM_START_ADDR + 12));
@@ -339,7 +339,7 @@ void System_Initial(void)
 
     for(uint8_t i = 0; i < _STEP_LOOPNUM; i++)
     {
-        step.restArray[i] = (uint16_t)(0x0000FFFF & DATAEEPROM_Read(EEPROM_START_ADDR + 0x100 + 4 * i));
+        step.resetArray[i] = (uint16_t)(0x0000FFFF & DATAEEPROM_Read(EEPROM_START_ADDR + 0x100 + 4 * i));
     }
 		
     for(uint8_t i = 0; i < _STEP_LOOPNUM; i++)
@@ -376,7 +376,7 @@ void System_Initial(void)
 
     for(uint8_t i = 0; i < _STEP_LOOPNUM; i++)
     {
-        rfid_printf("%x ", step.stepArray[i]);
+        rfid_printf("%x ", step.movementArray[i]);
     }
 
     rfid_printf("\nstepStage = %d\n", step.stepStage);
