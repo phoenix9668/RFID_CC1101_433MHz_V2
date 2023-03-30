@@ -20,14 +20,14 @@
 #define max(a,b) ((a) > (b) ? (a) : (b))
 #define min(a,b) ((a) < (b) ? (a) : (b))
 
-#define _STEP_LOOPNUM         36  // 20min per step,have 36 steps,equal 12 hours
+#define _STEP_LOOPNUM         12  // 20min per step,have 12 steps,equal 4 hours
 #define _FIFO_LEN             1024
 #define _FIFO_SAMPLES_LEN     900
 #define _AXIS_LEN             170
 #define _FILTER_CNT			      3
 #define _DIFF_CNT			        2
 #define _MEM_ROWS			        18
-#define _MEM_COLS			        3
+#define _MEM_COLS			        4
 
 typedef struct
 {
@@ -77,10 +77,12 @@ typedef struct
 {
     __IO uint8_t stepStage;
     __IO FlagStatus fifoOverrun;
-    __IO uint16_t stepNum;
-    __IO uint16_t stepArray[_STEP_LOOPNUM];
-    __IO uint16_t ingestionNum;
+    __IO uint16_t restArray[_STEP_LOOPNUM];
     __IO uint16_t ingestionArray[_STEP_LOOPNUM];
+		__IO uint16_t movementArray[_STEP_LOOPNUM];
+		__IO uint16_t climbArray[_STEP_LOOPNUM];
+		__IO uint16_t ruminateArray[_STEP_LOOPNUM];
+		__IO uint16_t otherArray[_STEP_LOOPNUM];
 } step_t;
 
 extern step_t step;
