@@ -2391,21 +2391,21 @@ Image Symbol Table
     i.__scatterload_zeroinit                 0x08003c04   Section       14  handlers.o(i.__scatterload_zeroinit)
     i.crl_DRBG_AES128_Generate               0x08003c14   Section        0  crypto.o(i.crl_DRBG_AES128_Generate)
     i.main                                   0x08003e30   Section        0  main.o(i.main)
-    .constdata                               0x08004078   Section       94  cc1101.o(.constdata)
-    CC1101InitData                           0x08004078   Data          94  cc1101.o(.constdata)
-    .constdata                               0x080040d6   Section       25  system_stm32l0xx.o(.constdata)
-    .constdata                               0x080040ef   Section        8  system_stm32l0xx.o(.constdata)
-    .constdata                               0x080040f8   Section     7012  crypto.o(.constdata)
-    table_reduction8                         0x08004b24   Data         512  crypto.o(.constdata)
-    table_reduction4                         0x08004d24   Data          32  crypto.o(.constdata)
-    sha512_K                                 0x08005648   Data         640  crypto.o(.constdata)
-    tau                                      0x080058d8   Data          16  crypto.o(.constdata)
-    m                                        0x080058e8   Data          32  crypto.o(.constdata)
-    mu                                       0x08005908   Data          36  crypto.o(.constdata)
-    ge25519_ecd                              0x0800592c   Data          32  crypto.o(.constdata)
-    ge25519_ec2d                             0x080059cc   Data          32  crypto.o(.constdata)
-    ge25519_sqrtm1                           0x080059ec   Data          32  crypto.o(.constdata)
-    pad                                      0x08005a7c   Data          64  crypto.o(.constdata)
+    .constdata                               0x08004060   Section       94  cc1101.o(.constdata)
+    CC1101InitData                           0x08004060   Data          94  cc1101.o(.constdata)
+    .constdata                               0x080040be   Section       25  system_stm32l0xx.o(.constdata)
+    .constdata                               0x080040d7   Section        8  system_stm32l0xx.o(.constdata)
+    .constdata                               0x080040e0   Section     7012  crypto.o(.constdata)
+    table_reduction8                         0x08004b0c   Data         512  crypto.o(.constdata)
+    table_reduction4                         0x08004d0c   Data          32  crypto.o(.constdata)
+    sha512_K                                 0x08005630   Data         640  crypto.o(.constdata)
+    tau                                      0x080058c0   Data          16  crypto.o(.constdata)
+    m                                        0x080058d0   Data          32  crypto.o(.constdata)
+    mu                                       0x080058f0   Data          36  crypto.o(.constdata)
+    ge25519_ecd                              0x08005914   Data          32  crypto.o(.constdata)
+    ge25519_ec2d                             0x080059b4   Data          32  crypto.o(.constdata)
+    ge25519_sqrtm1                           0x080059d4   Data          32  crypto.o(.constdata)
+    pad                                      0x08005a64   Data          64  crypto.o(.constdata)
     .data                                    0x20000000   Section       34  adxl362.o(.data)
     .data                                    0x20000022   Section       10  cc1101.o(.data)
     .data                                    0x2000002c   Section       50  rand_bytes_gen.o(.data)
@@ -2610,28 +2610,28 @@ Image Symbol Table
     __scatterload_null                       0x08003c03   Thumb Code     2  handlers.o(i.__scatterload_null)
     __scatterload_zeroinit                   0x08003c05   Thumb Code    14  handlers.o(i.__scatterload_zeroinit)
     crl_DRBG_AES128_Generate                 0x08003c15   Thumb Code   526  crypto.o(i.crl_DRBG_AES128_Generate)
-    main                                     0x08003e31   Thumb Code   538  main.o(i.main)
-    AHBPrescTable                            0x080040d6   Data          16  system_stm32l0xx.o(.constdata)
-    PLLMulTable                              0x080040e6   Data           9  system_stm32l0xx.o(.constdata)
-    APBPrescTable                            0x080040ef   Data           8  system_stm32l0xx.o(.constdata)
-    Sbox                                     0x080040fc   Data         256  crypto.o(.constdata)
-    InvSbox                                  0x080041fc   Data         256  crypto.o(.constdata)
-    rcon                                     0x080042fc   Data          40  crypto.o(.constdata)
-    enc_table                                0x08004324   Data        1024  crypto.o(.constdata)
-    dec_table                                0x08004724   Data        1024  crypto.o(.constdata)
-    SP1                                      0x08004d44   Data         256  crypto.o(.constdata)
-    SP2                                      0x08004e44   Data         256  crypto.o(.constdata)
-    SP3                                      0x08004f44   Data         256  crypto.o(.constdata)
-    SP4                                      0x08005044   Data         256  crypto.o(.constdata)
-    SP5                                      0x08005144   Data         256  crypto.o(.constdata)
-    SP6                                      0x08005244   Data         256  crypto.o(.constdata)
-    SP7                                      0x08005344   Data         256  crypto.o(.constdata)
-    SP8                                      0x08005444   Data         256  crypto.o(.constdata)
-    K256                                     0x08005544   Data         256  crypto.o(.constdata)
-    sigma                                    0x080058c8   Data          16  crypto.o(.constdata)
-    ge25519_base                             0x0800594c   Data         128  crypto.o(.constdata)
-    Region$$Table$$Base                      0x08005c5c   Number         0  anon$$obj.o(Region$$Table)
-    Region$$Table$$Limit                     0x08005c7c   Number         0  anon$$obj.o(Region$$Table)
+    main                                     0x08003e31   Thumb Code   516  main.o(i.main)
+    AHBPrescTable                            0x080040be   Data          16  system_stm32l0xx.o(.constdata)
+    PLLMulTable                              0x080040ce   Data           9  system_stm32l0xx.o(.constdata)
+    APBPrescTable                            0x080040d7   Data           8  system_stm32l0xx.o(.constdata)
+    Sbox                                     0x080040e4   Data         256  crypto.o(.constdata)
+    InvSbox                                  0x080041e4   Data         256  crypto.o(.constdata)
+    rcon                                     0x080042e4   Data          40  crypto.o(.constdata)
+    enc_table                                0x0800430c   Data        1024  crypto.o(.constdata)
+    dec_table                                0x0800470c   Data        1024  crypto.o(.constdata)
+    SP1                                      0x08004d2c   Data         256  crypto.o(.constdata)
+    SP2                                      0x08004e2c   Data         256  crypto.o(.constdata)
+    SP3                                      0x08004f2c   Data         256  crypto.o(.constdata)
+    SP4                                      0x0800502c   Data         256  crypto.o(.constdata)
+    SP5                                      0x0800512c   Data         256  crypto.o(.constdata)
+    SP6                                      0x0800522c   Data         256  crypto.o(.constdata)
+    SP7                                      0x0800532c   Data         256  crypto.o(.constdata)
+    SP8                                      0x0800542c   Data         256  crypto.o(.constdata)
+    K256                                     0x0800552c   Data         256  crypto.o(.constdata)
+    sigma                                    0x080058b0   Data          16  crypto.o(.constdata)
+    ge25519_base                             0x08005934   Data         128  crypto.o(.constdata)
+    Region$$Table$$Base                      0x08005c44   Number         0  anon$$obj.o(Region$$Table)
+    Region$$Table$$Limit                     0x08005c64   Number         0  anon$$obj.o(Region$$Table)
     memory_index                             0x20000000   Data           1  adxl362.o(.data)
     mid_index                                0x20000001   Data           1  adxl362.o(.data)
     movement_cnt                             0x20000002   Data           1  adxl362.o(.data)
@@ -2692,9 +2692,9 @@ Memory Map of the image
 
   Image Entry point : 0x080000c1
 
-  Load Region LR_IROM1 (Base: 0x08000000, Size: 0x00005cf8, Max: 0x00010000, ABSOLUTE)
+  Load Region LR_IROM1 (Base: 0x08000000, Size: 0x00005ce0, Max: 0x00010000, ABSOLUTE)
 
-    Execution Region ER_IROM1 (Exec base: 0x08000000, Load base: 0x08000000, Size: 0x00005c7c, Max: 0x00010000, ABSOLUTE)
+    Execution Region ER_IROM1 (Exec base: 0x08000000, Load base: 0x08000000, Size: 0x00005c64, Max: 0x00010000, ABSOLUTE)
 
     Exec Addr    Load Addr    Size         Type   Attr      Idx    E Section Name        Object
 
@@ -2880,37 +2880,37 @@ Memory Map of the image
     0x08003c04   0x08003c04   0x0000000e   Code   RO         4505    i.__scatterload_zeroinit  mc_p.l(handlers.o)
     0x08003c12   0x08003c12   0x00000002   PAD
     0x08003c14   0x08003c14   0x0000021c   Code   RO         4082    i.crl_DRBG_AES128_Generate  STM32CryptographicV3.0.0_CM0PLUS_KEIL_otslsm1elfspf.lib(crypto.o)
-    0x08003e30   0x08003e30   0x00000248   Code   RO          720    i.main              main.o
-    0x08004078   0x08004078   0x0000005e   Data   RO          290    .constdata          cc1101.o
-    0x080040d6   0x080040d6   0x00000019   Data   RO         3780    .constdata          system_stm32l0xx.o
-    0x080040ef   0x080040ef   0x00000008   Data   RO         3781    .constdata          system_stm32l0xx.o
-    0x080040f7   0x080040f7   0x00000001   PAD
-    0x080040f8   0x080040f8   0x00001b64   Data   RO         4123    .constdata          STM32CryptographicV3.0.0_CM0PLUS_KEIL_otslsm1elfspf.lib(crypto.o)
-    0x08005c5c   0x08005c5c   0x00000020   Data   RO         4502    Region$$Table       anon$$obj.o
+    0x08003e30   0x08003e30   0x00000230   Code   RO          720    i.main              main.o
+    0x08004060   0x08004060   0x0000005e   Data   RO          290    .constdata          cc1101.o
+    0x080040be   0x080040be   0x00000019   Data   RO         3780    .constdata          system_stm32l0xx.o
+    0x080040d7   0x080040d7   0x00000008   Data   RO         3781    .constdata          system_stm32l0xx.o
+    0x080040df   0x080040df   0x00000001   PAD
+    0x080040e0   0x080040e0   0x00001b64   Data   RO         4123    .constdata          STM32CryptographicV3.0.0_CM0PLUS_KEIL_otslsm1elfspf.lib(crypto.o)
+    0x08005c44   0x08005c44   0x00000020   Data   RO         4502    Region$$Table       anon$$obj.o
 
 
-    Execution Region RW_IRAM1 (Exec base: 0x20000000, Load base: 0x08005c7c, Size: 0x000010d8, Max: 0x00002000, ABSOLUTE)
+    Execution Region RW_IRAM1 (Exec base: 0x20000000, Load base: 0x08005c64, Size: 0x000010d8, Max: 0x00002000, ABSOLUTE)
 
     Exec Addr    Load Addr    Size         Type   Attr      Idx    E Section Name        Object
 
-    0x20000000   0x08005c7c   0x00000022   Data   RW           21    .data               adxl362.o
-    0x20000022   0x08005c9e   0x0000000a   Data   RW          291    .data               cc1101.o
-    0x2000002c   0x08005ca8   0x00000032   Data   RW          489    .data               rand_bytes_gen.o
-    0x2000005e   0x08005cda   0x00000004   Data   RW          722    .data               main.o
-    0x20000062   0x08005cde   0x00000003   Data   RW          922    .data               rtc.o
-    0x20000065   0x08005ce1   0x00000003   PAD
-    0x20000068   0x08005ce4   0x0000000c   Data   RW         1413    .data               stm32l0xx_hal.o
-    0x20000074   0x08005cf0   0x00000004   Data   RW         3782    .data               system_stm32l0xx.o
-    0x20000078   0x08005cf4   0x00000004   Data   RW         4468    .data               mc_p.l(rand.o)
+    0x20000000   0x08005c64   0x00000022   Data   RW           21    .data               adxl362.o
+    0x20000022   0x08005c86   0x0000000a   Data   RW          291    .data               cc1101.o
+    0x2000002c   0x08005c90   0x00000032   Data   RW          489    .data               rand_bytes_gen.o
+    0x2000005e   0x08005cc2   0x00000004   Data   RW          722    .data               main.o
+    0x20000062   0x08005cc6   0x00000003   Data   RW          922    .data               rtc.o
+    0x20000065   0x08005cc9   0x00000003   PAD
+    0x20000068   0x08005ccc   0x0000000c   Data   RW         1413    .data               stm32l0xx_hal.o
+    0x20000074   0x08005cd8   0x00000004   Data   RW         3782    .data               system_stm32l0xx.o
+    0x20000078   0x08005cdc   0x00000004   Data   RW         4468    .data               mc_p.l(rand.o)
     0x2000007c        -       0x000009de   Zero   RW           20    .bss                adxl362.o
-    0x20000a5a   0x08005cf8   0x00000002   PAD
+    0x20000a5a   0x08005ce0   0x00000002   PAD
     0x20000a5c        -       0x0000018c   Zero   RW          289    .bss                cc1101.o
     0x20000be8        -       0x00000064   Zero   RW          488    .bss                rand_bytes_gen.o
     0x20000c4c        -       0x00000010   Zero   RW          721    .bss                main.o
     0x20000c5c        -       0x00000024   Zero   RW          859    .bss                crc.o
     0x20000c80        -       0x00000024   Zero   RW          921    .bss                rtc.o
     0x20000ca4        -       0x0000001a   Zero   RW         1040    .bss                usart.o
-    0x20000cbe   0x08005cf8   0x00000002   PAD
+    0x20000cbe   0x08005ce0   0x00000002   PAD
     0x20000cc0        -       0x00000018   Zero   RW         2314    .bss                stm32l0xx_hal_flash.o
     0x20000cd8        -       0x00000400   Zero   RW            1    STACK               startup_stm32l051xx.o
 
@@ -2927,7 +2927,7 @@ Image component sizes
        112         24          0          0         36       1951   crc.o
        864         38          0          0          0      17471   gpio.o
         52         22          0          0          0       2583   iwdg.o
-      1300        106          0          4         16       9957   main.o
+      1276        104          0          4         16       9897   main.o
        176         24          0         50        100       2865   rand_bytes_gen.o
        180         28          0          3         36       2388   rtc.o
        746         50          0          0          0      18902   spi.o
@@ -2956,7 +2956,7 @@ Image component sizes
        560         56          0          0         26      40274   usart.o
 
     ----------------------------------------------------------------------
-     13128        976        352        120       4188     592612   Object Totals
+     13104        974        352        120       4188     592552   Object Totals
          0          0         32          0          0          0   (incl. Generated)
         16          0          1          3          4          0   (incl. Padding)
 
@@ -3006,15 +3006,15 @@ Image component sizes
 
       Code (inc. data)   RO Data    RW Data    ZI Data      Debug   
 
-     16312       1090       7364        124       4188     587708   Grand Totals
-     16312       1090       7364        124       4188     587708   ELF Image Totals
-     16312       1090       7364        124          0          0   ROM Totals
+     16288       1088       7364        124       4188     587648   Grand Totals
+     16288       1088       7364        124       4188     587648   ELF Image Totals
+     16288       1088       7364        124          0          0   ROM Totals
 
 ==============================================================================
 
-    Total RO  Size (Code + RO Data)                23676 (  23.12kB)
+    Total RO  Size (Code + RO Data)                23652 (  23.10kB)
     Total RW  Size (RW Data + ZI Data)              4312 (   4.21kB)
-    Total ROM Size (Code + RO Data + RW Data)      23800 (  23.24kB)
+    Total ROM Size (Code + RO Data + RW Data)      23776 (  23.22kB)
 
 ==============================================================================
 

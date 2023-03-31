@@ -161,8 +161,8 @@ int main(void)
 
             for(uint8_t i = 0; i < _STEP_LOOPNUM; i++)
             {
-                if(step.movementArray[i] != 0)
-                {
+//                if(step.movementArray[i] != 0)
+//                {
                     MX_SPI1_Init();
                     RNG_Init();
                     RNG_Gen();
@@ -171,7 +171,7 @@ int main(void)
                     HAL_CRC_DeInit(&hcrc);
                     MX_SPI1_DeInit();
                     break;
-                }
+//                }
             }
 
             rtc.twentyMinIndex = RESET;
