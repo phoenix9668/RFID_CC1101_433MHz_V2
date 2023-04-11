@@ -74,65 +74,65 @@ static void SystemPower_Config(void);
   */
 int main(void)
 {
-  /* USER CODE BEGIN 1 */
+    /* USER CODE BEGIN 1 */
 
-  /* USER CODE END 1 */
+    /* USER CODE END 1 */
 
-  /* MCU Configuration--------------------------------------------------------*/
+    /* MCU Configuration--------------------------------------------------------*/
 
-  /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
-  HAL_Init();
+    /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
+    HAL_Init();
 
-  /* USER CODE BEGIN Init */
+    /* USER CODE BEGIN Init */
 
-  /* USER CODE END Init */
+    /* USER CODE END Init */
 
-  /* Configure the system clock */
-  SystemClock_Config();
+    /* Configure the system clock */
+    SystemClock_Config();
 
-  /* USER CODE BEGIN SysInit */
+    /* USER CODE BEGIN SysInit */
 
-  /* USER CODE END SysInit */
+    /* USER CODE END SysInit */
 
-  /* Initialize all configured peripherals */
-  MX_GPIO_Init();
-  MX_USART1_UART_Init();
-  MX_SPI1_Init();
-  MX_SPI2_Init();
-  MX_IWDG_Init();
-  MX_RTC_Init();
-  MX_CRC_Init();
-  MX_ADC_Init();
-  /* USER CODE BEGIN 2 */
+    /* Initialize all configured peripherals */
+    MX_GPIO_Init();
+    MX_USART1_UART_Init();
+    MX_SPI1_Init();
+    MX_SPI2_Init();
+    MX_IWDG_Init();
+    MX_RTC_Init();
+    MX_CRC_Init();
+    MX_ADC_Init();
+    /* USER CODE BEGIN 2 */
     System_Initial();
     Show_Message();
-  /* USER CODE END 2 */
+    /* USER CODE END 2 */
 
-  /* Infinite loop */
-  /* USER CODE BEGIN WHILE */
+    /* Infinite loop */
+    /* USER CODE BEGIN WHILE */
     while (1)
     {
         LL_IWDG_ReloadCounter(IWDG);
-    /* USER CODE END WHILE */
+        /* USER CODE END WHILE */
 
-    /* USER CODE BEGIN 3 */
+        /* USER CODE BEGIN 3 */
 
         if(rtc.tenSecIndex == SET)
         {
             DATAEEPROM_Program(EEPROM_START_ADDR + 16, (uint32_t) rtc.tenSecTick);
             step.restArray[step.stepStage] = action_classify.rest;
             step.ingestionArray[step.stepStage] = action_classify.ingestion;
-						step.movementArray[step.stepStage] = action_classify.movement;
-						step.climbArray[step.stepStage] = action_classify.climb;
-						step.ruminateArray[step.stepStage] = action_classify.ruminate;
-						step.otherArray[step.stepStage] = action_classify.other;
+            step.movementArray[step.stepStage] = action_classify.movement;
+            step.climbArray[step.stepStage] = action_classify.climb;
+            step.ruminateArray[step.stepStage] = action_classify.ruminate;
+            step.otherArray[step.stepStage] = action_classify.other;
             DATAEEPROM_Program(EEPROM_START_ADDR + 8, step.stepStage);
             DATAEEPROM_Program((EEPROM_START_ADDR + 0x100 + 4 * step.stepStage), (uint32_t)step.restArray[step.stepStage]);
             DATAEEPROM_Program((EEPROM_START_ADDR + 0x130 + 4 * step.stepStage), (uint32_t)step.ingestionArray[step.stepStage]);
-						DATAEEPROM_Program((EEPROM_START_ADDR + 0x160 + 4 * step.stepStage), (uint32_t)step.movementArray[step.stepStage]);
-						DATAEEPROM_Program((EEPROM_START_ADDR + 0x190 + 4 * step.stepStage), (uint32_t)step.climbArray[step.stepStage]);
-						DATAEEPROM_Program((EEPROM_START_ADDR + 0x1C0 + 4 * step.stepStage), (uint32_t)step.ruminateArray[step.stepStage]);
-						DATAEEPROM_Program((EEPROM_START_ADDR + 0x200 + 4 * step.stepStage), (uint32_t)step.otherArray[step.stepStage]);
+            DATAEEPROM_Program((EEPROM_START_ADDR + 0x160 + 4 * step.stepStage), (uint32_t)step.movementArray[step.stepStage]);
+            DATAEEPROM_Program((EEPROM_START_ADDR + 0x190 + 4 * step.stepStage), (uint32_t)step.climbArray[step.stepStage]);
+            DATAEEPROM_Program((EEPROM_START_ADDR + 0x1C0 + 4 * step.stepStage), (uint32_t)step.ruminateArray[step.stepStage]);
+            DATAEEPROM_Program((EEPROM_START_ADDR + 0x200 + 4 * step.stepStage), (uint32_t)step.otherArray[step.stepStage]);
             rtc.tenSecIndex = RESET;
         }
 
@@ -161,21 +161,14 @@ int main(void)
 
             DATAEEPROM_Program(EEPROM_START_ADDR + 8, step.stepStage);
 
-            for(uint8_t i = 0; i < _STEP_LOOPNUM; i++)
-            {
-                if(step.movementArray[i] != 0)
-                {
-                    MX_SPI1_Init();
-                    adc_detect();
-                    RNG_Init();
-                    RNG_Gen();
-                    MX_CRC_Init();
-                    CC1101SendHandler();
-                    HAL_CRC_DeInit(&hcrc);
-                    MX_SPI1_DeInit();
-                    break;
-                }
-            }
+            MX_SPI1_Init();
+            adc_detect();
+            RNG_Init();
+            RNG_Gen();
+            MX_CRC_Init();
+            CC1101SendHandler();
+            HAL_CRC_DeInit(&hcrc);
+            MX_SPI1_DeInit();
 
             rtc.twentyMinIndex = RESET;
         }
@@ -236,7 +229,7 @@ int main(void)
         #endif
     }
 
-  /* USER CODE END 3 */
+    /* USER CODE END 3 */
 }
 
 /**
@@ -245,56 +238,59 @@ int main(void)
   */
 void SystemClock_Config(void)
 {
-  RCC_OscInitTypeDef RCC_OscInitStruct = {0};
-  RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
-  RCC_PeriphCLKInitTypeDef PeriphClkInit = {0};
+    RCC_OscInitTypeDef RCC_OscInitStruct = {0};
+    RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
+    RCC_PeriphCLKInitTypeDef PeriphClkInit = {0};
 
-  /** Configure the main internal regulator output voltage
-  */
-  __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
+    /** Configure the main internal regulator output voltage
+    */
+    __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
 
-  /** Configure LSE Drive Capability
-  */
-  HAL_PWR_EnableBkUpAccess();
-  __HAL_RCC_LSEDRIVE_CONFIG(RCC_LSEDRIVE_LOW);
+    /** Configure LSE Drive Capability
+    */
+    HAL_PWR_EnableBkUpAccess();
+    __HAL_RCC_LSEDRIVE_CONFIG(RCC_LSEDRIVE_LOW);
 
-  /** Initializes the RCC Oscillators according to the specified parameters
-  * in the RCC_OscInitTypeDef structure.
-  */
-  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_LSI|RCC_OSCILLATORTYPE_HSE
-                              |RCC_OSCILLATORTYPE_LSE;
-  RCC_OscInitStruct.HSEState = RCC_HSE_ON;
-  RCC_OscInitStruct.LSEState = RCC_LSE_ON;
-  RCC_OscInitStruct.LSIState = RCC_LSI_ON;
-  RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
-  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
-  RCC_OscInitStruct.PLL.PLLMUL = RCC_PLLMUL_8;
-  RCC_OscInitStruct.PLL.PLLDIV = RCC_PLLDIV_3;
-  if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
-  {
-    Error_Handler();
-  }
+    /** Initializes the RCC Oscillators according to the specified parameters
+    * in the RCC_OscInitTypeDef structure.
+    */
+    RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_LSI | RCC_OSCILLATORTYPE_HSE
+                                       | RCC_OSCILLATORTYPE_LSE;
+    RCC_OscInitStruct.HSEState = RCC_HSE_ON;
+    RCC_OscInitStruct.LSEState = RCC_LSE_ON;
+    RCC_OscInitStruct.LSIState = RCC_LSI_ON;
+    RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
+    RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
+    RCC_OscInitStruct.PLL.PLLMUL = RCC_PLLMUL_8;
+    RCC_OscInitStruct.PLL.PLLDIV = RCC_PLLDIV_3;
 
-  /** Initializes the CPU, AHB and APB buses clocks
-  */
-  RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
-                              |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
-  RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
-  RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
-  RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV1;
-  RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
+    if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
+    {
+        Error_Handler();
+    }
 
-  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_1) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_USART1|RCC_PERIPHCLK_RTC;
-  PeriphClkInit.Usart1ClockSelection = RCC_USART1CLKSOURCE_PCLK2;
-  PeriphClkInit.RTCClockSelection = RCC_RTCCLKSOURCE_LSE;
-  if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK)
-  {
-    Error_Handler();
-  }
+    /** Initializes the CPU, AHB and APB buses clocks
+    */
+    RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK | RCC_CLOCKTYPE_SYSCLK
+                                  | RCC_CLOCKTYPE_PCLK1 | RCC_CLOCKTYPE_PCLK2;
+    RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
+    RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
+    RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV1;
+    RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
+
+    if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_1) != HAL_OK)
+    {
+        Error_Handler();
+    }
+
+    PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_USART1 | RCC_PERIPHCLK_RTC;
+    PeriphClkInit.Usart1ClockSelection = RCC_USART1CLKSOURCE_PCLK2;
+    PeriphClkInit.RTCClockSelection = RCC_RTCCLKSOURCE_LSE;
+
+    if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK)
+    {
+        Error_Handler();
+    }
 }
 
 /* USER CODE BEGIN 4 */
@@ -336,8 +332,10 @@ void System_Initial(void)
     Get_SerialNum();
     ADXL362_Init();
     /*##-2- initial CC1101 peripheral,configure it's address and sync code ##*/
+		CC1101_POWER_ON();
     RFIDInitial(0xEF, 0x1234, IDLE_MODE);
     CC1101WriteCmd(CC1101_SPWD);
+		CC1101_POWER_DOWN();
 
     resetCnt = (uint16_t)(0x0000FFFF & DATAEEPROM_Read(EEPROM_START_ADDR + 12));
     resetCnt++;
@@ -347,22 +345,22 @@ void System_Initial(void)
     {
         step.restArray[i] = (uint16_t)(0x0000FFFF & DATAEEPROM_Read(EEPROM_START_ADDR + 0x100 + 4 * i));
     }
-		
+
     for(uint8_t i = 0; i < _STEP_LOOPNUM; i++)
     {
         step.ingestionArray[i] = (uint16_t)(0x0000FFFF & DATAEEPROM_Read(EEPROM_START_ADDR + 0x130 + 4 * i));
     }
-		
+
     for(uint8_t i = 0; i < _STEP_LOOPNUM; i++)
     {
         step.movementArray[i] = (uint16_t)(0x0000FFFF & DATAEEPROM_Read(EEPROM_START_ADDR + 0x160 + 4 * i));
     }
-		
+
     for(uint8_t i = 0; i < _STEP_LOOPNUM; i++)
     {
         step.climbArray[i] = (uint16_t)(0x0000FFFF & DATAEEPROM_Read(EEPROM_START_ADDR + 0x190 + 4 * i));
     }
-		
+
     for(uint8_t i = 0; i < _STEP_LOOPNUM; i++)
     {
         step.ruminateArray[i] = (uint16_t)(0x0000FFFF & DATAEEPROM_Read(EEPROM_START_ADDR + 0x1C0 + 4 * i));
@@ -569,7 +567,7 @@ void LED_Blinking(uint32_t Period)
   */
 void Error_Handler(void)
 {
-  /* USER CODE BEGIN Error_Handler_Debug */
+    /* USER CODE BEGIN Error_Handler_Debug */
     /* User can add his own implementation to report the HAL error return state */
     if (ErrorIndex == 0x01 || ErrorIndex == 0x02)
         LED_Blinking(200);
@@ -582,7 +580,7 @@ void Error_Handler(void)
     {
     }
 
-  /* USER CODE END Error_Handler_Debug */
+    /* USER CODE END Error_Handler_Debug */
 }
 
 #ifdef  USE_FULL_ASSERT
@@ -595,9 +593,9 @@ void Error_Handler(void)
   */
 void assert_failed(uint8_t *file, uint32_t line)
 {
-  /* USER CODE BEGIN 6 */
+    /* USER CODE BEGIN 6 */
     /* User can add his own implementation to report the file name and line number,
        tex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
-  /* USER CODE END 6 */
+    /* USER CODE END 6 */
 }
 #endif /* USE_FULL_ASSERT */
