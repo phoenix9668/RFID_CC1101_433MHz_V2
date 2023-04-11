@@ -120,17 +120,17 @@ int main(void)
             DATAEEPROM_Program(EEPROM_START_ADDR + 16, (uint32_t) rtc.tenSecTick);
             step.resetArray[step.stepStage] = action_classify.reset;
             step.ingestionArray[step.stepStage] = action_classify.ingestion;
-						step.movementArray[step.stepStage] = action_classify.movement;
-						step.climbArray[step.stepStage] = action_classify.climb;
-						step.ruminateArray[step.stepStage] = action_classify.ruminate;
-						step.otherArray[step.stepStage] = action_classify.other;
+            step.movementArray[step.stepStage] = action_classify.movement;
+            step.climbArray[step.stepStage] = action_classify.climb;
+            step.ruminateArray[step.stepStage] = action_classify.ruminate;
+            step.otherArray[step.stepStage] = action_classify.other;
             DATAEEPROM_Program(EEPROM_START_ADDR + 8, step.stepStage);
             DATAEEPROM_Program((EEPROM_START_ADDR + 0x100 + 4 * step.stepStage), (uint32_t)step.resetArray[step.stepStage]);
             DATAEEPROM_Program((EEPROM_START_ADDR + 0x130 + 4 * step.stepStage), (uint32_t)step.ingestionArray[step.stepStage]);
-						DATAEEPROM_Program((EEPROM_START_ADDR + 0x160 + 4 * step.stepStage), (uint32_t)step.movementArray[step.stepStage]);
-						DATAEEPROM_Program((EEPROM_START_ADDR + 0x190 + 4 * step.stepStage), (uint32_t)step.climbArray[step.stepStage]);
-						DATAEEPROM_Program((EEPROM_START_ADDR + 0x1C0 + 4 * step.stepStage), (uint32_t)step.ruminateArray[step.stepStage]);
-						DATAEEPROM_Program((EEPROM_START_ADDR + 0x200 + 4 * step.stepStage), (uint32_t)step.otherArray[step.stepStage]);
+            DATAEEPROM_Program((EEPROM_START_ADDR + 0x160 + 4 * step.stepStage), (uint32_t)step.movementArray[step.stepStage]);
+            DATAEEPROM_Program((EEPROM_START_ADDR + 0x190 + 4 * step.stepStage), (uint32_t)step.climbArray[step.stepStage]);
+            DATAEEPROM_Program((EEPROM_START_ADDR + 0x1C0 + 4 * step.stepStage), (uint32_t)step.ruminateArray[step.stepStage]);
+            DATAEEPROM_Program((EEPROM_START_ADDR + 0x200 + 4 * step.stepStage), (uint32_t)step.otherArray[step.stepStage]);
             rtc.tenSecIndex = RESET;
         }
 
@@ -159,20 +159,13 @@ int main(void)
 
             DATAEEPROM_Program(EEPROM_START_ADDR + 8, step.stepStage);
 
-            for(uint8_t i = 0; i < _STEP_LOOPNUM; i++)
-            {
-//                if(step.movementArray[i] != 0)
-//                {
-                    MX_SPI1_Init();
-                    RNG_Init();
-                    RNG_Gen();
-                    MX_CRC_Init();
-                    CC1101SendHandler();
-                    HAL_CRC_DeInit(&hcrc);
-                    MX_SPI1_DeInit();
-                    break;
-//                }
-            }
+            MX_SPI1_Init();
+            RNG_Init();
+            RNG_Gen();
+            MX_CRC_Init();
+            CC1101SendHandler();
+            HAL_CRC_DeInit(&hcrc);
+            MX_SPI1_DeInit();
 
             rtc.twentyMinIndex = RESET;
         }
@@ -341,22 +334,22 @@ void System_Initial(void)
     {
         step.resetArray[i] = (uint16_t)(0x0000FFFF & DATAEEPROM_Read(EEPROM_START_ADDR + 0x100 + 4 * i));
     }
-		
+
     for(uint8_t i = 0; i < _STEP_LOOPNUM; i++)
     {
         step.ingestionArray[i] = (uint16_t)(0x0000FFFF & DATAEEPROM_Read(EEPROM_START_ADDR + 0x130 + 4 * i));
     }
-		
+
     for(uint8_t i = 0; i < _STEP_LOOPNUM; i++)
     {
         step.movementArray[i] = (uint16_t)(0x0000FFFF & DATAEEPROM_Read(EEPROM_START_ADDR + 0x160 + 4 * i));
     }
-		
+
     for(uint8_t i = 0; i < _STEP_LOOPNUM; i++)
     {
         step.climbArray[i] = (uint16_t)(0x0000FFFF & DATAEEPROM_Read(EEPROM_START_ADDR + 0x190 + 4 * i));
     }
-		
+
     for(uint8_t i = 0; i < _STEP_LOOPNUM; i++)
     {
         step.ruminateArray[i] = (uint16_t)(0x0000FFFF & DATAEEPROM_Read(EEPROM_START_ADDR + 0x1C0 + 4 * i));
