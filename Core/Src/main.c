@@ -136,7 +136,7 @@ int main(void)
 
         if(rtc.twentyMinIndex == SET)
         {
-            delayRand = rand() % 10;
+            delayRand = rand() % 100;
             rfid_printf("delayRand = %d\n", delayRand);
             HAL_Delay(delayRand);
             memset(&action_classify, 0, sizeof(action_classify));
