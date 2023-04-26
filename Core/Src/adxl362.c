@@ -857,7 +857,7 @@ void ADXL362FifoProcess(void)
             action_classify_array[((i + 1) / 25) - 1] = memory_array[memory_index_o][0];
 
             if (memory_array[memory_index_o][0] == 1) // rest
-                action_classify.reset ++;
+                action_classify.rest ++;
             else if (memory_array[memory_index_o][0] == 2) // ingestion
                 action_classify.ingestion ++;
             else if (memory_array[memory_index_o][0] == 3) // movement
