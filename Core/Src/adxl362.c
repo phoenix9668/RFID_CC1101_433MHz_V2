@@ -580,6 +580,16 @@ void ADXL362FifoProcess(void)
     // 2.To 16-bit complement
     for(uint16_t i = 0; i < (_FIFO_SAMPLES_LEN / 6) * 3; i++)
     {
+			  if ((fifo[2 * i + 1] >> 6 & 0x03) == 0x0)
+        {
+            if ((fifo[2 * i + 1] & 0x08))
+                three_axis_info[i / 3].x = (short int)(fifo[2 * i] + (0x0f00 & (fifo[2 * i + 1] << 8)) + 0xf000);
+            else
+                three_axis_info[i / 3].x = (short int)(fifo[2 * i] + (0x0f00 & (fifo[2 * i + 1] << 8)));
+
+            //				rfid_printf("X[%d] = %hd, %hx ", i/3, xAxis[i/3], xAxis[i/3]);
+//            rfid_printf("samples[%d] :%hd,", i / 3, three_axis_info[i / 3].x);
+        }
         if ((fifo[2 * i + 1] >> 6 & 0x03) == 0x1)
         {
             if ((fifo[2 * i + 1] & 0x08))
@@ -588,6 +598,16 @@ void ADXL362FifoProcess(void)
                 three_axis_info[i / 3].y = (short int)(fifo[2 * i] + (0x0f00 & (fifo[2 * i + 1] << 8)));
 
 //            rfid_printf("samples[%d] :%hd\n", i / 3, three_axis_info[i / 3].y);
+        }
+        else if ((fifo[2 * i + 1] >> 6 & 0x03) == 0x2)
+        {
+            if ((fifo[2 * i + 1] & 0x08))
+                three_axis_info[i / 3].z = (short int)(fifo[2 * i] + (0x0f00 & (fifo[2 * i + 1] << 8)) + 0xf000);
+            else
+                three_axis_info[i / 3].z = (short int)(fifo[2 * i] + (0x0f00 & (fifo[2 * i + 1] << 8)));
+
+            //				rfid_printf("Z[%d] = %hd, %hx\n", i/3, zAxis[i/3], zAxis[i/3]);
+//            rfid_printf("%hd\n", three_axis_info[i / 3].z);
         }
     }
 
@@ -661,7 +681,7 @@ void ADXL362FifoProcess(void)
                 action = 6;             //other
 
             rfid_printf("action = %d\n", action);
-            rfid_printf("action_classify.rest = %d\n", action_classify.reset);
+            rfid_printf("action_classify.rest = %d\n", action_classify.rest);
             rfid_printf("action_classify.ingestion = %d\n", action_classify.ingestion);
             rfid_printf("action_classify.movement = %d\n", action_classify.movement);
             rfid_printf("action_classify.climb = %d\n", action_classify.climb);
@@ -828,7 +848,7 @@ void ADXL362FifoProcess(void)
                     if(memory_array[i][2] > 130 && memory_array[i][2] < 700)
                         deta_a_cnt += 1;
 
-                    if(memory_array[i][3] < 100)
+                    if(memory_array[i][3] < 120)
                         jicha_cnt += 1;
                 }
 
