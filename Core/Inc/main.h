@@ -77,7 +77,7 @@ extern device_t device;
 /* Exported macro ------------------------------------------------------------*/
 /* USER CODE BEGIN EM */
 #define _DEBUG              0        //  set device info
-#define _RFID_PRINT_DEBUG   0        //  use printf debug
+#define _RFID_PRINT_DEBUG   0	        //  use printf debug
 #define _Original_Data_Algorithm   1 //  use original data algorithm
 
 #if (_RFID_PRINT_DEBUG == 1)

@@ -580,7 +580,7 @@ void ADXL362FifoProcess(void)
     // 2.To 16-bit complement
     for(uint16_t i = 0; i < (_FIFO_SAMPLES_LEN / 6) * 3; i++)
     {
-			  if ((fifo[2 * i + 1] >> 6 & 0x03) == 0x0)
+        if ((fifo[2 * i + 1] >> 6 & 0x03) == 0x0)
         {
             if ((fifo[2 * i + 1] & 0x08))
                 three_axis_info[i / 3].x = (short int)(fifo[2 * i] + (0x0f00 & (fifo[2 * i + 1] << 8)) + 0xf000);
@@ -590,6 +590,7 @@ void ADXL362FifoProcess(void)
             //				rfid_printf("X[%d] = %hd, %hx ", i/3, xAxis[i/3], xAxis[i/3]);
 //            rfid_printf("samples[%d] :%hd,", i / 3, three_axis_info[i / 3].x);
         }
+
         if ((fifo[2 * i + 1] >> 6 & 0x03) == 0x1)
         {
             if ((fifo[2 * i + 1] & 0x08))
@@ -618,39 +619,42 @@ void ADXL362FifoProcess(void)
     {
         diff_three_axis_info[1] = diff_three_axis_info[0];
         diff_three_axis_info[0] = three_axis_info[i];
-				
-				if (three_axis_info[i].x > x_max_val)
+
+        if (three_axis_info[i].x > x_max_val)
             x_max_val = three_axis_info[i].x;
+
         if (three_axis_info[i].x < x_min_val)
             x_min_val = three_axis_info[i].x;
 
         if (three_axis_info[i].y > y_max_val)
             y_max_val = three_axis_info[i].y;
+
         if (three_axis_info[i].y < y_min_val)
             y_min_val = three_axis_info[i].y;
 
         if (three_axis_info[i].z > z_max_val)
             z_max_val = three_axis_info[i].z;
+
         if (three_axis_info[i].z < z_min_val)
             z_min_val = three_axis_info[i].z;
 
-        three_axis_average_info.y += three_axis_info[i].y;
-				
-				three_axis_info[i].x = diff_three_axis_info[0].x - diff_three_axis_info[1].x;
+        three_axis_average_info.x += three_axis_info[i].x;
+
+        three_axis_info[i].x = diff_three_axis_info[0].x - diff_three_axis_info[1].x;
         three_axis_info[i].y = diff_three_axis_info[0].y - diff_three_axis_info[1].y;
         three_axis_info[i].z = diff_three_axis_info[0].z - diff_three_axis_info[1].z;
-				
-				sum_info.x += abs(three_axis_info[i].x);
+
+        sum_info.x += abs(three_axis_info[i].x);
         sum_info.y += abs(three_axis_info[i].y);
         sum_info.z += abs(three_axis_info[i].z);
-				
-        rfid_printf("samples[%d] :%hd\n", i, three_axis_info[i].y);
 
-        if (abs(three_axis_info[i].y) <= 10)
+        rfid_printf("samples[%d] :%hd\n", i, three_axis_info[i].x);
+
+        if (abs(three_axis_info[i].x) <= 10)
             threshold_judge.low ++;
-        else if (abs(three_axis_info[i].y) <= 100)
+        else if (abs(three_axis_info[i].x) <= 100)
             threshold_judge.normal ++;
-        else if (abs(three_axis_info[i].y) <= 200)
+        else if (abs(three_axis_info[i].x) <= 200)
             threshold_judge.abovenormal ++;
         else
             threshold_judge.high ++;
@@ -662,20 +666,20 @@ void ADXL362FifoProcess(void)
             rfid_printf("threshold_judge.abovenormal = %d\n", threshold_judge.abovenormal);
             rfid_printf("threshold_judge.high = %d\n", threshold_judge.high);
 
-            three_axis_average_info.y = three_axis_average_info.y / 25;
-            rfid_printf("average_info.y = %d\n", three_axis_average_info.y);
-            rfid_printf("sum_info.y = %d\n", sum_info.y);
+            three_axis_average_info.x = three_axis_average_info.x / 25;
+            rfid_printf("average_info.y = %d\n", three_axis_average_info.x);
+            rfid_printf("sum_info.y = %d\n", sum_info.x);
 
             if (threshold_judge.low >= 24)
                 action = 1;             // rest
             else if ((threshold_judge.normal + threshold_judge.abovenormal) > 11 && threshold_judge.high == 0 &&
-                     three_axis_average_info.y >= 200)
+                     three_axis_average_info.x >= 200)
                 action = 2;             // ingestion
-            else if (three_axis_average_info.y > -200 && three_axis_average_info.y < 100 &&
+            else if (three_axis_average_info.x > -200 && three_axis_average_info.x < 100 &&
                      (sum_info.x + sum_info.y + sum_info.z) / 3 > 400 &&
                      (((x_max_val - x_min_val) + (y_max_val - y_min_val) + (z_max_val - z_min_val)) / 3) > 150)
                 action = 3;             // movement
-            else if (threshold_judge.high > 0 && three_axis_average_info.y <= -200)
+            else if (threshold_judge.high > 0 && three_axis_average_info.x <= -200)
                 action = 4;             // climb
             else
                 action = 6;             //other
@@ -689,7 +693,7 @@ void ADXL362FifoProcess(void)
 
             // circular storage
             memory_array[memory_index][0] = action;
-            memory_array[memory_index][1] = three_axis_average_info.y;
+            memory_array[memory_index][1] = three_axis_average_info.x;
             memory_array[memory_index][2] = (sum_info.x + sum_info.y + sum_info.z) / 3;
             memory_array[memory_index][3] = ((x_max_val - x_min_val) + (y_max_val - y_min_val) + (z_max_val - z_min_val)) / 3;
 
