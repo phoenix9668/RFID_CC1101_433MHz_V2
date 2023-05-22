@@ -27,7 +27,7 @@ typedef enum { BROADCAST, ADDRESS_CHECK} TX_DATA_MODE;
 
 #define _RECV_LENGTH               128
 #define _SEND_LENGTH               256
-#define	_TX_WAIT_TIME			   			 500 // cc1101 tx wait time
+#define	_TX_WAIT_TIME			   			 50 // cc1101 tx wait time
 #define	_RFID_SIZE                 6   // RFID size
 #define	_BATTERY_SIZE              2   // battery size
 #define	_RESETCNT_SIZE             2   // resetCnt size

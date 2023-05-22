@@ -101,28 +101,28 @@ static const uint8_t CC1101InitData[47][2] =
 
 };
 
-// Address Config = No address check 
-// Base Frequency = 432.999817 
-// CRC Autoflush = false 
-// CRC Enable = true 
-// Carrier Frequency = 432.999817 
-// Channel Number = 0 
-// Channel Spacing = 49.987793 
-// Data Format = Normal mode 
-// Data Rate = 76.767 
-// Device Address = 0 
-// Manchester Enable = false 
-// Modulated = true 
-// Modulation Format = MSK 
-// PA Ramping = false 
-// Packet Length = 255 
-// Packet Length Mode = Variable packet length mode. Packet length configured by the first byte after sync word 
-// Phase Transition Time = 0 
-// Preamble Count = 2 
-// RX Filter BW = 232.142857 
-// Sync Word Qualifier Mode = 30/32 + carrier-sense above threshold 
-// TX Power = 10 
-// Whitening = true 
+// Address Config = No address check
+// Base Frequency = 432.999817
+// CRC Autoflush = false
+// CRC Enable = true
+// Carrier Frequency = 432.999817
+// Channel Number = 0
+// Channel Spacing = 49.987793
+// Data Format = Normal mode
+// Data Rate = 76.767
+// Device Address = 0
+// Manchester Enable = false
+// Modulated = true
+// Modulation Format = MSK
+// PA Ramping = false
+// Packet Length = 255
+// Packet Length Mode = Variable packet length mode. Packet length configured by the first byte after sync word
+// Phase Transition Time = 0
+// Preamble Count = 2
+// RX Filter BW = 232.142857
+// Sync Word Qualifier Mode = 30/32 + carrier-sense above threshold
+// TX Power = 10
+// Whitening = true
 
 //static const uint8_t CC1101InitData[47][2] =
 //{
@@ -173,7 +173,7 @@ static const uint8_t CC1101InitData[47][2] =
 //    {CC1101_TEST2,				0x81},
 //    {CC1101_TEST1,				0x35},
 //    {CC1101_TEST0,				0x09}
-//		
+//
 //};
 
 // Sync word qualifier mode = 30/32 sync word bits detected
@@ -1037,15 +1037,15 @@ void CC1101SendHandler(void)
 
     rfid_printf("\n");
 
-    for(uint8_t i = 0; i < 3; i++)
-    {
-        HAL_Delay(_TX_WAIT_TIME);
-        RFIDInitial(0xEF, 0x1234, IDLE_MODE);
-        CC1101SendPacket(cc1101.sendBuffer, _RFID_SIZE + sizeof(RandomString) + 12 * _STEP_LOOPNUM + sizeof(step.stepStage) + _BATTERY_SIZE + _RESETCNT_SIZE + _CRC32_SIZE, ADDRESS_CHECK);
-        CC1101SetIdle();
-        CC1101WriteCmd(CC1101_SPWD);
-        CC1101_GDO_DeInit();
-    }
+//    for(uint8_t i = 0; i < 3; i++)
+//    {
+//        HAL_Delay(_TX_WAIT_TIME);
+    RFIDInitial(0xEF, 0x1234, IDLE_MODE);
+    CC1101SendPacket(cc1101.sendBuffer, _RFID_SIZE + sizeof(RandomString) + 12 * _STEP_LOOPNUM + sizeof(step.stepStage) + _BATTERY_SIZE + _RESETCNT_SIZE + _CRC32_SIZE, ADDRESS_CHECK);
+    CC1101SetIdle();
+    CC1101WriteCmd(CC1101_SPWD);
+    CC1101_GDO_DeInit();
+//    }
 
     memset(&cc1101, 0, sizeof(cc1101));
 
