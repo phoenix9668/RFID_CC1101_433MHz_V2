@@ -17,17 +17,17 @@
 #ifndef _ADXL362DRIVER_H_
 #define _ADXL362DRIVER_H_
 
-#define max(a,b) ((a) > (b) ? (a) : (b))
-#define min(a,b) ((a) < (b) ? (a) : (b))
+#define max(a, b) ((a) > (b) ? (a) : (b))
+#define min(a, b) ((a) < (b) ? (a) : (b))
 
-#define _STEP_LOOPNUM         12  // 20min per step,have 12 steps,equal 4 hours
-#define _FIFO_LEN             1024
-#define _FIFO_SAMPLES_LEN     900
-#define _AXIS_LEN             170
-#define _FILTER_CNT			      3
-#define _DIFF_CNT			        2
-#define _MEM_ROWS			        18
-#define _MEM_COLS			        4
+#define _STEP_LOOPNUM 12 // 20min per step,have 12 steps,equal 4 hours
+#define _FIFO_LEN 1024
+#define _FIFO_SAMPLES_LEN 900
+#define _AXIS_LEN 170
+#define _FILTER_CNT 3
+#define _DIFF_CNT 2
+#define _MEM_ROWS 18
+#define _MEM_COLS 4
 
 typedef struct
 {
@@ -79,50 +79,50 @@ typedef struct
     __IO FlagStatus fifoOverrun;
     __IO uint16_t restArray[_STEP_LOOPNUM];
     __IO uint16_t ingestionArray[_STEP_LOOPNUM];
-		__IO uint16_t movementArray[_STEP_LOOPNUM];
-		__IO uint16_t climbArray[_STEP_LOOPNUM];
-		__IO uint16_t ruminateArray[_STEP_LOOPNUM];
-		__IO uint16_t otherArray[_STEP_LOOPNUM];
+    __IO uint16_t movementArray[_STEP_LOOPNUM];
+    __IO uint16_t climbArray[_STEP_LOOPNUM];
+    __IO uint16_t ruminateArray[_STEP_LOOPNUM];
+    __IO uint16_t otherArray[_STEP_LOOPNUM];
 } step_t;
 
 extern step_t step;
 
 /* ------- Register names ------- */
 
-#define XL362_DEVID_AD			  0x00
-#define XL362_DEVID_MST			  0x01
-#define XL362_PARTID			    0x02
-#define XL362_REVID			  	  0x03
-#define XL362_XDATA				    0x08
-#define XL362_YDATA				    0x09
-#define XL362_ZDATA				    0x0A
-#define XL362_STATUS			    0x0B
-#define XL362_FIFO_ENTRIES_L	0x0C
-#define XL362_FIFO_ENTRIES_H	0x0D
-#define XL362_XDATA_L			    0x0E
-#define XL362_XDATA_H			    0x0F
-#define XL362_YDATA_L			    0x10
-#define XL362_YDATA_H			    0x11
-#define XL362_ZDATA_L			    0x12
-#define XL362_ZDATA_H			    0x13
-#define XL362_TEMP_L			    0x14
-#define XL362_TEMP_H			    0x15
-#define XL362_SOFT_RESET		  0x1F
-#define XL362_THRESH_ACT_L		0x20
-#define XL362_THRESH_ACT_H		0x21
-#define XL362_TIME_ACT			  0x22
-#define XL362_THRESH_INACT_L	0x23
-#define XL362_THRESH_INACT_H	0x24
-#define XL362_TIME_INACT_L		0x25
-#define XL362_TIME_INACT_H		0x26
-#define XL362_ACT_INACT_CTL		0x27
-#define XL362_FIFO_CONTROL		0x28
-#define XL362_FIFO_SAMPLES		0x29
-#define XL362_INTMAP1			    0x2A
-#define XL362_INTMAP2			    0x2B
-#define XL362_FILTER_CTL		  0x2C
-#define XL362_POWER_CTL			  0x2D
-#define XL362_SELF_TEST			  0x2E
+#define XL362_DEVID_AD 0x00
+#define XL362_DEVID_MST 0x01
+#define XL362_PARTID 0x02
+#define XL362_REVID 0x03
+#define XL362_XDATA 0x08
+#define XL362_YDATA 0x09
+#define XL362_ZDATA 0x0A
+#define XL362_STATUS 0x0B
+#define XL362_FIFO_ENTRIES_L 0x0C
+#define XL362_FIFO_ENTRIES_H 0x0D
+#define XL362_XDATA_L 0x0E
+#define XL362_XDATA_H 0x0F
+#define XL362_YDATA_L 0x10
+#define XL362_YDATA_H 0x11
+#define XL362_ZDATA_L 0x12
+#define XL362_ZDATA_H 0x13
+#define XL362_TEMP_L 0x14
+#define XL362_TEMP_H 0x15
+#define XL362_SOFT_RESET 0x1F
+#define XL362_THRESH_ACT_L 0x20
+#define XL362_THRESH_ACT_H 0x21
+#define XL362_TIME_ACT 0x22
+#define XL362_THRESH_INACT_L 0x23
+#define XL362_THRESH_INACT_H 0x24
+#define XL362_TIME_INACT_L 0x25
+#define XL362_TIME_INACT_H 0x26
+#define XL362_ACT_INACT_CTL 0x27
+#define XL362_FIFO_CONTROL 0x28
+#define XL362_FIFO_SAMPLES 0x29
+#define XL362_INTMAP1 0x2A
+#define XL362_INTMAP2 0x2B
+#define XL362_FILTER_CTL 0x2C
+#define XL362_POWER_CTL 0x2D
+#define XL362_SELF_TEST 0x2E
 
 unsigned char ADXL362RegisterRead(unsigned char Address);
 void ADXL362RegisterWrite(unsigned char Address, unsigned char SendValue);

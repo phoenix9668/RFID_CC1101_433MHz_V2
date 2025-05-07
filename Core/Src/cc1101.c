@@ -1141,7 +1141,7 @@ void CC1101Send3AxisHandler(void)
         rfid_printf("\n");
 
         CC1101_POWER_ON();
-        RFIDInitial(0xEF, 0x1234, IDLE_MODE);
+        RFIDInitial(0x08, 0x0973, IDLE_MODE);
         CC1101SendPacket(cc1101.sendBuffer, _RFID_SIZE + 14 + 18 + _FIFO_SAMPLES_LEN / 6 + _CRC32_SIZE, ADDRESS_CHECK);
         CC1101SetIdle();
         CC1101WriteCmd(CC1101_SPWD);
