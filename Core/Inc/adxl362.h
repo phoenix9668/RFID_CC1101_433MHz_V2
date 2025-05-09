@@ -63,6 +63,41 @@ typedef struct
 
 extern action_classify_t action_classify;
 
+/* 正弦波检测相关宏定义 */
+#define SINE_WAVE_MIN_FREQ 1.0f    // 最小频率 (Hz)
+#define SINE_WAVE_MAX_FREQ 1.7f    // 最大频率 (Hz)
+#define SINE_WAVE_MIN_AMPLITUDE 30 // 最小幅度
+#define PLATEAU_THRESHOLD 5        // 平台期阈值
+#define MIN_PLATEAU_COUNT 3        // 最小平台期计数
+#define MAX_PLATEAU_WINDOW 3       // 平台期检测窗口大小
+#define MAX_PEAK_COUNT 20          // 最大峰值数量
+#define MAX_VALLEY_COUNT 20        // 最大谷值数量
+#define MAX_PERIOD_COUNT 11        // 最大周期数量
+#define STD_DEV_THRESHOLD 0.3f     // 标准差阈值（幅度的百分比）
+#define SMOOTH_WINDOW_SIZE 5       // 平滑窗口大小
+#define EXTREMA_WINDOW_SIZE 3      // 极值检测窗口大小（单侧）
+
+/* 正弦波检测相关结构体 */
+typedef struct
+{
+    int16_t value;  // 峰值/谷值
+    uint16_t index; // 峰值/谷值索引
+} extreme_point_t;
+
+typedef struct
+{
+    extreme_point_t peaks[MAX_PEAK_COUNT];     // 峰值数组
+    extreme_point_t valleys[MAX_VALLEY_COUNT]; // 谷值数组
+    uint16_t peak_count;                       // 峰值计数
+    uint16_t valley_count;                     // 谷值计数
+    uint16_t periods[MAX_PERIOD_COUNT];        // 周期数组
+    uint8_t period_count;                      // 周期计数
+    uint8_t is_rising;                         // 是否处于上升阶段
+    uint8_t is_sine_wave;                      // 是否为正弦波
+    float frequency;                           // 频率
+    int16_t amplitude;                         // 幅度
+} sine_wave_detection_t;
+
 /**
  * \brief           Buffer for FIFO
  * \note            SPI

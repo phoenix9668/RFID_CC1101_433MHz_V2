@@ -60,6 +60,15 @@ int16_t z_min_val = 2000;
 uint8_t fifo[_FIFO_LEN];
 step_t step;
 
+// 初始化正弦波检测结构体
+sine_wave_detection_t sine_detection;
+// 创建临时缓冲区用于平滑滤波
+int16_t smoothed_x[_AXIS_LEN];
+
+// 平台期检测参数
+uint8_t plateau_count = 0;
+int16_t plateau_value = 0;
+
 extern uint8_t ErrorIndex;
 
 /*******************************************************************
@@ -613,8 +622,345 @@ void ADXL362FifoProcess(void)
     }
 
     // 3.Average Calc
+    // 4.Calculate whether to breathe
+    // 初始化正弦波检测结构体
+    memset(&sine_detection, 0, sizeof(sine_detection));
+    // 初始化平滑滤波缓冲区
+    memset(smoothed_x, 0, sizeof(smoothed_x));
+    x_max_val = -2000;
+    x_min_val = 2000;
+    y_max_val = -2000;
+    y_min_val = 2000;
+    z_max_val = -2000;
+    z_min_val = 2000;
+    // 4.1 计算比较XYZ轴幅值
+    for (uint16_t i = 0; i < (_FIFO_SAMPLES_LEN / 6); i++)
+    {
+        // 确保读取到最新的值
+        int16_t current_x = three_axis_info[i].x;
+        int16_t current_y = three_axis_info[i].y;
+        if (current_x > x_max_val)
+            x_max_val = current_x;
+        if (current_x < x_min_val)
+            x_min_val = current_x;
 
-    // 4.Difference Derivation And Threshold Judge
+        if (current_y > y_max_val)
+            y_max_val = current_y;
+        if (current_y < y_min_val)
+            y_min_val = current_y;
+    }
+    // 4.2 平滑滤波 - 使用移动平均滤波
+    rfid_printf("x_max_val = %d\n", x_max_val);
+    rfid_printf("x_min_val = %d\n", x_min_val);
+    rfid_printf("y_max_val = %d\n", y_max_val);
+    rfid_printf("y_min_val = %d\n", y_min_val);
+    if (abs(x_max_val - x_min_val) > 2 * abs(y_max_val - y_min_val))
+    {
+        for (uint16_t i = 0; i < (_FIFO_SAMPLES_LEN / 6); i++)
+        {
+            // 对每个点应用移动平均滤波
+            int32_t sum = 0;
+            int16_t count = 0;
+
+            // 计算窗口内的平均值
+            for (int16_t j = -SMOOTH_WINDOW_SIZE / 2; j <= SMOOTH_WINDOW_SIZE / 2; j++)
+            {
+                int16_t idx = i + j;
+                if (idx >= 0 && idx < (_FIFO_SAMPLES_LEN / 6))
+                {
+                    sum += three_axis_info[idx].x;
+                    count++;
+                }
+            }
+
+            // 计算平均值并存储到平滑后的数组
+            smoothed_x[i] = (int16_t)(sum / count);
+        }
+
+        // 4.3 分析X轴数据是否为正弦波
+        for (uint16_t i = 0; i < (_FIFO_SAMPLES_LEN / 6); i++)
+        {
+            // 第一个点初始化
+            if (i == 0)
+            {
+                continue;
+            }
+
+            // 改进的平台期检测（扩大检测范围）
+            if (i >= MAX_PLATEAU_WINDOW)
+            {
+                // 检查是否存在平台期（连续多个相似值）
+                uint8_t is_plateau = 1;
+                int16_t plateau_value_sum = 0;
+                uint8_t plateau_count = 0;
+
+                // 检查窗口内的值是否都在阈值范围内
+                for (int16_t j = -MAX_PLATEAU_WINDOW; j < 0; j++)
+                {
+                    if (abs(smoothed_x[i + j] - smoothed_x[i + j + 1]) > PLATEAU_THRESHOLD)
+                    {
+                        is_plateau = 0;
+                        break;
+                    }
+                    plateau_value_sum += smoothed_x[i + j];
+                    plateau_count++;
+                }
+
+                // 如果是平台期，计算平台期的平均值
+                if (is_plateau && plateau_count >= MIN_PLATEAU_COUNT)
+                {
+                    int16_t plateau_value = plateau_value_sum / plateau_count;
+
+                    // 检查平台期前后的趋势
+                    int16_t before_plateau = 0;
+                    int16_t after_plateau = 0;
+
+                    // 获取平台期前的值（如果可能）
+                    if (i > MAX_PLATEAU_WINDOW + 2)
+                    {
+                        before_plateau = smoothed_x[i - MAX_PLATEAU_WINDOW - 2];
+                    }
+
+                    // 获取平台期后的值（当前值）
+                    after_plateau = smoothed_x[i];
+
+                    // 判断平台期是峰值还是谷值
+                    if (before_plateau < plateau_value && after_plateau < plateau_value)
+                    {
+                        // 平台期是峰值
+                        if (sine_detection.is_rising && sine_detection.peak_count < MAX_PEAK_COUNT)
+                        {
+                            sine_detection.peaks[sine_detection.peak_count].value = plateau_value;
+                            sine_detection.peaks[sine_detection.peak_count].index = i - MAX_PLATEAU_WINDOW / 2;
+
+                            // 计算周期（从峰值到峰值）
+                            if (sine_detection.peak_count >= 1 && sine_detection.period_count < MAX_PERIOD_COUNT)
+                            {
+                                sine_detection.periods[sine_detection.period_count] =
+                                    sine_detection.peaks[sine_detection.peak_count].index -
+                                    sine_detection.peaks[sine_detection.peak_count - 1].index;
+                                sine_detection.period_count++;
+                            }
+                            sine_detection.peak_count++;
+                            sine_detection.is_rising = 0;
+                        }
+                    }
+                    else if (before_plateau > plateau_value && after_plateau > plateau_value)
+                    {
+                        // 平台期是谷值
+                        if (!sine_detection.is_rising && sine_detection.valley_count < MAX_VALLEY_COUNT)
+                        {
+                            sine_detection.valleys[sine_detection.valley_count].value = plateau_value;
+                            sine_detection.valleys[sine_detection.valley_count].index = i - MAX_PLATEAU_WINDOW / 2;
+                            sine_detection.valley_count++;
+                            sine_detection.is_rising = 1;
+                        }
+                    }
+                }
+            }
+
+            // 改进的极值检测（扩大比较范围）
+            if (i >= EXTREMA_WINDOW_SIZE && i < (_FIFO_SAMPLES_LEN / 6) - EXTREMA_WINDOW_SIZE)
+            {
+                // 检测是否为局部峰值
+                uint8_t is_peak = 1;
+                for (int16_t j = -EXTREMA_WINDOW_SIZE; j <= EXTREMA_WINDOW_SIZE; j++)
+                {
+                    if (j != 0 && smoothed_x[i + j] > smoothed_x[i])
+                    {
+                        is_peak = 0;
+                        break;
+                    }
+                }
+
+                if (is_peak && sine_detection.is_rising && sine_detection.peak_count < MAX_PEAK_COUNT)
+                {
+                    // 检查是否与已有峰值过近
+                    uint8_t too_close = 0;
+                    for (uint16_t j = 0; j < sine_detection.peak_count; j++)
+                    {
+                        if (abs((int)i - (int)sine_detection.peaks[j].index) < EXTREMA_WINDOW_SIZE)
+                        {
+                            too_close = 1;
+                            // 如果新峰值更高，替换旧峰值
+                            if (smoothed_x[i] > sine_detection.peaks[j].value)
+                            {
+                                sine_detection.peaks[j].value = smoothed_x[i];
+                                sine_detection.peaks[j].index = i;
+                            }
+                            break;
+                        }
+                    }
+
+                    if (!too_close)
+                    {
+                        sine_detection.peaks[sine_detection.peak_count].value = smoothed_x[i];
+                        sine_detection.peaks[sine_detection.peak_count].index = i;
+
+                        // 计算周期（从峰值到峰值）
+                        if (sine_detection.peak_count >= 1 && sine_detection.period_count < MAX_PERIOD_COUNT)
+                        {
+                            sine_detection.periods[sine_detection.period_count] =
+                                sine_detection.peaks[sine_detection.peak_count].index -
+                                sine_detection.peaks[sine_detection.peak_count - 1].index;
+                            sine_detection.period_count++;
+                        }
+                        sine_detection.peak_count++;
+                    }
+                    sine_detection.is_rising = 0;
+                }
+
+                // 检测是否为局部谷值
+                uint8_t is_valley = 1;
+                for (int16_t j = -EXTREMA_WINDOW_SIZE; j <= EXTREMA_WINDOW_SIZE; j++)
+                {
+                    if (j != 0 && smoothed_x[i + j] < smoothed_x[i])
+                    {
+                        is_valley = 0;
+                        break;
+                    }
+                }
+
+                if (is_valley && !sine_detection.is_rising && sine_detection.valley_count < MAX_VALLEY_COUNT)
+                {
+                    // 检查是否与已有谷值过近
+                    uint8_t too_close = 0;
+                    for (uint16_t j = 0; j < sine_detection.valley_count; j++)
+                    {
+                        if (abs((int)i - (int)sine_detection.valleys[j].index) < EXTREMA_WINDOW_SIZE)
+                        {
+                            too_close = 1;
+                            // 如果新谷值更低，替换旧谷值
+                            if (smoothed_x[i] < sine_detection.valleys[j].value)
+                            {
+                                sine_detection.valleys[j].value = smoothed_x[i];
+                                sine_detection.valleys[j].index = i;
+                            }
+                            break;
+                        }
+                    }
+
+                    if (!too_close)
+                    {
+                        sine_detection.valleys[sine_detection.valley_count].value = smoothed_x[i];
+                        sine_detection.valleys[sine_detection.valley_count].index = i;
+                        sine_detection.valley_count++;
+                    }
+                    sine_detection.is_rising = 1;
+                }
+            }
+        }
+
+        // 4.4 对峰值和谷值按索引排序，确保周期计算的连续性
+        for (uint16_t i = 0; i < sine_detection.peak_count - 1; i++)
+        {
+            for (uint16_t j = 0; j < sine_detection.peak_count - i - 1; j++)
+            {
+                if (sine_detection.peaks[j].index > sine_detection.peaks[j + 1].index)
+                {
+                    extreme_point_t temp = sine_detection.peaks[j];
+                    sine_detection.peaks[j] = sine_detection.peaks[j + 1];
+                    sine_detection.peaks[j + 1] = temp;
+                }
+            }
+        }
+
+        for (uint16_t i = 0; i < sine_detection.valley_count - 1; i++)
+        {
+            for (uint16_t j = 0; j < sine_detection.valley_count - i - 1; j++)
+            {
+                if (sine_detection.valleys[j].index > sine_detection.valleys[j + 1].index)
+                {
+                    extreme_point_t temp = sine_detection.valleys[j];
+                    sine_detection.valleys[j] = sine_detection.valleys[j + 1];
+                    sine_detection.valleys[j + 1] = temp;
+                }
+            }
+        }
+
+        // 4.5 重新计算周期（基于排序后的峰值）
+        sine_detection.period_count = 0;
+        for (uint16_t i = 1; i < sine_detection.peak_count && sine_detection.period_count < MAX_PERIOD_COUNT; i++)
+        {
+            sine_detection.periods[sine_detection.period_count] =
+                sine_detection.peaks[i].index - sine_detection.peaks[i - 1].index;
+            sine_detection.period_count++;
+        }
+
+        // 4.6 分析是否为正弦波
+        if (sine_detection.peak_count >= 3 && sine_detection.valley_count >= 3)
+        {
+            // 计算平均周期
+            float avg_period = 0;
+            for (uint8_t j = 0; j < sine_detection.period_count; j++)
+            {
+                avg_period += sine_detection.periods[j];
+            }
+            avg_period /= sine_detection.period_count;
+
+            // 计算频率 (采样率为25Hz)
+            sine_detection.frequency = 25.0f / avg_period;
+
+            // 计算峰值和谷值的平均幅度
+            int32_t peak_sum = 0, valley_sum = 0;
+            for (uint8_t j = 0; j < sine_detection.peak_count; j++)
+            {
+                peak_sum += sine_detection.peaks[j].value;
+            }
+            for (uint8_t j = 0; j < sine_detection.valley_count; j++)
+            {
+                valley_sum += sine_detection.valleys[j].value;
+            }
+            int16_t avg_peak = peak_sum / sine_detection.peak_count;
+            int16_t avg_valley = valley_sum / sine_detection.valley_count;
+            sine_detection.amplitude = avg_peak - avg_valley;
+
+            // 判断是否为正弦波：
+            // 1. 频率在1.3-1.7Hz范围内
+            // 2. 幅度足够大
+            // 3. 峰值和谷值的标准差较小（波形规则）
+            if (sine_detection.frequency >= SINE_WAVE_MIN_FREQ &&
+                sine_detection.frequency <= SINE_WAVE_MAX_FREQ &&
+                sine_detection.amplitude > SINE_WAVE_MIN_AMPLITUDE)
+            {
+                // 计算峰值和谷值的标准差
+                float peak_std = 0, valley_std = 0;
+                for (uint8_t j = 0; j < sine_detection.peak_count; j++)
+                {
+                    peak_std += (sine_detection.peaks[j].value - avg_peak) * (sine_detection.peaks[j].value - avg_peak);
+                }
+                for (uint8_t j = 0; j < sine_detection.valley_count; j++)
+                {
+                    valley_std += (sine_detection.valleys[j].value - avg_valley) * (sine_detection.valleys[j].value - avg_valley);
+                }
+                peak_std = sqrtf(peak_std / sine_detection.peak_count);
+                valley_std = sqrtf(valley_std / sine_detection.valley_count);
+
+                // 标准差小于幅度的阈值百分比认为是规则波形
+                if (peak_std < sine_detection.amplitude * STD_DEV_THRESHOLD &&
+                    valley_std < sine_detection.amplitude * STD_DEV_THRESHOLD)
+                {
+                    sine_detection.is_sine_wave = 1;
+                }
+            }
+
+            // 输出检测结果
+            rfid_printf("Sine wave detection result:\n");
+            rfid_printf("Peak number: %d, valley number: %d\n", sine_detection.peak_count, sine_detection.valley_count);
+            rfid_printf("Average period: %.2f Sampling point\n", avg_period);
+            rfid_printf("Frequency: %.2f Hz\n", sine_detection.frequency);
+            rfid_printf("Amplitude: %d\n", sine_detection.amplitude);
+            rfid_printf("Is it a sine wave(1.0-1.7Hz): %d\n", sine_detection.is_sine_wave);
+        }
+    }
+
+    x_max_val = -2000;
+    x_min_val = 2000;
+    y_max_val = -2000;
+    y_min_val = 2000;
+    z_max_val = -2000;
+    z_min_val = 2000;
+    // 5.Difference Derivation And Threshold Judge
     for (uint16_t i = 0; i < (_FIFO_SAMPLES_LEN / 6); i++)
     {
         diff_three_axis_info[1] = diff_three_axis_info[0];
@@ -670,7 +1016,9 @@ void ADXL362FifoProcess(void)
             rfid_printf("average_info.y = %d\n", three_axis_average_info.x);
             rfid_printf("sum_info.y = %d\n", sum_info.x);
 
-            if (threshold_judge.low >= 24)
+            if (sine_detection.is_sine_wave == 1)
+                action = 7; // breath
+            else if (threshold_judge.low >= 24)
                 action = 1; // rest
             else if ((threshold_judge.normal + threshold_judge.abovenormal) > 11 && threshold_judge.high == 0 &&
                      three_axis_average_info.x >= 200)
@@ -798,30 +1146,6 @@ void ADXL362FifoProcess(void)
             else
                 memory_index += 1;
 
-            // eliminate redundant climb
-            //            for (uint8_t i = 0; i < _MEM_ROWS; i++)
-            //                if(memory_array[i][0] == 4)
-            //                {
-            //                    for (uint8_t j = (i + 1); j < _MEM_ROWS; j++)
-            //                    {
-            //                        if (memory_array[j][0] == 4)
-            //                            memory_array[j][0] = 3;
-            //                    }
-
-            //                    rfid_printf("memory_array2:\n");
-
-            //                    // print memory_array
-            //                    for (uint8_t i = 0; i < _MEM_ROWS; i++)
-            //                    {
-            //                        for (uint8_t j = 0; j < _MEM_COLS; j++)
-            //                        {
-            //                            rfid_printf("%d ", memory_array[i][j]);
-            //                        }
-
-            //                        rfid_printf("\n");
-            //                    }
-            //                }
-
             // if ingestion_cnt >= 2 ==> 3 to 6
             ingestion_cnt = 0;
 
@@ -845,7 +1169,7 @@ void ADXL362FifoProcess(void)
                 if (memory_array[i][0] == 1)
                     rest_cnt += 1;
 
-            if (rest_cnt <= 4)
+            if (rest_cnt <= 4 && sine_detection.is_sine_wave == 0)
             {
                 for (uint8_t i = 0; i < _MEM_ROWS; i++)
                 {
@@ -880,7 +1204,9 @@ void ADXL362FifoProcess(void)
 
             action_classify_array[((i + 1) / 25) - 1] = memory_array[memory_index_o][0];
 
-            if (memory_array[memory_index_o][0] == 1) // rest
+            if (memory_array[memory_index_o][0] == 7) // breath
+                action_classify.other++;
+            else if (memory_array[memory_index_o][0] == 1) // rest
                 action_classify.rest++;
             else if (memory_array[memory_index_o][0] == 2) // ingestion
                 action_classify.ingestion++;
@@ -890,8 +1216,8 @@ void ADXL362FifoProcess(void)
                 action_classify.climb++;
             else if (memory_array[memory_index_o][0] == 5) // ruminate
                 action_classify.ruminate++;
-            else // other
-                action_classify.other++;
+            // else // other
+            //     action_classify.other++;
 
             memset(&threshold_judge, 0, sizeof(threshold_judge));
             memset(&three_axis_average_info, 0, sizeof(three_axis_average_info));
@@ -910,7 +1236,7 @@ void ADXL362FifoProcess(void)
         rfid_printf("action_classify_array[%d] = %d\n", i, action_classify_array[i]);
     }
 
-    CC1101Send3AxisHandler();
+//    CC1101Send3AxisHandler();
 
     //    ADXL362RegisterRead(XL362_STATUS);
     //    rfid_printf("XL362_STATUS: %x\n", ADXL362RegisterRead(XL362_STATUS));

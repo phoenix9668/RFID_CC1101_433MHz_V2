@@ -331,7 +331,7 @@ void System_Initial(void)
     ADXL362_Init();
     /*##-2- initial CC1101 peripheral,configure it's address and sync code ##*/
 		CC1101_POWER_ON();
-    RFIDInitial(0x08, 0x0973, IDLE_MODE);
+    RFIDInitial(0xEF, 0x1234, IDLE_MODE);
     CC1101WriteCmd(CC1101_SPWD);
 		CC1101_POWER_DOWN();
 
