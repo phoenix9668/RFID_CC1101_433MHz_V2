@@ -52,6 +52,8 @@ uint8_t personalization_String[] = {0x1E, 0x6C, 0x7B, 0x82, 0xE5, 0xA5, 0x71, 0x
 /* Array that will be filled with random bytes */
 uint8_t RandomString[32] = {0, };
 
+#ifdef USE_ST_CRYPTO_RNG
+
 RNGstate_stt RNGstate;
 
 RNGinitInput_stt RNGinit_st;
@@ -133,6 +135,64 @@ void RNG_Gen(void)
         Error_Handler();
     }
 }
+
+#else
+
+static uint32_t rng_state;
+
+static uint32_t rng_mix32(uint32_t value)
+{
+    value ^= value >> 16;
+    value *= 0x7feb352dU;
+    value ^= value >> 15;
+    value *= 0x846ca68bU;
+    value ^= value >> 16;
+    return value;
+}
+
+/* RNG init function */
+void RNG_Init(void)
+{
+    rng_state = HAL_GetTick() ^ 0x9e3779b9U;
+
+#ifdef UID_BASE
+    {
+        const uint32_t *uid = (const uint32_t *)UID_BASE;
+        rng_state ^= uid[0];
+        rng_state = rng_mix32(rng_state ^ uid[1]);
+        rng_state = rng_mix32(rng_state ^ uid[2]);
+    }
+#endif
+
+    for (uint8_t i = 0; i < sizeof(entropy_data); i++)
+    {
+        rng_state = rng_mix32(rng_state + entropy_data[i] + i);
+    }
+
+    for (uint8_t i = 0; i < sizeof(nonce); i++)
+    {
+        rng_state = rng_mix32(rng_state + HAL_GetTick() + i);
+        nonce[i] = (uint8_t)rng_state;
+        rfid_printf("nonce[%d] = %02x ", i, nonce[i]);
+    }
+
+    rfid_printf("\n");
+}
+
+/* RNG gen function */
+void RNG_Gen(void)
+{
+    for (uint16_t i = 0; i < sizeof(RandomString); i++)
+    {
+        rng_state = rng_mix32(rng_state + HAL_GetTick() + i + nonce[i % sizeof(nonce)]);
+        RandomString[i] = (uint8_t)(rng_state >> ((i & 0x03U) * 8U));
+        rfid_printf("%02x ", RandomString[i]);
+    }
+
+    rfid_printf("\n");
+}
+
+#endif
 
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
