@@ -1,6 +1,6 @@
 # ADXL362 PC algorithm runner
 
-This harness compiles the production `Core/Src/adxl362.c` and
+This harness compiles the production `Core/Src/adxl362_behavior.c` and
 `Core/Inc/adxl362.h` directly. The firmware algorithm and its data structures
 are not copied or modified. PC-only headers replace STM32 peripherals, and
 `src/main.c` converts decoded CSV `x,y,z` samples back into the ADXL362 FIFO

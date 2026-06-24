@@ -44,14 +44,20 @@ target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE
 
 # Add sources to executable
 target_sources(${CMAKE_PROJECT_NAME} PRIVATE
-    Core/Src/adxl362.c
+    Core/Src/adxl362_app.c
+    Core/Src/adxl362_behavior.c
     Core/Src/cc1101.c
+    Core/Src/no_os_alloc.c
+    Core/Src/no_os_spi_stm32l0.c
     Core/Src/rand_bytes_gen.c
+    Drivers/ADI/no-OS/drivers/accel/adxl362/adxl362.c
 )
 
 # Add include paths
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
-    # Add user defined include paths
+    Core/Inc
+    Drivers/ADI/no-OS/include
+    Drivers/ADI/no-OS/drivers/accel/adxl362
 )
 
 # Add project symbols (macros)

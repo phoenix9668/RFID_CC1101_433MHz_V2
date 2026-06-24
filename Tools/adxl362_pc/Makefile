@@ -26,7 +26,7 @@ $(BUILD_DIR)/main.o: src/main.c | $(BUILD_DIR)
 $(BUILD_DIR)/pc_platform.o: src/pc_platform.c | $(BUILD_DIR)
 	$(CC) $(CPPFLAGS) $(CFLAGS) $(PC_WARNINGS) -c $< -o $@
 
-$(FIRMWARE_OBJECT): $(ROOT)/Core/Src/adxl362.c | $(BUILD_DIR)
+$(FIRMWARE_OBJECT): $(ROOT)/Core/Src/adxl362_behavior.c | $(BUILD_DIR)
 	$(CC) $(CPPFLAGS) $(CFLAGS) $(FIRMWARE_WARNINGS) -c $< -o $@
 
 sanitize:

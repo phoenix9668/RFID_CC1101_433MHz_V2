@@ -7,7 +7,7 @@ validating firmware behavior from CSV data.
 
 Key files:
 
-- `Core/Src/adxl362.c`
+- `Core/Src/adxl362_behavior.c`
 - `Core/Inc/adxl362.h`
 - `Tools/adxl362_pc/`
 - `Doc/data/02 1004 20230315 1819-2219 29W.csv`
@@ -90,5 +90,5 @@ Verbose diagnostics:
   not be overwritten unless intentionally testing a small default output.
 - `Tools/adxl362_pc/.gitignore` ignores generated CSV files. If you want to
   move result CSVs through Git, add them with `git add -f`.
-- The PC runner compiles the firmware `Core/Src/adxl362.c` directly. It is not a
+- The PC runner compiles the firmware `Core/Src/adxl362_behavior.c` directly. It is not a
   separate reimplementation of the algorithm.

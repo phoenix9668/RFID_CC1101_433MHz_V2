@@ -81,16 +81,6 @@ static int16_t ADXL362GetAxisValue(uint16_t index, uint8_t axis)
         return three_axis_info[index].z;
 }
 
-static char ADXL362GetAxisName(uint8_t axis)
-{
-    if (axis == 0)
-        return 'X';
-    else if (axis == 1)
-        return 'Y';
-    else
-        return 'Z';
-}
-
 static void ADXL362SortExtremePoints(extreme_point_t *points, uint16_t count)
 {
     if (count < 2)
@@ -349,11 +339,25 @@ static uint8_t ADXL362AnalyzeSineAxis(uint8_t axis, sine_wave_detection_t *candi
     return candidate->is_sine_wave;
 }
 
+#ifdef ADXL362_PC_RUNNER
+static char ADXL362GetAxisName(uint8_t axis)
+{
+    if (axis == 0)
+        return 'X';
+    else if (axis == 1)
+        return 'Y';
+    else
+        return 'Z';
+}
+#endif
+
 static void ADXL362DetectBreathSineWave(void)
 {
     sine_wave_detection_t candidate;
     sine_wave_detection_t best_candidate;
+#ifdef ADXL362_PC_RUNNER
     uint8_t best_axis = 0;
+#endif
     uint8_t found = 0;
 
     memset(&sine_detection, 0, sizeof(sine_detection));
@@ -374,7 +378,9 @@ static void ADXL362DetectBreathSineWave(void)
             (!found || candidate.amplitude > best_candidate.amplitude))
         {
             best_candidate = candidate;
+#ifdef ADXL362_PC_RUNNER
             best_axis = axis;
+#endif
             found = 1;
         }
     }
@@ -388,6 +394,8 @@ static void ADXL362DetectBreathSineWave(void)
     }
 }
 
+#ifdef ADXL362_PC_RUNNER
+/* PC regression builds keep the legacy shims and do not link the no-OS driver. */
 /*******************************************************************
   @brief unsigned char ADXL362RegisterRead(unsigned char Address)
          Read a register value from ADXL362
@@ -829,6 +837,7 @@ void ADXL362_Init(void)
 
     HAL_Delay(200);
 }
+#endif
 
 /*******************************************************************
   @brief void ADXL362FifoProcess(void)
