@@ -71,323 +71,6 @@ int16_t plateau_value = 0;
 
 extern uint8_t ErrorIndex;
 
-static int16_t ADXL362GetAxisValue(uint16_t index, uint8_t axis)
-{
-    if (axis == 0)
-        return three_axis_info[index].x;
-    else if (axis == 1)
-        return three_axis_info[index].y;
-    else
-        return three_axis_info[index].z;
-}
-
-static char ADXL362GetAxisName(uint8_t axis)
-{
-    if (axis == 0)
-        return 'X';
-    else if (axis == 1)
-        return 'Y';
-    else
-        return 'Z';
-}
-
-static void ADXL362SortExtremePoints(extreme_point_t *points, uint16_t count)
-{
-    if (count < 2)
-        return;
-
-    for (uint16_t i = 0; i < count - 1; i++)
-    {
-        for (uint16_t j = 0; j < count - i - 1; j++)
-        {
-            if (points[j].index > points[j + 1].index)
-            {
-                extreme_point_t temp = points[j];
-                points[j] = points[j + 1];
-                points[j + 1] = temp;
-            }
-        }
-    }
-}
-
-static uint8_t ADXL362AnalyzeSineAxis(uint8_t axis, sine_wave_detection_t *candidate, uint16_t *axis_range)
-{
-    int16_t axis_max_val = -2000;
-    int16_t axis_min_val = 2000;
-
-    memset(candidate, 0, sizeof(*candidate));
-    memset(smoothed_x, 0, sizeof(smoothed_x));
-
-    for (uint16_t i = 0; i < (_FIFO_SAMPLES_LEN / 6); i++)
-    {
-        int16_t current_value = ADXL362GetAxisValue(i, axis);
-        if (current_value > axis_max_val)
-            axis_max_val = current_value;
-        if (current_value < axis_min_val)
-            axis_min_val = current_value;
-    }
-
-    *axis_range = (uint16_t)abs(axis_max_val - axis_min_val);
-    if (*axis_range < SINE_WAVE_MIN_RANGE)
-        return 0;
-
-    for (uint16_t i = 0; i < (_FIFO_SAMPLES_LEN / 6); i++)
-    {
-        int32_t sum = 0;
-        int16_t count = 0;
-
-        for (int16_t j = -SMOOTH_WINDOW_SIZE / 2; j <= SMOOTH_WINDOW_SIZE / 2; j++)
-        {
-            int16_t idx = i + j;
-            if (idx >= 0 && idx < (_FIFO_SAMPLES_LEN / 6))
-            {
-                sum += ADXL362GetAxisValue(idx, axis);
-                count++;
-            }
-        }
-
-        smoothed_x[i] = (int16_t)(sum / count);
-    }
-
-    for (uint16_t i = 0; i < (_FIFO_SAMPLES_LEN / 6); i++)
-    {
-        if (i == 0)
-            continue;
-
-        if (i >= MAX_PLATEAU_WINDOW)
-        {
-            uint8_t is_plateau = 1;
-            int16_t plateau_value_sum = 0;
-            uint8_t plateau_count = 0;
-
-            for (int16_t j = -MAX_PLATEAU_WINDOW; j < 0; j++)
-            {
-                if (abs(smoothed_x[i + j] - smoothed_x[i + j + 1]) > PLATEAU_THRESHOLD)
-                {
-                    is_plateau = 0;
-                    break;
-                }
-                plateau_value_sum += smoothed_x[i + j];
-                plateau_count++;
-            }
-
-            if (is_plateau && plateau_count >= MIN_PLATEAU_COUNT)
-            {
-                int16_t plateau_value = plateau_value_sum / plateau_count;
-                int16_t before_plateau = 0;
-                int16_t after_plateau = smoothed_x[i];
-
-                if (i > MAX_PLATEAU_WINDOW + 2)
-                    before_plateau = smoothed_x[i - MAX_PLATEAU_WINDOW - 2];
-
-                if (before_plateau < plateau_value && after_plateau < plateau_value)
-                {
-                    if (candidate->is_rising && candidate->peak_count < MAX_PEAK_COUNT)
-                    {
-                        candidate->peaks[candidate->peak_count].value = plateau_value;
-                        candidate->peaks[candidate->peak_count].index = i - MAX_PLATEAU_WINDOW / 2;
-
-                        if (candidate->peak_count >= 1 && candidate->period_count < MAX_PERIOD_COUNT)
-                        {
-                            candidate->periods[candidate->period_count] =
-                                candidate->peaks[candidate->peak_count].index -
-                                candidate->peaks[candidate->peak_count - 1].index;
-                            candidate->period_count++;
-                        }
-                        candidate->peak_count++;
-                        candidate->is_rising = 0;
-                    }
-                }
-                else if (before_plateau > plateau_value && after_plateau > plateau_value)
-                {
-                    if (!candidate->is_rising && candidate->valley_count < MAX_VALLEY_COUNT)
-                    {
-                        candidate->valleys[candidate->valley_count].value = plateau_value;
-                        candidate->valleys[candidate->valley_count].index = i - MAX_PLATEAU_WINDOW / 2;
-                        candidate->valley_count++;
-                        candidate->is_rising = 1;
-                    }
-                }
-            }
-        }
-
-        if (i >= EXTREMA_WINDOW_SIZE && i < (_FIFO_SAMPLES_LEN / 6) - EXTREMA_WINDOW_SIZE)
-        {
-            uint8_t is_peak = 1;
-            for (int16_t j = -EXTREMA_WINDOW_SIZE; j <= EXTREMA_WINDOW_SIZE; j++)
-            {
-                if (j != 0 && smoothed_x[i + j] > smoothed_x[i])
-                {
-                    is_peak = 0;
-                    break;
-                }
-            }
-
-            if (is_peak && candidate->is_rising && candidate->peak_count < MAX_PEAK_COUNT)
-            {
-                uint8_t too_close = 0;
-                for (uint16_t j = 0; j < candidate->peak_count; j++)
-                {
-                    if (abs((int)i - (int)candidate->peaks[j].index) < EXTREMA_WINDOW_SIZE)
-                    {
-                        too_close = 1;
-                        if (smoothed_x[i] > candidate->peaks[j].value)
-                        {
-                            candidate->peaks[j].value = smoothed_x[i];
-                            candidate->peaks[j].index = i;
-                        }
-                        break;
-                    }
-                }
-
-                if (!too_close)
-                {
-                    candidate->peaks[candidate->peak_count].value = smoothed_x[i];
-                    candidate->peaks[candidate->peak_count].index = i;
-
-                    if (candidate->peak_count >= 1 && candidate->period_count < MAX_PERIOD_COUNT)
-                    {
-                        candidate->periods[candidate->period_count] =
-                            candidate->peaks[candidate->peak_count].index -
-                            candidate->peaks[candidate->peak_count - 1].index;
-                        candidate->period_count++;
-                    }
-                    candidate->peak_count++;
-                }
-                candidate->is_rising = 0;
-            }
-
-            uint8_t is_valley = 1;
-            for (int16_t j = -EXTREMA_WINDOW_SIZE; j <= EXTREMA_WINDOW_SIZE; j++)
-            {
-                if (j != 0 && smoothed_x[i + j] < smoothed_x[i])
-                {
-                    is_valley = 0;
-                    break;
-                }
-            }
-
-            if (is_valley && !candidate->is_rising && candidate->valley_count < MAX_VALLEY_COUNT)
-            {
-                uint8_t too_close = 0;
-                for (uint16_t j = 0; j < candidate->valley_count; j++)
-                {
-                    if (abs((int)i - (int)candidate->valleys[j].index) < EXTREMA_WINDOW_SIZE)
-                    {
-                        too_close = 1;
-                        if (smoothed_x[i] < candidate->valleys[j].value)
-                        {
-                            candidate->valleys[j].value = smoothed_x[i];
-                            candidate->valleys[j].index = i;
-                        }
-                        break;
-                    }
-                }
-
-                if (!too_close)
-                {
-                    candidate->valleys[candidate->valley_count].value = smoothed_x[i];
-                    candidate->valleys[candidate->valley_count].index = i;
-                    candidate->valley_count++;
-                }
-                candidate->is_rising = 1;
-            }
-        }
-    }
-
-    ADXL362SortExtremePoints(candidate->peaks, candidate->peak_count);
-    ADXL362SortExtremePoints(candidate->valleys, candidate->valley_count);
-
-    candidate->period_count = 0;
-    for (uint16_t i = 1; i < candidate->peak_count && candidate->period_count < MAX_PERIOD_COUNT; i++)
-    {
-        candidate->periods[candidate->period_count] =
-            candidate->peaks[i].index - candidate->peaks[i - 1].index;
-        candidate->period_count++;
-    }
-
-    if (candidate->peak_count >= 3 && candidate->valley_count >= 3 && candidate->period_count > 0)
-    {
-        float avg_period = 0;
-        for (uint8_t j = 0; j < candidate->period_count; j++)
-            avg_period += candidate->periods[j];
-        avg_period /= candidate->period_count;
-
-        candidate->frequency = 25.0f / avg_period;
-
-        int32_t peak_sum = 0, valley_sum = 0;
-        for (uint8_t j = 0; j < candidate->peak_count; j++)
-            peak_sum += candidate->peaks[j].value;
-        for (uint8_t j = 0; j < candidate->valley_count; j++)
-            valley_sum += candidate->valleys[j].value;
-
-        int16_t avg_peak = peak_sum / candidate->peak_count;
-        int16_t avg_valley = valley_sum / candidate->valley_count;
-        candidate->amplitude = avg_peak - avg_valley;
-
-        if (candidate->frequency >= SINE_WAVE_MIN_FREQ &&
-            candidate->frequency <= SINE_WAVE_MAX_FREQ &&
-            candidate->amplitude > SINE_WAVE_MIN_AMPLITUDE)
-        {
-            float peak_std = 0, valley_std = 0;
-            for (uint8_t j = 0; j < candidate->peak_count; j++)
-                peak_std += (candidate->peaks[j].value - avg_peak) * (candidate->peaks[j].value - avg_peak);
-            for (uint8_t j = 0; j < candidate->valley_count; j++)
-                valley_std += (candidate->valleys[j].value - avg_valley) * (candidate->valleys[j].value - avg_valley);
-
-            peak_std = sqrtf(peak_std / candidate->peak_count);
-            valley_std = sqrtf(valley_std / candidate->valley_count);
-
-            if (peak_std < candidate->amplitude * STD_DEV_THRESHOLD &&
-                valley_std < candidate->amplitude * STD_DEV_THRESHOLD)
-            {
-                candidate->is_sine_wave = 1;
-            }
-        }
-    }
-
-    return candidate->is_sine_wave;
-}
-
-static void ADXL362DetectBreathSineWave(void)
-{
-    sine_wave_detection_t candidate;
-    sine_wave_detection_t best_candidate;
-    uint8_t best_axis = 0;
-    uint8_t found = 0;
-
-    memset(&sine_detection, 0, sizeof(sine_detection));
-    memset(&best_candidate, 0, sizeof(best_candidate));
-
-    for (uint8_t axis = 0; axis < 3; axis++)
-    {
-        uint16_t axis_range = 0;
-        ADXL362AnalyzeSineAxis(axis, &candidate, &axis_range);
-
-#ifdef ADXL362_PC_RUNNER
-        rfid_printf("Sine axis %c: range=%d, peak=%d, valley=%d, freq=%.2f Hz, amp=%d, is_sine=%d\n",
-                    ADXL362GetAxisName(axis), axis_range, candidate.peak_count, candidate.valley_count,
-                    candidate.frequency, candidate.amplitude, candidate.is_sine_wave);
-#endif
-
-        if (candidate.is_sine_wave &&
-            (!found || candidate.amplitude > best_candidate.amplitude))
-        {
-            best_candidate = candidate;
-            best_axis = axis;
-            found = 1;
-        }
-    }
-
-    if (found)
-    {
-        sine_detection = best_candidate;
-#ifdef ADXL362_PC_RUNNER
-        rfid_printf("Sine wave selected axis: %c\n", ADXL362GetAxisName(best_axis));
-#endif
-    }
-}
-
 /*******************************************************************
   @brief unsigned char ADXL362RegisterRead(unsigned char Address)
          Read a register value from ADXL362
@@ -940,7 +623,336 @@ void ADXL362FifoProcess(void)
 
     // 3.Average Calc
     // 4.Calculate whether to breathe
-    ADXL362DetectBreathSineWave();
+    // 初始化正弦波检测结构体
+    memset(&sine_detection, 0, sizeof(sine_detection));
+    // 初始化平滑滤波缓冲区
+    memset(smoothed_x, 0, sizeof(smoothed_x));
+    x_max_val = -2000;
+    x_min_val = 2000;
+    y_max_val = -2000;
+    y_min_val = 2000;
+    z_max_val = -2000;
+    z_min_val = 2000;
+    // 4.1 计算比较XYZ轴幅值
+    for (uint16_t i = 0; i < (_FIFO_SAMPLES_LEN / 6); i++)
+    {
+        // 确保读取到最新的值
+        int16_t current_x = three_axis_info[i].x;
+        int16_t current_y = three_axis_info[i].y;
+        if (current_x > x_max_val)
+            x_max_val = current_x;
+        if (current_x < x_min_val)
+            x_min_val = current_x;
+
+        if (current_y > y_max_val)
+            y_max_val = current_y;
+        if (current_y < y_min_val)
+            y_min_val = current_y;
+    }
+    // 4.2 平滑滤波 - 使用移动平均滤波
+    rfid_printf("x_max_val = %d\n", x_max_val);
+    rfid_printf("x_min_val = %d\n", x_min_val);
+    rfid_printf("y_max_val = %d\n", y_max_val);
+    rfid_printf("y_min_val = %d\n", y_min_val);
+    if (abs(x_max_val - x_min_val) > 2 * abs(y_max_val - y_min_val))
+    {
+        for (uint16_t i = 0; i < (_FIFO_SAMPLES_LEN / 6); i++)
+        {
+            // 对每个点应用移动平均滤波
+            int32_t sum = 0;
+            int16_t count = 0;
+
+            // 计算窗口内的平均值
+            for (int16_t j = -SMOOTH_WINDOW_SIZE / 2; j <= SMOOTH_WINDOW_SIZE / 2; j++)
+            {
+                int16_t idx = i + j;
+                if (idx >= 0 && idx < (_FIFO_SAMPLES_LEN / 6))
+                {
+                    sum += three_axis_info[idx].x;
+                    count++;
+                }
+            }
+
+            // 计算平均值并存储到平滑后的数组
+            smoothed_x[i] = (int16_t)(sum / count);
+        }
+
+        // 4.3 分析X轴数据是否为正弦波
+        for (uint16_t i = 0; i < (_FIFO_SAMPLES_LEN / 6); i++)
+        {
+            // 第一个点初始化
+            if (i == 0)
+            {
+                continue;
+            }
+
+            // 改进的平台期检测（扩大检测范围）
+            if (i >= MAX_PLATEAU_WINDOW)
+            {
+                // 检查是否存在平台期（连续多个相似值）
+                uint8_t is_plateau = 1;
+                int16_t plateau_value_sum = 0;
+                uint8_t plateau_count = 0;
+
+                // 检查窗口内的值是否都在阈值范围内
+                for (int16_t j = -MAX_PLATEAU_WINDOW; j < 0; j++)
+                {
+                    if (abs(smoothed_x[i + j] - smoothed_x[i + j + 1]) > PLATEAU_THRESHOLD)
+                    {
+                        is_plateau = 0;
+                        break;
+                    }
+                    plateau_value_sum += smoothed_x[i + j];
+                    plateau_count++;
+                }
+
+                // 如果是平台期，计算平台期的平均值
+                if (is_plateau && plateau_count >= MIN_PLATEAU_COUNT)
+                {
+                    int16_t plateau_value = plateau_value_sum / plateau_count;
+
+                    // 检查平台期前后的趋势
+                    int16_t before_plateau = 0;
+                    int16_t after_plateau = 0;
+
+                    // 获取平台期前的值（如果可能）
+                    if (i > MAX_PLATEAU_WINDOW + 2)
+                    {
+                        before_plateau = smoothed_x[i - MAX_PLATEAU_WINDOW - 2];
+                    }
+
+                    // 获取平台期后的值（当前值）
+                    after_plateau = smoothed_x[i];
+
+                    // 判断平台期是峰值还是谷值
+                    if (before_plateau < plateau_value && after_plateau < plateau_value)
+                    {
+                        // 平台期是峰值
+                        if (sine_detection.is_rising && sine_detection.peak_count < MAX_PEAK_COUNT)
+                        {
+                            sine_detection.peaks[sine_detection.peak_count].value = plateau_value;
+                            sine_detection.peaks[sine_detection.peak_count].index = i - MAX_PLATEAU_WINDOW / 2;
+
+                            // 计算周期（从峰值到峰值）
+                            if (sine_detection.peak_count >= 1 && sine_detection.period_count < MAX_PERIOD_COUNT)
+                            {
+                                sine_detection.periods[sine_detection.period_count] =
+                                    sine_detection.peaks[sine_detection.peak_count].index -
+                                    sine_detection.peaks[sine_detection.peak_count - 1].index;
+                                sine_detection.period_count++;
+                            }
+                            sine_detection.peak_count++;
+                            sine_detection.is_rising = 0;
+                        }
+                    }
+                    else if (before_plateau > plateau_value && after_plateau > plateau_value)
+                    {
+                        // 平台期是谷值
+                        if (!sine_detection.is_rising && sine_detection.valley_count < MAX_VALLEY_COUNT)
+                        {
+                            sine_detection.valleys[sine_detection.valley_count].value = plateau_value;
+                            sine_detection.valleys[sine_detection.valley_count].index = i - MAX_PLATEAU_WINDOW / 2;
+                            sine_detection.valley_count++;
+                            sine_detection.is_rising = 1;
+                        }
+                    }
+                }
+            }
+
+            // 改进的极值检测（扩大比较范围）
+            if (i >= EXTREMA_WINDOW_SIZE && i < (_FIFO_SAMPLES_LEN / 6) - EXTREMA_WINDOW_SIZE)
+            {
+                // 检测是否为局部峰值
+                uint8_t is_peak = 1;
+                for (int16_t j = -EXTREMA_WINDOW_SIZE; j <= EXTREMA_WINDOW_SIZE; j++)
+                {
+                    if (j != 0 && smoothed_x[i + j] > smoothed_x[i])
+                    {
+                        is_peak = 0;
+                        break;
+                    }
+                }
+
+                if (is_peak && sine_detection.is_rising && sine_detection.peak_count < MAX_PEAK_COUNT)
+                {
+                    // 检查是否与已有峰值过近
+                    uint8_t too_close = 0;
+                    for (uint16_t j = 0; j < sine_detection.peak_count; j++)
+                    {
+                        if (abs((int)i - (int)sine_detection.peaks[j].index) < EXTREMA_WINDOW_SIZE)
+                        {
+                            too_close = 1;
+                            // 如果新峰值更高，替换旧峰值
+                            if (smoothed_x[i] > sine_detection.peaks[j].value)
+                            {
+                                sine_detection.peaks[j].value = smoothed_x[i];
+                                sine_detection.peaks[j].index = i;
+                            }
+                            break;
+                        }
+                    }
+
+                    if (!too_close)
+                    {
+                        sine_detection.peaks[sine_detection.peak_count].value = smoothed_x[i];
+                        sine_detection.peaks[sine_detection.peak_count].index = i;
+
+                        // 计算周期（从峰值到峰值）
+                        if (sine_detection.peak_count >= 1 && sine_detection.period_count < MAX_PERIOD_COUNT)
+                        {
+                            sine_detection.periods[sine_detection.period_count] =
+                                sine_detection.peaks[sine_detection.peak_count].index -
+                                sine_detection.peaks[sine_detection.peak_count - 1].index;
+                            sine_detection.period_count++;
+                        }
+                        sine_detection.peak_count++;
+                    }
+                    sine_detection.is_rising = 0;
+                }
+
+                // 检测是否为局部谷值
+                uint8_t is_valley = 1;
+                for (int16_t j = -EXTREMA_WINDOW_SIZE; j <= EXTREMA_WINDOW_SIZE; j++)
+                {
+                    if (j != 0 && smoothed_x[i + j] < smoothed_x[i])
+                    {
+                        is_valley = 0;
+                        break;
+                    }
+                }
+
+                if (is_valley && !sine_detection.is_rising && sine_detection.valley_count < MAX_VALLEY_COUNT)
+                {
+                    // 检查是否与已有谷值过近
+                    uint8_t too_close = 0;
+                    for (uint16_t j = 0; j < sine_detection.valley_count; j++)
+                    {
+                        if (abs((int)i - (int)sine_detection.valleys[j].index) < EXTREMA_WINDOW_SIZE)
+                        {
+                            too_close = 1;
+                            // 如果新谷值更低，替换旧谷值
+                            if (smoothed_x[i] < sine_detection.valleys[j].value)
+                            {
+                                sine_detection.valleys[j].value = smoothed_x[i];
+                                sine_detection.valleys[j].index = i;
+                            }
+                            break;
+                        }
+                    }
+
+                    if (!too_close)
+                    {
+                        sine_detection.valleys[sine_detection.valley_count].value = smoothed_x[i];
+                        sine_detection.valleys[sine_detection.valley_count].index = i;
+                        sine_detection.valley_count++;
+                    }
+                    sine_detection.is_rising = 1;
+                }
+            }
+        }
+
+        // 4.4 对峰值和谷值按索引排序，确保周期计算的连续性
+        for (uint16_t i = 0; i < sine_detection.peak_count - 1; i++)
+        {
+            for (uint16_t j = 0; j < sine_detection.peak_count - i - 1; j++)
+            {
+                if (sine_detection.peaks[j].index > sine_detection.peaks[j + 1].index)
+                {
+                    extreme_point_t temp = sine_detection.peaks[j];
+                    sine_detection.peaks[j] = sine_detection.peaks[j + 1];
+                    sine_detection.peaks[j + 1] = temp;
+                }
+            }
+        }
+
+        for (uint16_t i = 0; i < sine_detection.valley_count - 1; i++)
+        {
+            for (uint16_t j = 0; j < sine_detection.valley_count - i - 1; j++)
+            {
+                if (sine_detection.valleys[j].index > sine_detection.valleys[j + 1].index)
+                {
+                    extreme_point_t temp = sine_detection.valleys[j];
+                    sine_detection.valleys[j] = sine_detection.valleys[j + 1];
+                    sine_detection.valleys[j + 1] = temp;
+                }
+            }
+        }
+
+        // 4.5 重新计算周期（基于排序后的峰值）
+        sine_detection.period_count = 0;
+        for (uint16_t i = 1; i < sine_detection.peak_count && sine_detection.period_count < MAX_PERIOD_COUNT; i++)
+        {
+            sine_detection.periods[sine_detection.period_count] =
+                sine_detection.peaks[i].index - sine_detection.peaks[i - 1].index;
+            sine_detection.period_count++;
+        }
+
+        // 4.6 分析是否为正弦波
+        if (sine_detection.peak_count >= 3 && sine_detection.valley_count >= 3)
+        {
+            // 计算平均周期
+            float avg_period = 0;
+            for (uint8_t j = 0; j < sine_detection.period_count; j++)
+            {
+                avg_period += sine_detection.periods[j];
+            }
+            avg_period /= sine_detection.period_count;
+
+            // 计算频率 (采样率为25Hz)
+            sine_detection.frequency = 25.0f / avg_period;
+
+            // 计算峰值和谷值的平均幅度
+            int32_t peak_sum = 0, valley_sum = 0;
+            for (uint8_t j = 0; j < sine_detection.peak_count; j++)
+            {
+                peak_sum += sine_detection.peaks[j].value;
+            }
+            for (uint8_t j = 0; j < sine_detection.valley_count; j++)
+            {
+                valley_sum += sine_detection.valleys[j].value;
+            }
+            int16_t avg_peak = peak_sum / sine_detection.peak_count;
+            int16_t avg_valley = valley_sum / sine_detection.valley_count;
+            sine_detection.amplitude = avg_peak - avg_valley;
+
+            // 判断是否为正弦波：
+            // 1. 频率在1.3-1.7Hz范围内
+            // 2. 幅度足够大
+            // 3. 峰值和谷值的标准差较小（波形规则）
+            if (sine_detection.frequency >= SINE_WAVE_MIN_FREQ &&
+                sine_detection.frequency <= SINE_WAVE_MAX_FREQ &&
+                sine_detection.amplitude > SINE_WAVE_MIN_AMPLITUDE)
+            {
+                // 计算峰值和谷值的标准差
+                float peak_std = 0, valley_std = 0;
+                for (uint8_t j = 0; j < sine_detection.peak_count; j++)
+                {
+                    peak_std += (sine_detection.peaks[j].value - avg_peak) * (sine_detection.peaks[j].value - avg_peak);
+                }
+                for (uint8_t j = 0; j < sine_detection.valley_count; j++)
+                {
+                    valley_std += (sine_detection.valleys[j].value - avg_valley) * (sine_detection.valleys[j].value - avg_valley);
+                }
+                peak_std = sqrtf(peak_std / sine_detection.peak_count);
+                valley_std = sqrtf(valley_std / sine_detection.valley_count);
+
+                // 标准差小于幅度的阈值百分比认为是规则波形
+                if (peak_std < sine_detection.amplitude * STD_DEV_THRESHOLD &&
+                    valley_std < sine_detection.amplitude * STD_DEV_THRESHOLD)
+                {
+                    sine_detection.is_sine_wave = 1;
+                }
+            }
+
+            // 输出检测结果
+            rfid_printf("Sine wave detection result:\n");
+            rfid_printf("Peak number: %d, valley number: %d\n", sine_detection.peak_count, sine_detection.valley_count);
+            rfid_printf("Average period: %.2f Sampling point\n", avg_period);
+            rfid_printf("Frequency: %.2f Hz\n", sine_detection.frequency);
+            rfid_printf("Amplitude: %d\n", sine_detection.amplitude);
+            rfid_printf("Is it a sine wave(1.0-1.7Hz): %d\n", sine_detection.is_sine_wave);
+        }
+    }
 
     x_max_val = -2000;
     x_min_val = 2000;
@@ -1004,7 +1016,9 @@ void ADXL362FifoProcess(void)
             rfid_printf("average_info.y = %d\n", three_axis_average_info.x);
             rfid_printf("sum_info.y = %d\n", sum_info.x);
 
-            if (threshold_judge.low >= 24)
+            if (sine_detection.is_sine_wave == 1)
+                action = 7; // breath
+            else if (threshold_judge.low >= 24)
                 action = 1; // rest
             else if ((threshold_judge.normal + threshold_judge.abovenormal) > 11 && threshold_judge.high == 0 &&
                      three_axis_average_info.x >= 200)
@@ -1155,7 +1169,7 @@ void ADXL362FifoProcess(void)
                 if (memory_array[i][0] == 1)
                     rest_cnt += 1;
 
-            if (rest_cnt <= 4)
+            if (rest_cnt <= 4 && sine_detection.is_sine_wave == 0)
             {
                 for (uint8_t i = 0; i < _MEM_ROWS; i++)
                 {
@@ -1177,12 +1191,8 @@ void ADXL362FifoProcess(void)
                         sum_eighteen_average += abs(eighteen_average - memory_array[i][1]);
 
                     if (sum_eighteen_average <= 400 && eighteen_average < 150)
-                    {
-                        uint8_t ruminate_action = sine_detection.is_sine_wave ? 7 : 5;
-
                         for (uint8_t i = 0; i < _MEM_ROWS; i++)
-                            memory_array[i][0] = ruminate_action;
-                    }
+                            memory_array[i][0] = 5;
                 }
             }
 

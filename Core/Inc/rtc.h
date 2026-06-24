@@ -39,7 +39,7 @@ typedef struct
 {
     __IO ITStatus twentyMinIndex;
 	__IO ITStatus tenSecIndex;
-    uint8_t tenSecTick;    //one step == 10s
+    uint16_t tenSecTick;    //one step == 10s
 
 } rtc_t;
 

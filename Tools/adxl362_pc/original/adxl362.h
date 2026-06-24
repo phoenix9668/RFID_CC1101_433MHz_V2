@@ -65,16 +65,15 @@ extern action_classify_t action_classify;
 
 /* 正弦波检测相关宏定义 */
 #define SINE_WAVE_MIN_FREQ 1.0f    // 最小频率 (Hz)
-#define SINE_WAVE_MAX_FREQ 2.7f    // 最大频率 (Hz)
-#define SINE_WAVE_MIN_AMPLITUDE 12 // 最小幅度
-#define SINE_WAVE_MIN_RANGE 50     // 最小峰峰值，小于该值的轴不参与喘息判断
+#define SINE_WAVE_MAX_FREQ 1.7f    // 最大频率 (Hz)
+#define SINE_WAVE_MIN_AMPLITUDE 30 // 最小幅度
 #define PLATEAU_THRESHOLD 5        // 平台期阈值
 #define MIN_PLATEAU_COUNT 3        // 最小平台期计数
 #define MAX_PLATEAU_WINDOW 3       // 平台期检测窗口大小
 #define MAX_PEAK_COUNT 20          // 最大峰值数量
 #define MAX_VALLEY_COUNT 20        // 最大谷值数量
 #define MAX_PERIOD_COUNT 11        // 最大周期数量
-#define STD_DEV_THRESHOLD 1.2f     // 标准差阈值（幅度的百分比）
+#define STD_DEV_THRESHOLD 0.3f     // 标准差阈值（幅度的百分比）
 #define SMOOTH_WINDOW_SIZE 5       // 平滑窗口大小
 #define EXTREMA_WINDOW_SIZE 3      // 极值检测窗口大小（单侧）
 

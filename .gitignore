@@ -98,3 +98,15 @@ JLinkLog.txt
 *._[Ii][Ii]
 *.SCR
 *.scr
+.DS_Store
+.vscode
+/MDK-ARM
+
+# Local analysis/media artifacts
+/Doc/data/*.mp4
+/Doc/Power Consumption Data/*.iotpl
+/Doc/3D body/*.7z
+/Doc/3D body/*.STEP
+/Doc/3D body/*.step
+__pycache__/
+*.pyc

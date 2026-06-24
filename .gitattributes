@@ -1,2 +1,8 @@
 # Auto detect text files and perform LF normalization
 * text=auto
+
+# CAD files are generated data; do not normalize line endings.
+*.STEP -text
+*.step -text
+*.STP -text
+*.stp -text

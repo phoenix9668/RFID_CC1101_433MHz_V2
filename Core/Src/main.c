@@ -136,41 +136,42 @@ int main(void)
             rtc.tenSecIndex = RESET;
         }
 
+//				HAL_Delay(450);
         if(rtc.twentyMinIndex == SET)
         {
-            delayRand = rand() % 100;
-            rfid_printf("delayRand = %d\n", delayRand);
-            HAL_Delay(delayRand);
-            memset(&action_classify, 0, sizeof(action_classify));
+						delayRand = rand() % 100;
+						rfid_printf("delayRand = %d\n", delayRand);
+						HAL_Delay(delayRand);
+						memset(&action_classify, 0, sizeof(action_classify));
 
-            for(uint8_t i = 0; i < _STEP_LOOPNUM; i++)
-            {
-                rfid_printf("%x ", step.movementArray[i]);
-            }
+						for(uint8_t i = 0; i < _STEP_LOOPNUM; i++)
+						{
+								rfid_printf("%x ", step.movementArray[i]);
+						}
 
-            rfid_printf("\nstepStage = %d\n", step.stepStage);
+						rfid_printf("\nstepStage = %d\n", step.stepStage);
 
-            if(step.stepStage == (_STEP_LOOPNUM - 1))
-            {
-                step.stepStage = 0;
-            }
-            else
-            {
-                step.stepStage++;
-            }
+						if(step.stepStage == (_STEP_LOOPNUM - 1))
+						{
+								step.stepStage = 0;
+						}
+						else
+						{
+								step.stepStage++;
+						}
 
-            DATAEEPROM_Program(EEPROM_START_ADDR + 8, step.stepStage);
+						DATAEEPROM_Program(EEPROM_START_ADDR + 8, step.stepStage);
 
-            MX_SPI1_Init();
-            adc_detect();
-            RNG_Init();
-            RNG_Gen();
-            MX_CRC_Init();
-            CC1101SendHandler();
-            HAL_CRC_DeInit(&hcrc);
-            MX_SPI1_DeInit();
+						MX_SPI1_Init();
+						adc_detect();
+						RNG_Init();
+						RNG_Gen();
+						MX_CRC_Init();
+						CC1101SendHandler();
+						HAL_CRC_DeInit(&hcrc);
+						MX_SPI1_DeInit();
 
-            rtc.twentyMinIndex = RESET;
+						rtc.twentyMinIndex = RESET;
         }
 
         #if (_DEBUG == 1)
@@ -370,7 +371,7 @@ void System_Initial(void)
     }
 
     step.stepStage = (uint8_t)(0x000000FF & DATAEEPROM_Read(EEPROM_START_ADDR + 8));
-    rtc.tenSecTick = (uint8_t)(0x000000FF & DATAEEPROM_Read(EEPROM_START_ADDR + 16));
+    rtc.tenSecTick = (uint16_t)(0x0000FFFF & DATAEEPROM_Read(EEPROM_START_ADDR + 16));
     rtc.tenSecIndex = RESET;
     rtc.twentyMinIndex = RESET;
 
