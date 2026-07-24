@@ -1,0 +1,30 @@
+name: Build
+
+on:
+  push:
+    branches: [panting]
+  pull_request:
+    branches: [panting]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install toolchain
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ninja-build gcc-arm-none-eabi cmake
+          arm-none-eabi-gcc --version
+          cmake --version
+          ninja --version
+
+      - name: Configure (Debug preset)
+        run: cmake --preset Debug
+
+      - name: Build (Debug preset)
+        run: cmake --build --preset Debug
+
+      - name: Report firmware size
+        run: arm-none-eabi-size build/Debug/RFID_CC1101_433MHz_V2.elf
