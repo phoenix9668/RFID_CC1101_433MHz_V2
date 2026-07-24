@@ -98,3 +98,12 @@ JLinkLog.txt
 *._[Ii][Ii]
 *.SCR
 *.scr
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Local build / scratch output
+/build/
+/output/
+/tmp/
