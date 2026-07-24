@@ -107,3 +107,17 @@ Thumbs.db
 /build/
 /output/
 /tmp/
+
+# CMake build output
+/cmake-build-*/
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+compile_commands.json
+*.ninja
+.ninja_*
+
+# Editor / tooling local metadata
+/.clangd
+/.settings/
+/.vscode/
