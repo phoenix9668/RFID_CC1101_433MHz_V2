@@ -108,6 +108,10 @@ Thumbs.db
 /output/
 /tmp/
 
+# Large local data sets — kept on disk / synced via Dropbox, not tracked in git
+/Doc/data/
+/Doc/Power Consumption Data/
+
 # CMake build output
 /cmake-build-*/
 CMakeFiles/
