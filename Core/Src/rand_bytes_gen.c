@@ -1,138 +1,84 @@
-/**
-  ******************************************************************************
-  * @file    rng.c
-  * @brief   This file provides code for the configuration
-  *          of the rng instances.
-  ******************************************************************************
-  * @attention
-  *
-  * <h2><center>&copy; COPYRIGHT 2015 STMicroelectronics</center></h2>
-  *
-  * Licensed under MCD-ST Liberty SW License Agreement V2, (the "License");
-  * You may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at:
-  *
-  *        http://www.st.com/software_license_agreement_liberty_v2
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  *
-  ******************************************************************************
-  */
-
 /* Includes ------------------------------------------------------------------*/
 #include "rand_bytes_gen.h"
+#include "adc.h"
+#include <string.h>
 
-/** @addtogroup STM32_Crypto_Examples
-  * @{
-  */
+/* xoshiro128++ 1.0 (David Blackman and Sebastiano Vigna, public domain,
+ * https://prng.di.unimi.it/xoshiro128plusplus.c). Not cryptographically
+ * secure, but this MCU has no hardware TRNG and RandomString is only ever
+ * used as RF-packet filler/obfuscation bytes, not key material. */
+static uint32_t s[4];
 
-/* Private typedef -----------------------------------------------------------*/
-/* Private define ------------------------------------------------------------*/
-
-/* Private macro -------------------------------------------------------------*/
-/* Private variables ---------------------------------------------------------*/
-
-/* Entropy String. Uniformly distributed random bit string 1*/
-uint8_t entropy_data[32] =
+static inline uint32_t rotl(const uint32_t x, int k)
 {
-    0x9d, 0x20, 0x1a, 0x18, 0x9b, 0x6d, 0x1a, 0xa7, 0x0e,
-    0x79, 0x57, 0x6f, 0x36, 0xb6, 0xaa, 0x88, 0x55, 0xfd,
-    0x4a, 0x7f, 0x97, 0xe9, 0x71, 0x69, 0xb6, 0x60, 0x88,
-    0x78, 0xe1, 0x9c, 0x8b, 0xa5
-};
-/* Nonce. Non repeating sequence, such as a timestamp */
-uint8_t nonce[] = {0xFE, 0xA9, 0x96, 0xD4, 0x62, 0xC5};
-/* Personalization String */
-uint8_t personalization_String[] = {0x1E, 0x6C, 0x7B, 0x82, 0xE5, 0xA5, 0x71, 0x8D};
+    return (x << k) | (x >> (32 - k));
+}
+
+static uint32_t xoshiro128pp_next(void)
+{
+    const uint32_t result = rotl(s[0] + s[3], 7) + s[0];
+    const uint32_t t = s[1] << 9;
+
+    s[2] ^= s[0];
+    s[3] ^= s[1];
+    s[1] ^= s[2];
+    s[0] ^= s[3];
+    s[2] ^= t;
+    s[3] = rotl(s[3], 11);
+
+    return result;
+}
+
+/* splitmix32, used only to whiten/expand the small entropy pool into
+ * xoshiro's 128-bit state (standard practice recommended by xoshiro's
+ * authors when seeding from a small/weak entropy source). */
+static uint32_t splitmix32_next(uint32_t *state)
+{
+    uint32_t z = (*state += 0x9E3779B9u);
+    z = (z ^ (z >> 16)) * 0x21F0AAADu;
+    z = (z ^ (z >> 15)) * 0x735A2D97u;
+    return z ^ (z >> 15);
+}
 
 /* Array that will be filled with random bytes */
 uint8_t RandomString[32] = {0, };
 
-RNGstate_stt RNGstate;
-
-RNGinitInput_stt RNGinit_st;
-
-int32_t status = RNG_SUCCESS;
-/* Private function prototypes -----------------------------------------------*/
-/* Private functions ---------------------------------------------------------*/
-
 /* RNG init function */
 void RNG_Init(void)
 {
-    for(uint8_t i = 0; i < sizeof(nonce); i++)
+    uint32_t seed = HAL_GetTick();
+    seed ^= adc.avgValue;
+
+    const uint32_t *uid = (const uint32_t *)UID_BASE;
+    seed ^= uid[0] ^ uid[1] ^ uid[2];
+
+    uint32_t sm_state = seed;
+    for (int i = 0; i < 4; i++)
     {
-        srand(HAL_GetTick());
-        nonce[i] = rand() % 255;
-        rfid_printf("nonce[%d] = %02x ", i, nonce[i]);
+        s[i] ^= splitmix32_next(&sm_state);
     }
 
-    rfid_printf("\n");
-
-    /* Enable CRC clock */
-    __CRC_CLK_ENABLE();
-
-    /* Set the values of EntropyData, Nonce, Personalization String and their sizes inside the RNGinit_st structure */
-    RNGinit_st.pmEntropyData = entropy_data;
-    RNGinit_st.mEntropyDataSize = sizeof(entropy_data);
-    RNGinit_st.pmNonce =  nonce;
-    RNGinit_st.mNonceSize = sizeof( nonce );
-    RNGinit_st.pmPersData = personalization_String;
-    RNGinit_st.mPersDataSize = sizeof( personalization_String );
-
-    status = RNGinit(&RNGinit_st, &RNGstate);
-
-    if  ( status != RNG_SUCCESS )
+    if ((s[0] | s[1] | s[2] | s[3]) == 0)
     {
-        /* In case of randomization not success possible values of status:
-         * RNG_ERR_BAD_ENTROPY_SIZE, RNG_ERR_BAD_PERS_STRING_SIZE
-         */
-
-        Error_Handler();
+        s[0] = 1; /* xoshiro128 requires non-all-zero state */
     }
 
+    rfid_printf("rng seed=%08lx\n", (unsigned long)seed);
 }
 
 /* RNG gen function */
 void RNG_Gen(void)
 {
-    /* The Random engine has been initialized, the status is in RNGstate */
-
-    /* Now fill the random string with random bytes */
-    status = RNGgenBytes(&RNGstate, NULL, RandomString, sizeof(RandomString));
-
-    if (status == RNG_SUCCESS)
+    for (uint8_t i = 0; i < sizeof(RandomString); i += 4)
     {
-        /* Random Generated Succefully, free the state before returning */
-        for(uint16_t i = 0; i < sizeof(RandomString); i++)
-        {
-            rfid_printf("%02x ", RandomString[i]);
-        }
-
-        rfid_printf("\n");
-
-        status = RNGfree(&RNGstate);
-
-        if  ( status == RNG_SUCCESS )
-        {
-        }
-        else
-        {
-            Error_Handler();
-        }
+        uint32_t r = xoshiro128pp_next();
+        memcpy(&RandomString[i], &r, sizeof(r));
     }
-    else
+
+    for (uint16_t i = 0; i < sizeof(RandomString); i++)
     {
-        /* In case of randomization not success possible values of status:
-         * RNG_ERR_BAD_PARAMETER, RNG_ERR_UNINIT_STATE
-         */
-
-        Error_Handler();
+        rfid_printf("%02x ", RandomString[i]);
     }
+
+    rfid_printf("\n");
 }
-
-
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
