@@ -1,0 +1,49 @@
+{
+  "question": "Do the supplied files support the PDF paper's explicit F_1_2 > F_2_3 panting-versus-rumination spectral rule?",
+  "overall_assessment": "Share with caveats / not a full correctness validation",
+  "primary_method": {
+    "actual_sample_rate_hz": 25.0,
+    "paper_sample_rate_hz": 10.0,
+    "window_seconds": 90,
+    "window_overlap": "none",
+    "signal": "sqrt(x^2 + y^2 + z^2), mean removed",
+    "taper": "rectangular",
+    "bands_hz": [
+      "[1, 2)",
+      "[2, 3)"
+    ],
+    "decision": "F_1_2 > F_2_3",
+    "cross_file_deduplication": "Removed 15536 shared cleaned samples from 喘息20250820 1755.csv"
+  },
+  "primary_results": {
+    "panting_windows": 56,
+    "panting_windows_passing": 33,
+    "panting_window_pass_rate": 0.5892857142857143,
+    "panting_window_pass_rate_wilson_low": 0.4587759684643971,
+    "panting_window_pass_rate_wilson_high": 0.708332257121538,
+    "rumination_windows": 13,
+    "rumination_windows_rejected": 12,
+    "rumination_window_rejection_rate": 0.9230769230769231,
+    "rumination_window_rejection_rate_wilson_low": 0.6668604907890041,
+    "rumination_window_rejection_rate_wilson_high": 0.9862895787574435,
+    "balanced_descriptive_rate": 0.7561813186813187
+  },
+  "data_quality": {
+    "duplicate_prefix_rows_after_initial_zero_removal": 15536,
+    "duplicate_prefix_seconds": 621.44,
+    "duplicate_prefix_minutes": 10.357333333333335,
+    "timestamp_columns_present": false,
+    "file_level_labels_only": true,
+    "manual_respiration_rate_labels_present": false,
+    "temperature_humidity_labels_present": false
+  },
+  "firmware_comparison_error": null,
+  "limitations": [
+    "The PDF does not include the referenced step-8 classifier thresholds/model, so the full other/rumination/eating-to-heat-stress pipeline is not reproducible.",
+    "File names provide recording-level labels only; there are no timestamped visual respiration counts or annotated panting intervals, so window-level sensitivity and specificity cannot be established.",
+    "The recordings contain no animal identifier, ambient temperature, humidity, or THI, so the heat-stress claim cannot be validated from these files.",
+    "Windows from the same recording are serially correlated; nominal Wilson intervals do not account for clustering and are descriptive only.",
+    "The PDF leaves FFT axis selection, taper, overlap, and the exact interpretation of the three-axis energy calculation underspecified; sensitivity checks show that these choices materially affect results.",
+    "The current firmware uses a separate 25 Hz, 6 s time-domain sine detector and is not a faithful implementation of the paper's 90 s FFT harmonic-ratio rule."
+  ]
+}

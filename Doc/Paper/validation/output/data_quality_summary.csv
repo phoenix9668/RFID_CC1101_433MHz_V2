@@ -1,0 +1,5 @@
+file_name,recording,expected_behavior,raw_rows,usable_xyz_rows,analysis_rows_after_cross_file_dedup,omitted_initial_zero_rows,deduplicated_prefix_rows,analysis_duration_minutes_at_25_hz,exact_duplicate_rows_within_file,duplicate_xyz_rows_within_file,null_xyz_rows,out_of_adxl362_12bit_range_rows,timestamp_column_present,column_count
+05项圈 5826牛 0302 1549  反刍.csv,反刍对照,rumination,30558,30558,30558,0,0,20.372,970,8059,0,0,False,9
+喘息20250819 1622.csv,喘息 2025-08-19 16:22,panting,19721,19720,19720,1,0,13.146666666666667,0,1044,0,0,False,35
+喘息20250820 1644.csv,喘息 2025-08-20 16:44,panting,77846,77845,77845,1,0,51.89666666666667,109,7278,0,0,False,29
+喘息20250820 1755.csv,喘息 2025-08-20 17:55,panting,47425,47424,31888,1,15536,21.258666666666667,75,5013,0,0,False,29

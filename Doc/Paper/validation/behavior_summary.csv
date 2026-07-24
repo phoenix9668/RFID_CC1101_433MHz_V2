@@ -1,0 +1,5 @@
+behavior,n,rule_positive,pass_rate,median_F12,median_F23,median_peak12_bpm
+activity,17,9,0.529,2.171,2.053,93.0
+panting,23,8,0.348,2.105,2.337,99.0
+rest,3,2,0.667,8.492,4.931,117.0
+rumination,291,113,0.388,2.586,3.092,108.0

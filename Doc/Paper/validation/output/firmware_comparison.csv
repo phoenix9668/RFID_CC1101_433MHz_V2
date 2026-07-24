@@ -1,0 +1,5 @@
+file_name,recording,expected_behavior,processed_samples_after_dedup,trimmed_duplicate_output_rows,breath_samples,breath_sample_rate
+05项圈 5826牛 0302 1549  反刍.csv,反刍对照,rumination,30450,0,0,0.0
+喘息20250819 1622.csv,喘息 2025-08-19 16:22,panting,19650,0,16725,0.851145038167939
+喘息20250820 1644.csv,喘息 2025-08-20 16:44,panting,77700,0,23950,0.3082368082368082
+喘息20250820 1755.csv,喘息 2025-08-20 17:55,panting,31863,15537,23563,0.7395097762294824
