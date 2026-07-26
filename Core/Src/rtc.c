@@ -132,3 +132,4 @@ void HAL_RTCEx_WakeUpTimerEventCallback(RTC_HandleTypeDef *hrtc)
 }
 
 /* USER CODE END 1 */
+

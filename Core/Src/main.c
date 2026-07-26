@@ -74,6 +74,7 @@ static void SystemPower_Config(void);
   */
 int main(void)
 {
+
   /* USER CODE BEGIN 1 */
 
   /* USER CODE END 1 */
@@ -480,8 +481,8 @@ void Set_DeviceInfo(void)
     /* Set transmission flag: trasfer complete*/
     uint32_t data;
 
-    /*##-1- Check UART receive data whether is ¡®ABCD¡¯ begin or not ###########################*/
-    if(usart.rxBuffer[0] == 0x41 && usart.rxBuffer[1] == 0x42 && usart.rxBuffer[2] == 0x43 && usart.rxBuffer[3] == 0x44)//ÊäÈë¡®ABCD¡¯
+    /*##-1- Check UART receive data whether is ï¿½ï¿½ABCDï¿½ï¿½ begin or not ###########################*/
+    if(usart.rxBuffer[0] == 0x41 && usart.rxBuffer[1] == 0x42 && usart.rxBuffer[2] == 0x43 && usart.rxBuffer[3] == 0x44)//ï¿½ï¿½ï¿½ë¡®ABCDï¿½ï¿½
     {
         data = ((uint32_t)(0xFF000000 & usart.rxBuffer[4] << 24) + (uint32_t)(0x00FF0000 & usart.rxBuffer[5] << 16) + (uint32_t)(0x0000FF00 & usart.rxBuffer[6] << 8) + (uint32_t)(0x000000FF & usart.rxBuffer[7]));
         DATAEEPROM_Program(EEPROM_START_ADDR, data);
@@ -580,8 +581,7 @@ void Error_Handler(void)
 
   /* USER CODE END Error_Handler_Debug */
 }
-
-#ifdef  USE_FULL_ASSERT
+#ifdef USE_FULL_ASSERT
 /**
   * @brief  Reports the name of the source file and the source line number
   *         where the assert_param error has occurred.

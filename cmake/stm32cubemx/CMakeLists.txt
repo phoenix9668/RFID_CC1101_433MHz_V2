@@ -1,13 +1,15 @@
 cmake_minimum_required(VERSION 3.22)
+# Enable CMake support for ASM and C languages
 enable_language(C ASM)
-
-set(MX_Defines_Syms
-    USE_FULL_LL_DRIVER
-    USE_HAL_DRIVER
-    STM32L051xx
+# STM32CubeMX generated symbols (macros)
+set(MX_Defines_Syms 
+	USE_FULL_LL_DRIVER 
+	USE_HAL_DRIVER 
+	STM32L051xx
     $<$<CONFIG:Debug>:DEBUG>
 )
 
+# STM32CubeMX generated include paths
 set(MX_Include_Dirs
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Core/Inc
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Drivers/STM32L0xx_HAL_Driver/Inc
@@ -16,6 +18,7 @@ set(MX_Include_Dirs
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Drivers/CMSIS/Include
 )
 
+# STM32CubeMX generated application sources
 set(MX_Application_Src
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Core/Src/main.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Core/Src/gpio.c
@@ -32,12 +35,12 @@ set(MX_Application_Src
     ${CMAKE_CURRENT_SOURCE_DIR}/../../startup_stm32l051xx.s
 )
 
+# STM32 HAL/LL Drivers
 set(STM32_Drivers_Src
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Core/Src/system_stm32l0xx.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Drivers/STM32L0xx_HAL_Driver/Src/stm32l0xx_ll_gpio.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Drivers/STM32L0xx_HAL_Driver/Src/stm32l0xx_hal_adc.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Drivers/STM32L0xx_HAL_Driver/Src/stm32l0xx_hal_adc_ex.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../Drivers/STM32L0xx_HAL_Driver/Src/stm32l0xx_ll_dma.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Drivers/STM32L0xx_HAL_Driver/Src/stm32l0xx_hal.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Drivers/STM32L0xx_HAL_Driver/Src/stm32l0xx_hal_i2c.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Drivers/STM32L0xx_HAL_Driver/Src/stm32l0xx_hal_i2c_ex.c
@@ -60,10 +63,12 @@ set(STM32_Drivers_Src
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Drivers/STM32L0xx_HAL_Driver/Src/stm32l0xx_hal_rtc.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Drivers/STM32L0xx_HAL_Driver/Src/stm32l0xx_hal_rtc_ex.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Drivers/STM32L0xx_HAL_Driver/Src/stm32l0xx_ll_spi.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../Drivers/STM32L0xx_HAL_Driver/Src/stm32l0xx_ll_dma.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Drivers/STM32L0xx_HAL_Driver/Src/stm32l0xx_ll_usart.c
 )
 
-# Drivers Middlewares
+# Drivers Midllewares
+
 
 
 # Link directories setup
@@ -71,10 +76,10 @@ set(MX_LINK_DIRS
 
 )
 # Project static libraries
-set(MX_LINK_LIBS
+set(MX_LINK_LIBS 
     STM32_Drivers
     ${TOOLCHAIN_LINK_LIBRARIES}
-
+    
 )
 # Interface library for includes and symbols
 add_library(stm32cubemx INTERFACE)

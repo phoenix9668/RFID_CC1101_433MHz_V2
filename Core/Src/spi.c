@@ -281,3 +281,4 @@ void SpiFunction(SPI_TypeDef *SPIx, uint8_t *OutputBuff, uint8_t *InputBuff, uin
     }
 }
 /* USER CODE END 1 */
+
