@@ -59,9 +59,17 @@ typedef struct
     uint16_t climb;
     uint16_t ruminate;
     uint16_t other;
+    uint16_t panting;   // appended last: existing RF/EEPROM field offsets are unaffected
 } action_classify_t;
 
 extern action_classify_t action_classify;
+
+/**
+ * \brief           Latest verdict of the panting spectral rule, refreshed once per
+ *                  _PANT_WIN_SEG FIFO segments and held until the next window ends.
+ * \note            Written and read from thread context only (ADXL362FifoProcess).
+ */
+extern uint8_t panting_detected;
 
 /**
  * \brief           Buffer for FIFO

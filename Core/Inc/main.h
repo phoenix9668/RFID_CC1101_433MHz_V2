@@ -80,6 +80,17 @@ extern device_t device;
 #define _RFID_PRINT_DEBUG   0	        //  use printf debug
 #define _Original_Data_Algorithm   1 //  use original data algorithm
 
+/*  Panting / heat-stress detection, Davison et al. 2020, Agriculture 10, 210, Eq.(5).
+ *  The paper's step 8 (rumination classifier) is already provided by this firmware's
+ *  own memory_array logic, so only steps 1-7 (spectrum) and step 9 (re-classify a
+ *  rumination window as heat stress when F(1-2Hz) > F(2-3Hz)) are implemented here.  */
+#define _PANT_DETECT               1   //  master switch
+#define _PANT_WIN_SEG              3   //  3 x 6.0 s FIFO segments = 18 s window
+#define _PANT_GATE_NUM             2   //  absolute peakiness gate: F(1-2) >= NUM/DEN
+#define _PANT_GATE_DEN             1   //  2/1 = 2.0, calibrated for _PANT_WIN_SEG = 3
+#define _PANT_STALE_MS         20000   //  drop a partial window after this gap
+#define _PANTING_REPLACES_RUMINATE 0   //  0 = observe in parallel (RF frame unchanged)
+
 #if (_RFID_PRINT_DEBUG == 1)
 #define rfid_printf(...)     			printf(__VA_ARGS__)
 #else
