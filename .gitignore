@@ -21,3 +21,17 @@ compile_commands.json
 # Python cache
 __pycache__/
 *.pyc
+
+# OS and office temporary files
+.DS_Store
+~$*
+
+# Local/generated analysis output
+/output/
+/tmp/
+/Doc/data/*_result*.csv
+
+# One-off local document-generation helpers
+/Tools/build_simple_pcb_purchase_contract.py
+/Tools/format_user_contract.py
+/Tools/fontconfig-cjk.xml
