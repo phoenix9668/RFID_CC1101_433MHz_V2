@@ -4,8 +4,7 @@
   * @author  phoenix
   * @version V1.0.0
   * @date    20-October-2017
-  * @brief   This file provides set of cc1101 to manage RF functions
-  *          available on STM32F4-Discovery Kit from STMicroelectronics.
+  * @brief   CC1101 RF driver and RFID payload public interface.
   ******************************************************************************
   * @attention
   *
@@ -24,10 +23,20 @@
 typedef enum { TX_MODE, RX_MODE, IDLE_MODE, WOR_Mode } TRMODE;
 typedef enum { BROAD_ALL, BROAD_NO, BROAD_0, BROAD_0AND255 } ADDR_MODE;
 typedef enum { BROADCAST, ADDRESS_CHECK} TX_DATA_MODE;
+typedef enum
+{
+    CC1101_STATUS_OK = 0,
+    CC1101_STATUS_INVALID_ARGUMENT,
+    CC1101_STATUS_SO_TIMEOUT,
+    CC1101_STATUS_SPI_TIMEOUT,
+    CC1101_STATUS_TX_TIMEOUT,
+    CC1101_STATUS_RX_TIMEOUT,
+    CC1101_STATUS_RX_OVERFLOW,
+    CC1101_STATUS_CRC_ERROR
+} cc1101_status_t;
 
 #define _RECV_LENGTH               128
 #define _SEND_LENGTH               256
-#define	_TX_WAIT_TIME			   			 50 // cc1101 tx wait time
 #define	_RFID_SIZE                 6   // RFID size
 #define	_BATTERY_SIZE              2   // battery size
 #define	_RESETCNT_SIZE             2   // resetCnt size
@@ -45,6 +54,7 @@ typedef struct
 } cc1101_t;
 
 extern cc1101_t cc1101;
+/* Set from EXTI handlers and consumed by the CC1101 driver. */
 extern __IO ITStatus txFiFoUnFlow;
 extern __IO ITStatus rxCatch;
 
@@ -130,6 +140,12 @@ uint8_t CC1101RecvHandler(void);
 /*Send RF Single*/
 void CC1101SendHandler(void);
 void CC1101Send3AxisHandler(void);
+
+/*Driver diagnostics*/
+cc1101_status_t CC1101GetLastError(void);
+void CC1101ClearLastError(void);
+uint8_t CC1101ReadPartNumber(void);
+uint8_t CC1101ReadVersion(void);
 
 #endif // _CC1101_H_
 

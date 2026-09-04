@@ -6,3 +6,10 @@
 *.step -text
 *.STP -text
 *.stp -text
+
+# Documents and reports are binary; never normalize their contents.
+*.pdf binary
+*.doc binary
+*.docx binary
+*.xls binary
+*.xlsx binary

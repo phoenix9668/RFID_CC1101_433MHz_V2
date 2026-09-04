@@ -30,6 +30,12 @@ __pycache__/
 /output/
 /tmp/
 /Doc/data/*_result*.csv
+/Doc/Paper/validation/output/
+/Doc/Paper/validation/queries/
+/Doc/Paper/validation/*_v2.*
+/Doc/Paper/validation/behavior_summary.csv
+/Doc/Paper/validation/windows_*.csv
+.ipynb_checkpoints/
 
 # One-off local document-generation helpers
 /Tools/build_simple_pcb_purchase_contract.py

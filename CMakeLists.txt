@@ -46,7 +46,8 @@ target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE
 target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     Core/Src/adxl362_app.c
     Core/Src/adxl362_behavior.c
-    Core/Src/cc1101.c
+    Core/Src/cc1101_app.c
+    Core/Src/cc1101_driver.c
     Core/Src/no_os_alloc.c
     Core/Src/no_os_spi_stm32l0.c
     Core/Src/rand_bytes_gen.c
