@@ -8,13 +8,15 @@ compile_commands.json
 *.ninja
 .ninja_*
 
+# Local agent worktrees
+/.claude/worktrees/
+
 # STM32Cube / editor local metadata
 /.clangd
 /.settings/
 /.vscode/
 
 # Local analysis/media artifacts
-/Doc/Core/
 /Doc/data/*.mp4
 /Doc/Power Consumption Data/*.iotpl
 
