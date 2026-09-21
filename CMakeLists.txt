@@ -12,6 +12,10 @@ set(CMAKE_C_STANDARD_REQUIRED ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 option(RFID_DIAGNOSTICS "Enable bounded UART diagnostics" OFF)
 option(RFID_DIAGNOSTIC_HOLD_AWAKE "Bench only: disable STOP to isolate sample timing" OFF)
+option(RFID_SENSOR_ODR_TEST "Bench only: DATA_READY timing; no application or EEPROM writes" OFF)
+if(RFID_SENSOR_ODR_TEST AND (NOT RFID_DIAGNOSTICS OR RFID_DIAGNOSTIC_HOLD_AWAKE))
+  message(FATAL_ERROR "ODR_TEST requires Diagnostics and cannot use HOLD_AWAKE")
+endif()
 if(RFID_DIAGNOSTIC_HOLD_AWAKE AND NOT RFID_DIAGNOSTICS)
   message(FATAL_ERROR "HOLD_AWAKE is allowed only in Diagnostics")
 endif()
@@ -34,7 +38,8 @@ target_compile_options(firmware_options INTERFACE -mcpu=cortex-m0plus -mthumb
 target_compile_definitions(firmware_options INTERFACE USE_HAL_DRIVER USE_FULL_LL_DRIVER STM32L051xx
   HSE_VALUE=12000000 RFID_DIAGNOSTICS=$<BOOL:${RFID_DIAGNOSTICS}>)
 target_compile_definitions(firmware_options INTERFACE
-  RFID_DIAGNOSTIC_HOLD_AWAKE=$<BOOL:${RFID_DIAGNOSTIC_HOLD_AWAKE}>)
+  RFID_DIAGNOSTIC_HOLD_AWAKE=$<BOOL:${RFID_DIAGNOSTIC_HOLD_AWAKE}>
+  RFID_SENSOR_ODR_TEST=$<BOOL:${RFID_SENSOR_ODR_TEST}>)
 target_include_directories(firmware_options INTERFACE Core/Inc App/Inc Platform/Inc
   ${HAL}/Inc Drivers/CMSIS/Include Drivers/CMSIS/Device/ST/STM32L0xx/Include
   Drivers/ADI Drivers/PCG)
@@ -45,6 +50,9 @@ add_executable(${PROJECT_NAME}
   App/Src/history.c App/Src/app.c Platform/Src/board.c Platform/Src/sensor.c
   Platform/Src/no_os_port.c Platform/Src/radio.c Platform/Src/syscalls.c Platform/Src/clock.c
   Drivers/ADI/adxl362.c Drivers/PCG/pcg_basic.c)
+if(RFID_SENSOR_ODR_TEST)
+  target_sources(${PROJECT_NAME} PRIVATE Platform/Src/sensor_odr_test.c)
+endif()
 set_target_properties(${PROJECT_NAME} PROPERTIES SUFFIX ".elf")
 target_link_libraries(${PROJECT_NAME} PRIVATE stm32_support firmware_options m c)
 target_link_options(${PROJECT_NAME} PRIVATE -mcpu=cortex-m0plus -mthumb --specs=nano.specs

@@ -110,3 +110,30 @@ rfid_status_t sensor_fifo_restart(void)
     rfid_status_t status = write_register(ADXL362_REG_FIFO_CTL, 0);
     return status == RFID_OK ? write_register(ADXL362_REG_FIFO_CTL, 0x0a) : status;
 }
+#if RFID_SENSOR_ODR_TEST
+rfid_status_t sensor_data_ready_begin(void)
+{
+    /* Standby while changing routing; retain the production ODR/range/filter. */
+    static const uint8_t config[][2] = {
+        {ADXL362_REG_POWER_CTL, 0}, {ADXL362_REG_FIFO_CTL, 0},
+        {ADXL362_REG_INTMAP2, 1}, {ADXL362_REG_POWER_CTL, 2}};
+    uint8_t value;
+    rfid_status_t status = sensor_read_register(ADXL362_REG_FILTER_CTL, &value);
+    if (status != RFID_OK || value != 0x51)
+        return status == RFID_OK ? RFID_IO : status;
+    for (unsigned i = 0; i < sizeof(config) / sizeof(config[0]); ++i)
+    {
+        status = write_register(config[i][0], config[i][1]);
+        if (status != RFID_OK)
+            return status;
+        status = sensor_read_register(config[i][0], &value);
+        if (status != RFID_OK || value != config[i][1])
+            return status == RFID_OK ? RFID_IO : status;
+    }
+    return sensor_read_register(ADXL362_REG_XDATA_L, &value);
+}
+rfid_status_t sensor_data_ready_end(void)
+{
+    return write_register(ADXL362_REG_POWER_CTL, 0);
+}
+#endif

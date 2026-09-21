@@ -222,3 +222,137 @@ with the requested 25 Hz; its cause is still unresolved. Next evidence should
 include analog VS/VDDIO supply/ripple measurements and, if needed, a clearly
 temporary data-ready measurement or reference-board comparison. Do not change
 the production classifier or reporting protocol to compensate silently.
+
+## Temporary DATA_READY Experiment
+
+The user reported collars with about 2800-3000 total classifications per hour,
+while others approach 3600. This is consistent with the observed rate deficit,
+but it does not establish the same cause for all collars.
+
+A new, default-OFF RFID_SENSOR_ODR_TEST entry bypasses all application work.
+The experiment keeps FILTER_CTL=51, POWER_CTL=02, disables FIFO (28=00), and
+maps DATA_READY alone to INT2 (2B=01). GPIO PB1 is polled; a read of XDATA_L
+acknowledges each event. STOP, classification, RF and EEPROM writes are absent.
+The linked bench ELF has no app_init/app_poll, storage or EEPROM programming
+symbols. SPI and pin waits are bounded; a run ends in standby within 240 s.
+The actual runs below were interrupted after acquisition to restore normal
+firmware, so the 240-second termination path was host-tested, not timed on board.
+
+- Test HEX SHA256: 25CF36C42BE91AEEE3D9123666497D4752055075CBCCAEDFE4916610C2FBE52F.
+- Test ELF SHA256: 180C06023A08A21D2138C1CE3DCF12A871B597B1FB113EB1F5664B4FB2BDCBF0.
+- Restored normal HEX SHA256: 6A823BA02515CF614E70F79850F2E62D5BDE56AD750DAEA67C706877982D6866.
+- Restored normal ELF SHA256: 2E597FAB4C147A9BE897C6BDAD7A4D209D969B9CF81CCAAD322D7CC415E5A68E.
+
+Read-only UR backup 20260921-161051 includes complete 64 KB Flash, double-read
+2 KB EEPROM and 20 option bytes. Its Flash prefix exactly matched the existing
+26216-byte normal image. Each subsequent experiment took another EEPROM/options
+snapshot immediately before download. Logs and binary backups remain private
+under .local/backups; no mass erase, EEPROM restoration, identity write or
+option-byte modification was performed. Normal operation between experiments
+continues to update the journal, so compare before/after within each attempt.
+
+### Attempt D1: CS Evidence, Missing D4
+
+Original DSLogic U3Pro16-la-260921-162447.dsl; evidence copy and JSON:
+.local/captures/20260921-162447-adxl362-drdy.*.
+SHA256 F77903E4E2570B91E508EF6483904F2CED4E9F0F7D926A4867671A59418F5CB7.
+Stream/Instant, 1 MHz, 50000896 samples (50.000896 s), 1.5 V, no filter/RLE,
+internal clock, explicit L-0 through L-4 blocks present and complete.
+
+- D0 contains 987 complete CS pulses, 19-20 us wide. First/last falling edges
+  are samples 44327 and 49986866. Across 986 intervals, mean period is
+  50651.662 us and frequency is 19.742689 Hz. Period range: 49995-52001 us.
+- D4 contains ZERO high samples. It provides no independent DATA_READY period;
+  do not report its rate as zero or substitute CS edges for sensor IRQ evidence.
+- UART 20260921-162326-COM27.txt confirms IDs AD/1D/F2, revision 03, test
+  readbacks and status=0. At n=1975, SysTick span=99978 ms, RTC span=99980 ms:
+  rates (n-1)/span are about 19.744 Hz. No restart appeared in this test log.
+- Test-before/test-after/pre-normal-release EEPROM SHA256 all equal
+  C99E16DE7CED8292BE22A468B7BA55487713EB213B1750A10A407E05991E3EAA.
+  Corresponding options SHA256 all equal
+  7FC6E8272A2DE908091CDC536B180CE557CAE4D13B4120250A50D564507821D6.
+- Normal image restoration verified; later UART 20260921-162742-COM27.txt
+  has regular 453-word drains and checkpoint reset=43, errors=0/0/0.
+
+The analyzer's independent CS timing agrees with the MCU clock spans. This
+supports a deficit before classification even without FIFO/STOP/application
+work. Missing D4 prevents treating D1 alone as physical DATA_READY proof.
+
+### Attempt D2: Restart-Contaminated Acquisition
+
+After the user reported D4 reconnected, the same test image was used again.
+UART 20260921-163218-COM27.txt records normal test counts up to n=1777 over
+89956 SysTick / 89961 RTC ms, followed by two new TEST_ONLY boot messages at
+about 16:34:16 and 16:34:18 host local receipt time. No agent ST-Link command
+was issued during that interval. Cause is unconfirmed; user requested a new
+acquisition rather than confirming a reset/power action. Do not infer a hardware
+fault or treat this attempt as a continuous timing run. No raw D2 archive was
+received before reacquisition; only its UI and UART observations are retained.
+
+Full EEPROM/options matched before/after and before normal release again
+(before-odr2/after-odr2/restore2 files). The exact normal image was restored and
+verified; UART 20260921-163553-COM27.txt shows 453-word reads at 22848, 30492,
+38137 and 45785 ms. A third attempt was requested to obtain a continuous trace.
+
+### Attempt D3: Physical DATA_READY Rate Verified
+
+Analyzed original: DSLogic U3Pro16-la-260921-163735.dsl, saved at 16:38:46.
+The archive trigger/record-start timestamp is 16:37:35.950 host local time.
+Evidence copy/JSON: .local/captures/20260921-163735-adxl362-drdy.*.
+SHA256: 00676EF8ADC037EA569122703581E7238B3F898D588D759DFC202FA13F2F6D30.
+Stream, Instant, 1 MHz, 50000896 samples (50.000896 s), threshold 1.5 V,
+no RLE/filter/external clock. There is no start/end-truncated CS or IRQ pulse.
+
+| Measurement | Result |
+| --- | --- |
+| Complete INT2 rising/falling pairs | 988 |
+| First / last INT2 rise sample | 10692 / 49984408 |
+| INT2 period min / mean / max | 50516 / 50631.931 / 50717 us |
+| INT2 rising-edge frequency over 987 intervals | 19.750382 Hz |
+| Complete CS transactions | 988 |
+| CS duration | 19-20 us |
+| IRQ rise to CS assertion min / mean / max | 105 / 1096.845 / 3371 us |
+| CS end to IRQ low | 18-43 us |
+| IRQ high duration | 146-3426 us |
+
+All 988 pairs satisfy IRQ rise < CS fall < CS rise < IRQ fall. Each observed
+DATA_READY pulse is acknowledged well before the next sample; there are no
+double-period gaps in this trace. Within consecutive ten-second subwindows,
+mean periods are 50648.75, 50641.92, 50626.40, 50644.17, 50598.85 us. Timing
+uses the analyzer clock, not MCU polling timestamps. SPI bytes are NOT decoded
+from this 1 MHz trace. Configuration/REVID=03 is corroborated by the test UART
+readback and the previously verified high-rate production startup trace.
+
+UART 20260921-163644-COM27.txt shows the sole test boot at 16:37:05.817 and
+uninterrupted counts through n=2371 / 119982 SysTick ms; no boot occurs across
+the analyzed 50-second capture. Follow-on 20260921-163935-COM27.txt has n=3754
+over 189964/189972 ms. The test reboot at 16:40:19 follows the agent's post-test
+UR snapshot, not spontaneous reset. Normal restoration at about 16:40:31
+reports stage=5, elapsed=720, reset=45, errors=0/0/0; first normal drain has
+453 words. D3 EEPROM before/after/pre-release SHA256 all equal
+DE8E19381F0890652B76DB4B7AE1FDD296B3F1BBB45A384C8278F3B402E4E4BA;
+options match the original 7FC6E827...821D6 hash. Exact normal image restored.
+
+DSView also showed a subsequent acquisition starting at 16:38:51 during the
+same test boot. After the user reported saving, the latest received file was
+still 163735.dsl. The table above deliberately uses that actual archive, not
+the later UI trace. The second D3 waveform is not needed for this conclusion.
+
+The sensor's physical DATA_READY output is about 21.00 percent below nominal
+25 Hz on this board under this configuration. With the unchanged one-output-
+per-25-XYZ-sets rule, the steady-state prediction is
+19.750382 / 25 * 3600 = 2844.06 classifications/hour, before startup/history
+latency or other losses. This is quantitatively consistent with the user's
+2800-3000 field totals, not a direct one-hour end-to-end acceptance test.
+
+The deficit persists with FIFO, STOP, classification, EEPROM and radio work
+removed. Those paths therefore are not necessary to reproduce this board's
+slow sample-generation cadence. This does not prove all field collars share
+one cause, nor certify the sensor defective/counterfeit. Internal sensor clock,
+analog supply conditions and part/board differences remain to be separated.
+The ADI datasheet states ODR scales with its internal time base; the typical
+clock distribution is not a guarantee that this observed 21 percent deficit
+is acceptable. Next useful test: explicit temporary 25/50/100 Hz selections,
+checking whether measured rates all scale by about 0.79, then compare a known
+good board and measure VS/VDDIO at the sensor. Do not change the production
+algorithm, invent samples or normalize counts to 3600 without an agreed design.

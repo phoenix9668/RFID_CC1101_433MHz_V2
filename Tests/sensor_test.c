@@ -35,6 +35,11 @@ int main(void)
     assert(regs[0x20]==100 && regs[0x22]==6 && regs[0x23]==100 && regs[0x25]==6);
     assert(regs[0x27]==0x3f && regs[0x28]==0x0a && regs[0x29]==0xc2);
     assert(regs[0x2a]==0x10 && regs[0x2b]==4 && regs[0x2c]==0x51 && regs[0x2d]==2);
+    assert(sensor_data_ready_begin()==RFID_OK);
+    assert(regs[0x28]==0 && regs[0x2b]==1 && regs[0x2c]==0x51 && regs[0x2d]==2);
+    assert(sensor_data_ready_end()==RFID_OK && regs[0x2d]==0);
+    regs[0x2c]=0; assert(sensor_data_ready_begin()==RFID_IO);
+    assert(sensor_init()==RFID_OK);
     uint8_t data[1026];
     for(unsigned length=900;length<=1024;length+=124) {
         memset(data,0xa5,sizeof(data)); calls=0; fifo_offset=0;

@@ -10,7 +10,8 @@ typedef enum
     PIN_GDO2,
     PIN_RADIO_POWER,
     PIN_TX_EN,
-    PIN_RX_EN
+    PIN_RX_EN,
+    PIN_SENSOR_IRQ
 } board_pin_t;
 void board_pin_write(board_pin_t pin, bool high);
 bool board_pin_read(board_pin_t pin);

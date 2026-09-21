@@ -20,7 +20,7 @@ def edges(signal, before, after):
     return np.flatnonzero((signal[:-1] == before) & (signal[1:] == after)) + 1
 
 
-def load_capture(path):
+def load_capture(path, *, timing_only=False):
     with zipfile.ZipFile(path) as archive:
         header = configparser.ConfigParser()
         header.read_string(archive.read("header").decode("utf-8-sig"))
@@ -33,9 +33,12 @@ def load_capture(path):
             raise ValueError("Expected unfiltered, internally clocked capture")
         count = header.getint("header", "total samples")
         rate = int(session["Sample rate"])
-        if not 0 < count <= 30_000_000 or count != int(session["Sample count"]):
-            raise ValueError("Inconsistent sample count or more than 30M samples")
-        if rate < 40_000_000:
+        limit = 60_000_000 if timing_only else 30_000_000
+        if not 0 < count <= limit or count != int(session["Sample count"]):
+            raise ValueError("Inconsistent sample count or capture exceeds size limit")
+        if timing_only and rate < 1_000_000:
+            raise ValueError("Use at least 1 MS/s for timing analysis")
+        if not timing_only and rate < 40_000_000:
             raise ValueError("Use at least 40 MS/s for nominal 4 MHz SPI")
         blocks = header.getint("header", "total blocks")
         names = archive.namelist()

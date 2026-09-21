@@ -9,12 +9,13 @@
 void SystemClock_Config(void);
 static GPIO_TypeDef *pin_port(board_pin_t pin)
 {
-    return pin == PIN_SENSOR_CS || pin == PIN_RADIO_POWER || pin == PIN_RX_EN ? GPIOB : GPIOA;
+    return pin == PIN_SENSOR_CS || pin == PIN_RADIO_POWER || pin == PIN_RX_EN ||
+                   pin == PIN_SENSOR_IRQ ? GPIOB : GPIOA;
 }
 static uint32_t pin_mask(board_pin_t pin)
 {
     static const uint16_t masks[] = {1U << 2, 1U << 12, 1U << 6, 1U << 3,
-                                     1U << 4, 1U << 5,  1U << 1, 1U << 2};
+                                     1U << 4, 1U << 5,  1U << 1, 1U << 2, 1U << 1};
     return masks[pin];
 }
 void board_pin_write(board_pin_t pin, bool high)

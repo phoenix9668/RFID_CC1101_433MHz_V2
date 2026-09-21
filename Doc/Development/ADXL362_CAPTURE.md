@@ -140,6 +140,52 @@ Do not declare a defective/counterfeit sensor from timing evidence alone.
 Supply-voltage/ripple measurements require an analog instrument, not this
 digital trace. Base-station receipt and current acceptance remain pending.
 
+## Temporary DATA_READY Test
+
+`RFID_SENSOR_ODR_TEST` is OFF in all normal presets. It requires Diagnostics
+and rejects simultaneous HOLD_AWAKE. Build into a separate directory:
+
+```powershell
+cmake --preset Diagnostics-local -B build/odr-test -DRFID_SENSOR_ODR_TEST=ON
+cmake --build build/odr-test --parallel 1
+```
+
+This image is NOT usable production firmware. entry.c bypasses app_init and
+app_poll entirely: no classification, RF reporting, checkpoints or EEPROM
+writes. It polls PB1 with STOP disabled, services the watchdog and stops the
+sensor after at most 240 seconds. The final idle loop is not normal operation;
+restore the normal image explicitly. It does not automatically reflash itself.
+
+Initialization verifies the ordinary sensor configuration, then enters standby,
+disables FIFO, maps only DATA_READY to INT2, and resumes measurement. Readbacks
+must confirm FIFO_CTL=00, INTMAP2=01, FILTER_CTL=51, POWER_CTL=02. A read of
+XDATA_L clears DATA_READY. Only a low-to-high observation is counted, with
+bounded stuck-high/no-ready detection and SPI errors propagated. UART reports
+cumulative counts and both SysTick and RTC spans every ten seconds. Count rate
+is (n-1)/first-to-last span, not n/span. MCU polling quantizes timestamps;
+the analyzer must independently check the physical INT2 rising-edge periods.
+
+Keep D0..D4 wired as above. Use Stream, 1 MHz / 50 s, single, internal clock,
+1.5 V, no filter; click Instant only after UART confirms test configuration.
+One MHz is sufficient for millisecond IRQ/CS timing, NOT 4 MHz SPI decoding.
+Keep a new raw DSL for each attempt. An all-low D4 is missing IRQ evidence,
+not zero sensor ODR. Check probe contact before repeating.
+
+Before each download, back up EEPROM and option bytes under reset. Program
+only application Flash, verify, and reset. After acquisition, read back the
+complete EEPROM and options before restoring normal firmware; require exact
+equality with that attempt's before-test snapshots. Restore the previously
+hashed normal image, verify, and confirm ordinary FIFO/checkpoint UART logs.
+Never restore EEPROM or change protection to work around a connection issue.
+Elapsed time during this bench experiment is not classified or persisted.
+
+Offline edge analysis (does not decode SPI or assume that CS is DATA_READY):
+
+```powershell
+python -B Tools/analyze_adxl362_timing.py capture.dsl --output capture.json
+python -B -m unittest discover -s Tools -p "test_analyze_adxl362*.py" -v
+```
+
 ## Sources
 
 - [DSLogic U3Pro16 data sheet](https://www.dreamsourcelab.com/doc/DSLogic_U3Pro16_Datasheet.pdf)

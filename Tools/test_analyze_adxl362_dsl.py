@@ -106,6 +106,14 @@ class ArchiveTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "packed byte count"):
                 load_capture(path)
 
+    def test_timing_only_explicit_opt_in(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory)/"test.dsl"
+            expected = self.capture(path, rate=1_000_000)
+            _, _, rate, actual = load_capture(path, timing_only=True)
+            self.assertEqual(rate, 1_000_000)
+            np.testing.assert_array_equal(actual, expected)
+
 
 if __name__ == "__main__":
     unittest.main()

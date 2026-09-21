@@ -4,6 +4,9 @@
 #include "app.h"
 #include "iwdg.h"
 #include "rtc.h"
+#if RFID_SENSOR_ODR_TEST
+#include "sensor_odr_test.h"
+#endif
 #if RFID_DIAGNOSTIC_HOLD_AWAKE
 #include "sensor.h"
 #include <stdio.h>
@@ -29,6 +32,17 @@ int main(void)
     board_init();
     MX_IWDG_Init();
     MX_RTC_Init();
+#if RFID_SENSOR_ODR_TEST
+    LL_EXTI_DisableIT_0_31(LL_EXTI_LINE_1);
+    LL_EXTI_ClearFlag_0_31(LL_EXTI_LINE_1);
+    NVIC_DisableIRQ(EXTI0_1_IRQn);
+    (void)sensor_odr_test_run(240000);
+    for (;;)
+    {
+        board_watchdog();
+        __WFI();
+    }
+#else
     app_init();
 #if RFID_DIAGNOSTIC_HOLD_AWAKE
     board_log("bench hold-awake: STOP disabled\r\n");
@@ -48,6 +62,7 @@ int main(void)
         board_idle(app_poll());
 #endif
     }
+#endif
 }
 void Error_Handler(void)
 {

@@ -8,4 +8,8 @@ rfid_status_t sensor_fifo_read(uint8_t *data, uint16_t length);
 rfid_status_t sensor_fifo_restart(void);
 void sensor_port_clear_error(void);
 rfid_status_t sensor_port_error(void);
+#if RFID_SENSOR_ODR_TEST
+rfid_status_t sensor_data_ready_begin(void);
+rfid_status_t sensor_data_ready_end(void);
+#endif
 #endif

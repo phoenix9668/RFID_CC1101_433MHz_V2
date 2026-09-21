@@ -144,7 +144,10 @@ installed DSView 1.3.2 are confirmed. Probe wiring was corrected and passive
 low-rate timing, one high-rate FIFO capture and manual-reset startup capture
 completed. The earlier approved HWRSTPULSE connection failed with
 DEV_TARGET_CMD_ERR; it was not treated as successful startup evidence.
-No new firmware download was performed. See ADXL362_CAPTURE.md and
+No new firmware download was performed during those three passive captures.
+Subsequent DATA_READY experiments temporarily replaced the application image,
+with per-attempt EEPROM/options checks and verified normal-image restoration.
+See ADXL362_CAPTURE.md and
 ADXL362_MEASUREMENTS.md for the manual procedure and its evidence/limitations.
 The base station is not currently on site, so receipt tests are explicitly
 deferred, not passed or inferred from the collar's tx-ok result.
@@ -166,6 +169,36 @@ A pre-existing broken refs/codex/turn-diffs checkpoint caused automatic Git
 maintenance to report an error after the first successful commit. Subsequent
 commits disabled automatic maintenance per command. No unrelated refs were
 deleted or repaired. Original main checkout and user modifications are preserved.
+
+## DATA_READY Bench Software Checks
+
+The default-OFF RFID_SENSOR_ODR_TEST build bypasses application/EEPROM/RF work.
+Clean build/odr-verify Debug, Release and Diagnostics builds passed, as did all
+six native CTest targets and the three CSV regressions (15738 classifications
+unchanged). Bench tests cover nominal/slower timing, tick wrap, stuck pins,
+missing readiness and SPI/init errors. Sixteen Python tests cover the SPI
+decoder/archive loader and edge statistics, including missing IRQ data and
+partial pulses. Physical ODR acceptance remains open; see measurement notes.
+
+The received D3 DATA_READY archive independently measures 988 complete IRQs,
+mean period 50.631931 ms (19.750382 Hz), with one timely CS acknowledgement
+inside each pulse. This confirms this board's below-nominal sample cadence,
+not a passing 25 Hz result or a diagnosed component fault. It predicts about
+2844 classifications/hour at 25 samples/output. All three temporary firmware
+attempts preserved complete EEPROM/options and restored the same normal image.
+Last observed normal boot: reset=45, stage=5, elapsed=720, errors=0/0/0.
+
+| Image | Flash bytes | RAM bytes including reserved stack |
+| --- | ---: | ---: |
+| Debug | 22252 | 4408 |
+| Release | 20232 | 4400 |
+| Diagnostics | 26236 | 4816 |
+| DATA_READY bench | 14312 | 2576 |
+
+No new build warnings were observed. The bench image is not a replacement for
+normal Diagnostics. Board tests restore the previously hashed 26216-byte normal
+image, not the newly rebuilt 26236-byte Diagnostics output. Runtime stack
+watermark and the full physical 240-second bench timeout remain unverified.
 
 ## Rollback
 
