@@ -2,4 +2,5 @@
 #define RFID_SENSOR_ODR_TEST_H
 #include "rfid_types.h"
 rfid_status_t sensor_odr_test_run(uint32_t duration_ms);
+rfid_status_t sensor_odr_sweep_run(void);
 #endif

@@ -113,10 +113,23 @@ rfid_status_t sensor_fifo_restart(void)
 #if RFID_SENSOR_ODR_TEST
 rfid_status_t sensor_data_ready_begin(void)
 {
-    /* Standby while changing routing; retain the production ODR/range/filter. */
-    static const uint8_t config[][2] = {
+    return sensor_data_ready_begin_rate(25);
+}
+rfid_status_t sensor_data_ready_begin_rate(uint16_t nominal_hz)
+{
+    uint8_t odr;
+    switch (nominal_hz)
+    {
+    case 25: odr = ADXL362_ODR_25_HZ; break;
+    case 50: odr = ADXL362_ODR_50_HZ; break;
+    case 100: odr = ADXL362_ODR_100_HZ; break;
+    default: return RFID_INVALID;
+    }
+    /* Each experiment starts with sensor_init; change ODR only in standby. */
+    const uint8_t config[][2] = {
         {ADXL362_REG_POWER_CTL, 0}, {ADXL362_REG_FIFO_CTL, 0},
-        {ADXL362_REG_INTMAP2, 1}, {ADXL362_REG_POWER_CTL, 2}};
+        {ADXL362_REG_INTMAP2, 1}, {ADXL362_REG_FILTER_CTL, (uint8_t)(0x50 | odr)},
+        {ADXL362_REG_POWER_CTL, 2}};
     uint8_t value;
     rfid_status_t status = sensor_read_register(ADXL362_REG_FILTER_CTL, &value);
     if (status != RFID_OK || value != 0x51)

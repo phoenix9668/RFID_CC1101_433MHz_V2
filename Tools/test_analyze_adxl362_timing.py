@@ -1,6 +1,6 @@
 import unittest
 import numpy as np
-from analyze_adxl362_timing import summarize
+from analyze_adxl362_timing import summarize, segment_timings
 
 
 class TimingTests(unittest.TestCase):
@@ -41,6 +41,37 @@ class TimingTests(unittest.TestCase):
             summarize(np.array([0, 2]), 1000, True)
         with self.assertRaises(ValueError):
             summarize(np.array([0, 1]), 0, True)
+
+    def test_sweep_segments_exclude_standby(self):
+        signal = np.zeros(4000, dtype=np.uint8)
+        for base, period in ((600, 40), (1800, 20), (2800, 10)):
+            for i in range(10):
+                signal[base+i*period:base+i*period+2] = 1
+        groups = segment_timings(signal, 1000)
+        self.assertEqual([g["frequency_hz"] for g in groups], [25, 50, 100])
+        self.assertTrue(all(g["leading_gap_observed"] and g["trailing_gap_observed"] for g in groups))
+
+    def test_segment_edges_and_absence(self):
+        signal = np.zeros(1000, dtype=np.uint8)
+        self.assertEqual(segment_timings(signal, 1000), [])
+        signal[1:3] = 1
+        signal[998:] = 1
+        groups = segment_timings(signal, 1000)
+        self.assertFalse(groups[0]["leading_gap_observed"])
+        self.assertFalse(groups[1]["trailing_gap_observed"])
+        self.assertTrue(all(g["frequency_hz"] is None for g in groups))
+
+    def test_fixed_settling_trim_keeps_raw_result(self):
+        signal = np.zeros(12000, dtype=np.uint8)
+        signal[601:603] = 1
+        for start in range(610, 10610, 40):
+            signal[start:start+2] = 1
+        result = segment_timings(signal, 1000)[0]
+        self.assertNotEqual(result["frequency_hz"], 25)
+        self.assertEqual(result["steady"]["frequency_hz"], 25)
+        self.assertLess(result["steady"]["pulse_starts"], result["pulse_starts"])
+        short = segment_timings(np.array([0, 1, 0]), 1000)[0]
+        self.assertIsNone(short["steady"]["frequency_hz"])
 
 
 if __name__ == "__main__":

@@ -186,6 +186,54 @@ python -B Tools/analyze_adxl362_timing.py capture.dsl --output capture.json
 python -B -m unittest discover -s Tools -p "test_analyze_adxl362*.py" -v
 ```
 
+## Temporary ODR Sweep
+
+Add the default-OFF RFID_SENSOR_ODR_SWEEP switch only to the bench build:
+
+```powershell
+cmake --preset Diagnostics-local -B build/odr-sweep -DRFID_SENSOR_ODR_TEST=ON -DRFID_SENSOR_ODR_SWEEP=ON
+cmake --build build/odr-sweep --parallel 1
+```
+
+It requires ODR_TEST and thus Diagnostics. The normal presets are unchanged.
+Six 25/50/100 Hz cycles run for ten seconds per phase, with two seconds in
+standby between phases. Each phase initializes the sensor, configures it in
+standby and verifies FIFO_CTL=00, INTMAP2=01, FILTER_CTL=51/52/53, POWER_CTL=02.
+The range, HALF_BW bit and SPI speed do not change. No register outside the
+documented user range is accessed. This test does not use external clock/sample
+inputs. All application/EEPROM/RF work remains bypassed.
+
+After logging the configuration, read XDATA_L to clear any pending readiness,
+then measure without any UART printing until the sensor is stopped. The
+SWEEP phase marker plus DRDY config/END reports provide nominal ODR, register
+readback, count and MCU/RTC spans. TEST_ONLY messages are emitted every phase;
+they are not in themselves MCU reset evidence. SWEEP BEGIN is emitted once.
+The eighteen phases take about 217 seconds normally and finish in standby;
+errors stop the sweep early. The final idle loop still requires normal-image
+restoration. Host tests simulate every phase and failure/wrap cases; the field
+test is restored once enough waveforms are captured, without waiting for all
+eighteen phases. Watchdog service continues during the standby gaps.
+
+Use the same 1 MHz / 50 s Stream/Instant acquisition and per-attempt backup /
+restore process above. Capture while the sweep is already running; the repeated
+sequence permits complete examples of all three phases within fifty seconds.
+Identify phases using UART markers/timestamps and sequence, not measured-rate
+clustering alone. Do not operate reset, power, probes or the Start button during
+acquisition. Keep raw files under distinct names.
+
+```powershell
+python -B Tools/analyze_adxl362_timing.py sweep.dsl --segments --output sweep.json
+```
+
+Segments split at IRQ gaps over 500 ms. Raw results are retained. Report steady
+rates after applying the SAME 500 ms head / 100 ms tail trim to every phase;
+ignore phases whose complete bounds are not captured or that lack enough
+remaining edges. Sensor reinitialization and mode switching can cause initial
+short intervals. The settling exclusion exceeds the datasheet's 4/ODR startup
+time even for the observed slow 25 Hz setting; it is not selected by whether
+an interval makes the desired frequency. Do not include standby gaps in a
+global rate. Inspect individual CS acknowledgements inside steady IRQ pulses.
+
 ## Sources
 
 - [DSLogic U3Pro16 data sheet](https://www.dreamsourcelab.com/doc/DSLogic_U3Pro16_Datasheet.pdf)

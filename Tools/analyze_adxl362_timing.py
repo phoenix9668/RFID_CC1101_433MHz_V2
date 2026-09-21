@@ -39,10 +39,48 @@ def summarize(signal, rate, active_high):
     return result
 
 
+def segment_timings(signal, rate, gap_ms=500):
+    if gap_ms <= 0 or rate <= 0:
+        raise ValueError("Expected positive rate and segment gap")
+    starts = edges(signal, 0, 1)
+    if not len(starts):
+        return []
+    groups = np.split(starts, np.flatnonzero(np.diff(starts) > rate*gap_ms/1000)+1)
+    result = []
+    for group in groups:
+        periods = np.diff(group)
+        # Same fixed trims for every phase, independent of the measured rate.
+        steady = group[(group >= group[0]+rate*0.5) & (group <= group[-1]-rate*0.1)]
+        stable_periods = np.diff(steady)
+        result.append({
+            "first_sample": int(group[0]), "last_sample": int(group[-1]),
+            "start_s": float(group[0]/rate), "end_s": float(group[-1]/rate),
+            "pulse_starts": len(group),
+            "frequency_hz": float((len(group)-1)*rate/(group[-1]-group[0])) if len(periods) else None,
+            "period_us": {"min": float(periods.min()*1e6/rate),
+                          "mean": float(periods.mean()*1e6/rate),
+                          "max": float(periods.max()*1e6/rate)} if len(periods) else None,
+            "leading_gap_observed": bool(group[0] > rate*gap_ms/1000),
+            "trailing_gap_observed": bool(len(signal)-1-group[-1] > rate*gap_ms/1000),
+            "steady": {
+                "trim_head_ms": 500, "trim_tail_ms": 100,
+                "pulse_starts": len(steady),
+                "first_sample": int(steady[0]) if len(steady) else None,
+                "last_sample": int(steady[-1]) if len(steady) else None,
+                "frequency_hz": float((len(steady)-1)*rate/(steady[-1]-steady[0])) if len(stable_periods) else None,
+                "period_us": {"min": float(stable_periods.min()*1e6/rate),
+                              "mean": float(stable_periods.mean()*1e6/rate),
+                              "max": float(stable_periods.max()*1e6/rate)} if len(stable_periods) else None,
+            },
+        })
+    return result
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("capture", type=Path)
     parser.add_argument("--output", type=Path)
+    parser.add_argument("--segments", action="store_true", help="Split IRQ phases at gaps over 500 ms; labels require UART")
     args = parser.parse_args()
     _, session, rate, signals = load_capture(args.capture, timing_only=True)
     result = {"sha256": hashlib.sha256(args.capture.read_bytes()).hexdigest(),
@@ -53,6 +91,11 @@ def main():
               "cs": summarize(signals[0], rate, False),
               "irq": summarize(signals[4], rate, True),
               "limitation": "Edge timing only; CS frequency is not independent DATA_READY evidence."}
+    if args.segments:
+        result["irq_segments"] = segment_timings(signals[4], rate)
+        result["irq"]["frequency_hz"] = None
+        result["irq"]["period_us"] = None
+        result["limitation"] += " Standby gaps excluded from segment rates; do not assign nominal ODR from measured rate alone."
     text = json.dumps(result, indent=2)
     if args.output:
         # Never replace an earlier measurement silently.

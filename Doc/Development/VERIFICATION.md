@@ -200,6 +200,29 @@ normal Diagnostics. Board tests restore the previously hashed 26216-byte normal
 image, not the newly rebuilt 26236-byte Diagnostics output. Runtime stack
 watermark and the full physical 240-second bench timeout remain unverified.
 
+## ODR Sweep Checks
+
+Clean build/odr-sweep-verify builds pass for all three normal configurations;
+their BIN files exactly match the preceding build/odr-verify BINs. Six CTests,
+all three CSV regressions and nineteen Python tests pass after correcting the
+new test doubles. The separate default-OFF sweep image uses 14784 Flash bytes
+and 2576 RAM bytes including reserved stack. Its linked image has no app_init,
+app_poll, storage or EEPROM programming symbols.
+
+Capture E independently measures settled 25/50/100 Hz selections at 19.750956,
+39.502107 and 79.233530-79.269014 Hz. Full phase transitions are retained;
+steady statistics uniformly omit 500 ms at the head and 100 ms at the tail.
+The raw IRQ/SPI timing plus matching configuration logs support a common
+0.790-0.793 time-base factor, not an established root cause or nominal ODR pass.
+The measured configuration registers come from UART readback; this 1 MHz
+capture does not decode 4 MHz SPI bytes. See ADXL362_MEASUREMENTS.md Capture E.
+
+Full EEPROM/options again remained unchanged and the exact original normal
+Diagnostics image was restored/verified. Follow-on normal checkpoint reports
+reset=47, stage=6, elapsed=240, errors=0/0/0. Known-good board comparison and
+analog sensor supply measurements remain needed. No production compensation
+or classification/protocol change was made.
+
 ## Rollback
 
 Keep the complete private backup outside disposable build output. Match the

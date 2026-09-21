@@ -10,6 +10,7 @@ void sensor_port_clear_error(void);
 rfid_status_t sensor_port_error(void);
 #if RFID_SENSOR_ODR_TEST
 rfid_status_t sensor_data_ready_begin(void);
+rfid_status_t sensor_data_ready_begin_rate(uint16_t nominal_hz);
 rfid_status_t sensor_data_ready_end(void);
 #endif
 #endif

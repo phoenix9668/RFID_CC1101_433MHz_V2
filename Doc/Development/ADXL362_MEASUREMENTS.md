@@ -356,3 +356,108 @@ is acceptable. Next useful test: explicit temporary 25/50/100 Hz selections,
 checking whether measured rates all scale by about 0.79, then compare a known
 good board and measure VS/VDDIO at the sensor. Do not change the production
 algorithm, invent samples or normalize counts to 3600 without an agreed design.
+
+## Capture E: 25/50/100 Hz Sweep
+
+The user requested the next diagnostic step. A default-OFF ODR_SWEEP option
+selects repeated ten-second 25/50/100 Hz phases with two-second standby gaps.
+Each phase resets/initializes the sensor, changes only the ODR selection while
+in standby, verifies configuration, clears stale readiness after the initial
+log, and measures with NO UART printing in the measurement loop. Range remains
+4g, HALF_BW=1, FIFO disabled, INT2=DATA_READY, POWER_CTL=02, SPI=4 MHz.
+No production algorithms, protocol, storage layout or peripheral timing change.
+
+### Software and Backup Evidence
+
+- Sweep HEX SHA256: 543E0BBC5A1A66460CAAC91FF8E58C5F068FBF2FE2C53DB699086C0EE7364B83.
+- Sweep ELF SHA256: 98BF0439003450E1052AE6E7446CB50E02E0A6AFCF926DB210822F2410A486BD.
+- Sweep image: Flash 14784 bytes, RAM 2576 bytes including reserved stack.
+- Clean build/odr-sweep-verify Debug/Release/Diagnostics builds passed; all
+  three BIN files are byte-identical to the previous build/odr-verify outputs.
+- Six CTests and all three CSV comparisons pass (15738 identical outputs).
+  Tests cover all eighteen phases, nominal/slower mock clocks, tick wrap,
+  standby ODR writes, readback mismatch, no in-phase log and early error stop.
+  Nineteen Python decoder/timing tests pass, including raw/steady separation.
+- The first host runs exposed errors in the new test doubles (disabled fault
+  injection and pending-ready advancement) and an incorrect coarse expected
+  count for a slow mock clock. These were corrected before any board download.
+- Complete private UR backup: .local/backups/20260921-165201-<probe>/.
+  Flash prefix again matches the hashed original normal image. A new EEPROM /
+  options snapshot was taken in the download connection immediately before
+  programming the sweep. Only application Flash was programmed and verified.
+
+### Physical Waveform
+
+Original: DSLogic U3Pro16-la-260921-165326.dsl, saved 16:54:24.
+SHA256: B13F1FF0D4E1D0CC344A821D38B0F2773C5681E3A42328E22BCD96DD30D9F4AB.
+Copy: .local/captures/20260921-165326-adxl362-sweep.dsl.
+JSON: same basename with -steady.json suffix (raw and trimmed results retained).
+Stream/Instant, internal 1 MHz, 50000896 samples (50.000896 s), 1.5 V,
+no filter/RLE. Capture start is 16:53:26.435 local host time. SPI data bytes
+are NOT decoded at this sample rate; nominal selection comes from firmware
+readback and independently matched UART phase markers, not rate inference.
+
+UART .local/captures/20260921-165242-COM27.txt / .txt.jsonl shows phase IDs
+2,3,4,5 at about 16:53:28.55, 16:53:40.58, 16:53:52.73, 16:54:04.80.
+These align with the waveform's four segment starts below. Each phase has
+the expected FILTER_CTL readback 53,51,52,53 and status=0. No unexpected
+SWEEP BEGIN appears during capture. The per-phase TEST_ONLY lines are not
+reboots. Each ordinary sensor_init temporarily selects the baseline FIFO
+configuration before the DATA_READY configuration; its transition is excluded.
+
+| Phase / nominal | Raw first-last IRQ (s) | Raw edges | Steady edges | Steady Hz | Actual/nominal |
+| --- | --- | ---: | ---: | ---: | ---: |
+| 2 / 100 Hz | 2.039838-12.041935 | 795 | 746 | 79.269014 | 0.792690 |
+| 3 / 25 Hz | 14.105485-24.089517 | 199 | 186 | 19.750956 | 0.790038 |
+| 4 / 50 Hz | 26.171132-36.180816 | 398 | 372 | 39.502107 | 0.790042 |
+| 5 / 100 Hz | 38.237779-48.243078 | 795 | 746 | 79.233530 | 0.792335 |
+
+Raw phase means are 79.383353, 19.831667, 39.661592 and 79.357948 Hz. They
+include initial short intervals (first intervals 992, 12924, 2108, 991 us), so
+they must not be treated as settled ODR. For ALL four phases, exclude the first
+500 ms and last 100 ms, then compute (retained edges - 1)/(last - first).
+This fixed time exclusion is larger than the documented 4/ODR settling time
+at the slowest tested setting. All four phase boundaries are present in the
+capture. Initial waveform evidence is retained rather than hidden as outliers.
+
+Steady period min/mean/max in microseconds:
+
+- Phase 2: 12586 / 12615.269799 / 12657.
+- Phase 3: 50548 / 50630.459459 / 50710.
+- Phase 4: 25261 / 25315.105121 / 25356.
+- Phase 5: 12592 / 12620.919463 / 12648.
+
+For the 2050 retained IRQ pulses, pair each rise with its following IRQ fall,
+find CS assertions in that high interval and the matching CS deassertion.
+Each is acknowledged before its IRQ falls. Maximum high time is 2164 us;
+CS deassertion to IRQ low is 17-43 us. No doubled steady-period gaps occur.
+This validates timely service of the captured ready events, not all possible
+errors or a long-duration production acceptance run.
+
+### Recovery and Interpretation
+
+Before/after/pre-normal-release EEPROM SHA256 is identical:
+4AB3761E603D5F9AC83ED7E7DA51A14668C962DF108D535142068A37010620DE.
+All option snapshots equal 7FC6E8272A2DE908091CDC536B180CE557CAE4D13B4120250A50D564507821D6.
+The exact normal HEX (6A823BA0...982D6866) was restored and verified. EEPROM,
+identity and options were not programmed. The bounded original UART session
+ended before restoration, so no normal boot log is claimed from that session.
+Follow-on .local/captures/20260921-165618-COM27.txt shows normal 453-word drains
+at 38156,45797,53445 ms, then a 387-word checkpoint drain, stage=6, elapsed=240,
+reset=47, errors=0/0/0. Full eighteen-phase auto-termination is host-tested,
+not a completed on-board run; the board was restored after sufficient capture.
+
+All selected rates are approximately 79.0-79.3 percent of nominal. The result
+supports a common sensor time-base scale error rather than an isolated 25 Hz
+selection error or an application processing bottleneck. This is an INFERENCE:
+the internal oscillator itself was not measured. The ~0.3 percentage-point
+spread is reported, not forced into one exact calibration constant.
+
+The ADI datasheet's External Clock section states ODR/bandwidth scale with the
+time base; its typical population clock distribution is not an acceptance
+limit that makes this ~21 percent deficit normal. Continue with a known-good
+same-version collar under the same diagnostic image and measure VS/VDDIO at
+the sensor, including ripple. Battery operation or the ST-Link supply reading
+does not establish those analog conditions. Do not declare a failed/counterfeit
+part, use undocumented trim registers, or silently normalize class counts.
+Base-station receipt, real four-hour history and current acceptance stay open.

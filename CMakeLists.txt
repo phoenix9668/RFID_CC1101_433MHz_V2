@@ -13,6 +13,10 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 option(RFID_DIAGNOSTICS "Enable bounded UART diagnostics" OFF)
 option(RFID_DIAGNOSTIC_HOLD_AWAKE "Bench only: disable STOP to isolate sample timing" OFF)
 option(RFID_SENSOR_ODR_TEST "Bench only: DATA_READY timing; no application or EEPROM writes" OFF)
+option(RFID_SENSOR_ODR_SWEEP "Bench only: repeated 25/50/100 Hz DATA_READY phases" OFF)
+if(RFID_SENSOR_ODR_SWEEP AND NOT RFID_SENSOR_ODR_TEST)
+  message(FATAL_ERROR "ODR_SWEEP requires ODR_TEST")
+endif()
 if(RFID_SENSOR_ODR_TEST AND (NOT RFID_DIAGNOSTICS OR RFID_DIAGNOSTIC_HOLD_AWAKE))
   message(FATAL_ERROR "ODR_TEST requires Diagnostics and cannot use HOLD_AWAKE")
 endif()
@@ -39,7 +43,8 @@ target_compile_definitions(firmware_options INTERFACE USE_HAL_DRIVER USE_FULL_LL
   HSE_VALUE=12000000 RFID_DIAGNOSTICS=$<BOOL:${RFID_DIAGNOSTICS}>)
 target_compile_definitions(firmware_options INTERFACE
   RFID_DIAGNOSTIC_HOLD_AWAKE=$<BOOL:${RFID_DIAGNOSTIC_HOLD_AWAKE}>
-  RFID_SENSOR_ODR_TEST=$<BOOL:${RFID_SENSOR_ODR_TEST}>)
+  RFID_SENSOR_ODR_TEST=$<BOOL:${RFID_SENSOR_ODR_TEST}>
+  RFID_SENSOR_ODR_SWEEP=$<BOOL:${RFID_SENSOR_ODR_SWEEP}>)
 target_include_directories(firmware_options INTERFACE Core/Inc App/Inc Platform/Inc
   ${HAL}/Inc Drivers/CMSIS/Include Drivers/CMSIS/Device/ST/STM32L0xx/Include
   Drivers/ADI Drivers/PCG)

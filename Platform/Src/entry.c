@@ -36,7 +36,11 @@ int main(void)
     LL_EXTI_DisableIT_0_31(LL_EXTI_LINE_1);
     LL_EXTI_ClearFlag_0_31(LL_EXTI_LINE_1);
     NVIC_DisableIRQ(EXTI0_1_IRQn);
+#if RFID_SENSOR_ODR_SWEEP
+    (void)sensor_odr_sweep_run();
+#else
     (void)sensor_odr_test_run(240000);
+#endif
     for (;;)
     {
         board_watchdog();
