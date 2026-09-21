@@ -52,6 +52,7 @@ SPI transfers, storage or algorithm processing.
 Basic ID/configuration, regular FIFO reads, one resumed-window TX and reset
 recovery now have board evidence in VERIFICATION.md. Sampling rate is still
 unresolved at about 19.75 Hz; the complete checklist below is not all passed.
+The DSLogic U3Pro16 procedure and probe map are in ADXL362_CAPTURE.md.
 
 - Check ADXL362 AD/1D/F2 IDs and all configuration readbacks.
 - Confirm FIFO pace and no overruns at real ODR; test 900 and 1024 byte paths.

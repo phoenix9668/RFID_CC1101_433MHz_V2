@@ -117,6 +117,13 @@ counterfeit sensor. See the ADI source/datasheet links in SOURCES.md.
 
 ## Remaining Acceptance
 
+The user has confirmed a DSLogic U3Pro16; Windows USB enumeration and the
+installed DSView 1.3.2 are confirmed. At the user's request, probe wiring and
+waveform capture are deferred to a later session. ADXL362_CAPTURE.md records
+the next passive timing/SPI tests. No new firmware was flashed in this step.
+The base station is not currently on site, so receipt tests are explicitly
+deferred, not passed or inferred from the collar's tx-ok result.
+
 - Resolve measured ODR and confirm real six-second acquisition.
 - Validate 900 and 1024 byte worst-case FIFO paths physically, including
   intentional overflow/error recovery; regular observed reads were 906 bytes.
