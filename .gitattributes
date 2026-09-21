@@ -4,3 +4,5 @@
 Drivers/ADI/* -text
 Drivers/PCG/* -text
 Core/Startup/startup_stm32l051xx.s -text
+PCB/RFID_CC1101_433MHz_V3.8/* -text
+PCB/RFID_CC1101_433MHz_V3.8/*.pdf binary
