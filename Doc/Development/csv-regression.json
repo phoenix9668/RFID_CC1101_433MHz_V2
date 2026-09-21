@@ -1,0 +1,26 @@
+[
+  {
+    "source": "chuanxi.csv",
+    "source_sha256": "8aad22fdf6b5dc8e786f94a0f0795d84e77073f30b2d59422878ca5d41bc6ab5",
+    "samples": 19709,
+    "tail_samples": 59,
+    "result_sha256": "cab55c5481276ec7a25cdfcbc537ee4a0260771e397045931566c826528860c1",
+    "result": "PASS: 786 seconds; counts 17 0 8 0 671 90"
+  },
+  {
+    "source": "\u5598\u606f20250820 1644.csv",
+    "source_sha256": "0ea049c7f6cb7e1ab4756c44c0f11eb56a948e7e1fb56f84b5792584e1aeb9bf",
+    "samples": 77846,
+    "tail_samples": 146,
+    "result_sha256": "ab23c565cdc124a07a566eed073a745deaae7b698f75cf133cd09f19cf30b938",
+    "result": "PASS: 3108 seconds; counts 433 90 240 0 1062 1283"
+  },
+  {
+    "source": "02 1004 20230315 1819-2219 29W.csv",
+    "source_sha256": "cb0b90e91e14584bea23927021697e684c849c3f3c149562064d185ca158b789",
+    "samples": 296249,
+    "tail_samples": 149,
+    "result_sha256": "87880b1ce2416d165c929f7497378a3f8d2860a4cb826979aab62f9fb1b7151b",
+    "result": "PASS: 11844 seconds; counts 3782 0 1 0 5794 2267"
+  }
+]

@@ -1,0 +1,50 @@
+/* Hardware-free protocol oracle: original CC1101SendHandler from 34d57c2. */
+#include "rfid_types.h"
+#include <assert.h>
+#include <string.h>
+#define _DEBUG 0
+#define _RFID_SIZE 6
+#define _STEP_LOOPNUM 12
+#define _BATTERY_SIZE 2
+#define _RESETCNT_SIZE 2
+#define _CRC32_SIZE 4
+#define rfid_printf(...) ((void)0)
+#define CC1101_POWER_ON() ((void)0)
+#define CC1101_POWER_DOWN() ((void)0)
+#define RFIDInitial(...) ((void)0)
+#define CC1101SetIdle() ((void)0)
+#define CC1101WriteCmd(...) ((void)0)
+#define CC1101_GDO_DeInit() ((void)0)
+#define ADDRESS_CHECK 0
+static uint8_t RandomString[32], *wire;
+static uint16_t resetCnt;
+static struct { uint8_t sendBuffer[191]; uint32_t crcValue; } cc1101;
+static struct { uint8_t deviceCode1,deviceCode2,deviceCode3,deviceCode4,deviceCode5,deviceCode6; } device;
+static struct { uint16_t restArray[12],ingestionArray[12],movementArray[12],climbArray[12],ruminateArray[12],otherArray[12]; uint8_t stepStage; } step;
+static struct { uint16_t avgValue; } adc;
+static uint32_t hcrc;
+/* Model the base CRC peripheral: byte input reversal, polynomial 04C11DB7,
+   initial FFFFFFFF and output bit reversal, without final complement. */
+static uint32_t HAL_CRC_Calculate(uint32_t *unused,uint32_t *input,uint32_t length)
+{
+    (void)unused;
+    const uint8_t *bytes=(const uint8_t*)input;
+    uint32_t crc=0xffffffffU, reflected=0;
+    for(uint32_t i=0;i<length;++i) for(unsigned b=0;b<8;++b) {
+        unsigned carry=((crc>>31)^(bytes[i]>>b))&1U;
+        crc<<=1; if(carry) crc^=0x04c11db7U;
+    }
+    for(unsigned i=0;i<32;++i) { reflected=(reflected<<1)|(crc&1); crc>>=1; }
+    return reflected;
+}
+static void CC1101SendPacket(const uint8_t *p,size_t n,int mode)
+{
+    (void)mode; assert(n==191); memcpy(wire,p,n);
+}
+/* BASE_FUNCTION */
+void legacy_encode(uint8_t out[191],const uint8_t id[6],const uint8_t random[32],const rfid_history_t *s,uint16_t battery)
+{
+    wire=out; memcpy(&device,id,6); memcpy(RandomString,random,32);
+    memcpy(&step,s->history,144); step.stepStage=s->stage; resetCnt=s->reset_count; adc.avgValue=battery;
+    CC1101SendHandler();
+}
