@@ -1,8 +1,13 @@
 # ADXL362 Sampling-Rate Investigation
 
-Status: the user deferred probe wiring and capture until a later session.
-The user confirmed a DSLogic U3Pro16 and deferred base-station tests because
-the base station is not on site. Windows enumerates
+Status: the first low-rate capture and a corrected-INT2 repeat are complete.
+ADXL362_MEASUREMENTS.md records evidence, timing and limitations. High-rate
+capture B confirms one complete 906-byte drain at approximately 4 MHz.
+Capture C, obtained by manual hold-reset/arm/release after an unsuccessful
+ST-Link attempt, verifies startup IDs and all fourteen configuration
+write/readback pairs. ODR remains unresolved; no acceptance gate is waived.
+The user deferred
+base-station tests because the base station is not on site. Windows enumerates
 the analyzer as USB-based DSL Instrument v2 (VID 2A0E / PID 002A); DSView 1.3.2
 is installed. USB enumeration is not evidence that probes are connected.
 
@@ -63,6 +68,9 @@ for USB/UART buffering rather than treating host timestamps as exact IRQ time.
   require CS falling: multiple simple conditions are ANDed and need not coincide.
 - Start a single capture. If it does not trigger within 20 seconds, stop and
   investigate capture A instead of leaving an unbounded wait.
+- Recheck the top-bar rate/duration after closing Device Options: the installed
+  DSView build restored old values during this session. Do not reopen that
+  dialog after final verification unless a change is actually necessary.
 - Add SPI decoding: CLK=D1, MOSI=D2, MISO=D3, CS=D0, active-low,
   CPOL=0, CPHA=0, MSB first, 8 bits per word. This sample rate provides more
   than ten samples per nominal 4 MHz SPI clock cycle.
@@ -79,9 +87,20 @@ for USB/UART buffering rather than treating host timestamps as exact IRQ time.
 ## Capture C: Startup Configuration, Only After A/B
 
 Use the same SPI settings, but trigger on D0 falling and select at least
-100 ms. Arm the analyzer before an agreed hardware NRST pulse. This restarts
+100 ms (500 ms selected for this session). Arm the analyzer before an agreed
+hardware NRST pulse. This restarts
 the application and increments its reset counter; it is not a passive read.
 No Flash download, EEPROM restoration or option-byte change is needed.
+Ordinary FIFO reads also trigger D0 falling: if one arrives before reset, the
+capture is not startup evidence. Check for the reset command/configuration
+sequence and a matching UART boot log. Do not automatically repeat resets on
+ST-Link connection errors; first verify NRST and a reliable reset procedure.
+For the verified manual method, hold the board's SW2 continuously, arm the
+analyzer while held, then release SW2 only once acquisition is waiting.
+Prepare a bounded UART capture that covers the release, not just setup time;
+if it expires first, document the missing synchronized boot log rather than
+claiming alignment. The SPI trace itself can establish the initialization
+sequence. Do not keep restarting solely to recover a missing UART log.
 
 Confirm writes and readbacks on the actual wires, especially:
 
@@ -108,6 +127,10 @@ MOSI and MISO columns from the decoder's list viewer to CSV/TXT. Session
 settings alone are not captured data. Retain original files and record sample
 rate, threshold, enabled channels, firmware hash, trigger and any resets.
 Keep recordings under ignored .local/captures or provide their actual paths.
+If VCD is not offered by the installed build, keep the raw .dsl file; CSV
+export is also acceptable. Do not require a conversion merely to inspect
+this build's packed per-channel data. The first measurements use byte-bin
+timing directly from DSL and do not decode undersampled SPI traffic.
 
 First compare IRQ timing, SPI clock/configuration, FIFO word count and UART.
 If the same low rate persists with correct transactions, a separate temporary

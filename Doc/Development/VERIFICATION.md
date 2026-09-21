@@ -115,12 +115,37 @@ and SPI, checking actual sensor supply/clock and comparison with equivalent
 base firmware. This is not sufficient evidence to declare a defective or
 counterfeit sensor. See the ADI source/datasheet links in SOURCES.md.
 
+A subsequent DSLogic capture with corrected INT2 wiring independently measured
+four uninterrupted watermark intervals averaging 7.642282 seconds. First CS
+activity followed INT2 by about 2.55-2.70 ms. A checkpoint partial drain was
+identified and excluded from the regular-interval average. Combined with UART
+453-word counts, the inferred sample rate is about 19.76 Hz; the 1 MHz trace
+does not validate SPI bytes or clock. ADXL362_MEASUREMENTS.md records the raw
+file hash, method and limitations. The sampling-rate gate remains NOT PASSED.
+
+The later 50 MHz capture independently decoded status=07 and count=C5 01
+(453 words), followed by 510+396 FIFO data bytes. All 151 X/Y/Z sets have
+continuous tags; SCLK is approximately 4 MHz and IRQ-to-CS is 2.7172 ms.
+Ten synthetic offline-decoder tests pass. This verifies one regular transfer,
+not ODR, analog supply, 900/1024-byte stress cases or runtime stack margin.
+
+A subsequent manual hold-reset/arm/release capture decoded 33 startup SPI
+transactions: PARTID, soft reset, all three IDs, then fourteen matching
+configuration write/readback pairs. FILTER_CTL=51 and POWER_CTL=02 are verified
+on the physical bus. A later UART checkpoint reported reset=41 and errors=0/0/0;
+the approximately 7.64-second FIFO interval persisted. The synchronized UART
+boot log was missed because its bounded capture expired before reset release.
+This does not invalidate the SPI configuration evidence or waive the ODR gate.
+
 ## Remaining Acceptance
 
 The user has confirmed a DSLogic U3Pro16; Windows USB enumeration and the
-installed DSView 1.3.2 are confirmed. At the user's request, probe wiring and
-waveform capture are deferred to a later session. ADXL362_CAPTURE.md records
-the next passive timing/SPI tests. No new firmware was flashed in this step.
+installed DSView 1.3.2 are confirmed. Probe wiring was corrected and passive
+low-rate timing, one high-rate FIFO capture and manual-reset startup capture
+completed. The earlier approved HWRSTPULSE connection failed with
+DEV_TARGET_CMD_ERR; it was not treated as successful startup evidence.
+No new firmware download was performed. See ADXL362_CAPTURE.md and
+ADXL362_MEASUREMENTS.md for the manual procedure and its evidence/limitations.
 The base station is not currently on site, so receipt tests are explicitly
 deferred, not passed or inferred from the collar's tx-ok result.
 
