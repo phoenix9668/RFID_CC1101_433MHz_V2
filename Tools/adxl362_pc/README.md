@@ -47,3 +47,31 @@ column. The behavior number is repeated for the corresponding 25 samples:
 - `5`: ruminate
 - `6`: other
 - `7`: breath
+
+## Windows PowerShell
+
+With native MinGW-w64 GCC on PATH, run from the repository root:
+
+```powershell
+New-Item -ItemType Directory -Force build/adxl362-pc
+gcc -std=c11 -O2 -Wall -Wextra -ITools/adxl362_pc/include -ICore/Inc -D_Original_Data_Algorithm=1 -DADXL362_PC_RUNNER=1 Tools/adxl362_pc/src/main.c Tools/adxl362_pc/src/pc_platform.c Core/Src/adxl362_behavior.c -lm -o build/adxl362-pc/adxl362_pc.exe
+./build/adxl362-pc/adxl362_pc.exe Doc/data/chuanxi.csv build/adxl362-pc/chuanxi.csv
+```
+
+`pc_getline.h` supplies the line reader on Windows; POSIX builds continue using
+the system `getline`. Some older MinGW runtimes cannot open non-ASCII argument
+paths. Copy such fixtures to an ASCII filename under `build/`, verify the copy's
+SHA256 matches the source, and pass that path to the runner.
+
+Test empty input, line endings, long lines and a final line without a newline:
+
+```sh
+make test
+```
+
+Or, from the repository root in PowerShell after creating the build directory:
+
+```powershell
+gcc -std=c11 -Wall -Wextra -Werror -ITools/adxl362_pc/include Tools/adxl362_pc/tests/test_pc_getline.c -o build/adxl362-pc/test_pc_getline.exe
+./build/adxl362-pc/test_pc_getline.exe build/adxl362-pc/test_pc_getline.tmp
+```

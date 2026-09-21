@@ -7,6 +7,7 @@
 #include <string.h>
 
 #include "adxl362.h"
+#include "pc_getline.h"
 
 #define SAMPLE_RATE_HZ 25
 #define SAMPLES_PER_FIFO (_FIFO_SAMPLES_LEN / 6)
@@ -119,7 +120,7 @@ static int read_csv(const char *path,
 
     char *line = NULL;
     size_t line_capacity = 0;
-    ssize_t line_length = getline(&line, &line_capacity, input);
+    ssize_t line_length = pc_getline(&line, &line_capacity, input);
     if (line_length < 0)
     {
         fprintf(stderr, "'%s' has no header row\n", path);
@@ -159,7 +160,7 @@ static int read_csv(const char *path,
     size_t count = 0;
     size_t capacity = 0;
     size_t row = 1;
-    while ((line_length = getline(&line, &line_capacity, input)) >= 0)
+    while ((line_length = pc_getline(&line, &line_capacity, input)) >= 0)
     {
         row++;
         trim_line_end(line);

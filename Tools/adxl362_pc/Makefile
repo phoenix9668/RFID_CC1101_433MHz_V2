@@ -13,14 +13,14 @@ LDLIBS := -lm
 SANITIZE_CFLAGS := -std=c11 -O1 -g -fsanitize=address,undefined -fno-omit-frame-pointer
 SANITIZE_LDFLAGS := -fsanitize=address,undefined
 
-.PHONY: all clean sanitize
+.PHONY: all clean sanitize test
 
 all: $(TARGET)
 
 $(TARGET): $(OBJECTS)
 	$(CC) $(LDFLAGS) $(OBJECTS) $(LDLIBS) -o $@
 
-$(BUILD_DIR)/main.o: src/main.c | $(BUILD_DIR)
+$(BUILD_DIR)/main.o: src/main.c include/pc_getline.h | $(BUILD_DIR)
 	$(CC) $(CPPFLAGS) $(CFLAGS) $(PC_WARNINGS) -c $< -o $@
 
 $(BUILD_DIR)/pc_platform.o: src/pc_platform.c | $(BUILD_DIR)
@@ -28,6 +28,12 @@ $(BUILD_DIR)/pc_platform.o: src/pc_platform.c | $(BUILD_DIR)
 
 $(FIRMWARE_OBJECT): $(ROOT)/Core/Src/adxl362_behavior.c | $(BUILD_DIR)
 	$(CC) $(CPPFLAGS) $(CFLAGS) $(FIRMWARE_WARNINGS) -c $< -o $@
+
+test: $(BUILD_DIR)/test_pc_getline
+	./$(BUILD_DIR)/test_pc_getline $(BUILD_DIR)/test_pc_getline.tmp
+
+$(BUILD_DIR)/test_pc_getline: tests/test_pc_getline.c include/pc_getline.h | $(BUILD_DIR)
+	$(CC) $(CPPFLAGS) $(CFLAGS) $(PC_WARNINGS) $(LDFLAGS) $< -o $@
 
 sanitize:
 	$(MAKE) BUILD_DIR=build-sanitize CFLAGS="$(SANITIZE_CFLAGS)" \
