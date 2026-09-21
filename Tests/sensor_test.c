@@ -55,6 +55,19 @@ int main(void)
     assert(sensor_init()==RFID_OK); bad_readback=0x2c;
     assert(sensor_data_ready_begin_rate(50)==RFID_IO && regs[0x2d]==0);
     bad_readback=0;
+    for(unsigned external=0;external<2;++external) {
+        assert(sensor_init()==RFID_OK);
+        assert(sensor_clock_test_measure(external)!=RFID_OK);
+        assert(sensor_clock_test_prepare()==RFID_OK);
+        assert(regs[0x2a]==0 && regs[0x28]==0 && regs[0x2b]==1 && regs[0x2d]==0);
+        assert(sensor_clock_test_measure(external)==RFID_OK);
+        assert(regs[0x2d]==(external?0x42:2) && regs[0x2c]==0x51);
+        assert(sensor_clock_test_end()==RFID_OK && regs[0x2d]==0);
+    }
+    assert(sensor_init()==RFID_OK); bad_readback=0x2a;
+    assert(sensor_clock_test_prepare()==RFID_IO && regs[0x2d]==0);
+    assert(sensor_clock_test_measure(true)!=RFID_OK);
+    bad_readback=0;
     assert(sensor_init()==RFID_OK);
     uint8_t data[1026];
     for(unsigned length=900;length<=1024;length+=124) {

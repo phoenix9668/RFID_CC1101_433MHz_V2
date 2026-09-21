@@ -7,6 +7,9 @@
 #if RFID_SENSOR_ODR_TEST
 #include "sensor_odr_test.h"
 #endif
+#if RFID_SENSOR_EXTCLK_TEST
+#include "sensor_extclock_test.h"
+#endif
 #if RFID_DIAGNOSTIC_HOLD_AWAKE
 #include "sensor.h"
 #include <stdio.h>
@@ -36,7 +39,11 @@ int main(void)
     LL_EXTI_DisableIT_0_31(LL_EXTI_LINE_1);
     LL_EXTI_ClearFlag_0_31(LL_EXTI_LINE_1);
     NVIC_DisableIRQ(EXTI0_1_IRQn);
-#if RFID_SENSOR_ODR_SWEEP
+#if RFID_SENSOR_EXTCLK_TEST
+    NVIC_DisableIRQ(RTC_IRQn);
+    NVIC_DisableIRQ(USART1_IRQn);
+    (void)sensor_extclock_test_run();
+#elif RFID_SENSOR_ODR_SWEEP
     (void)sensor_odr_sweep_run();
 #else
     (void)sensor_odr_test_run(240000);

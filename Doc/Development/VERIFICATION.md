@@ -223,6 +223,43 @@ reset=47, stage=6, elapsed=240, errors=0/0/0. Known-good board comparison and
 analog sensor supply measurements remain needed. No production compensation
 or classification/protocol change was made.
 
+## External Clock Checks
+
+The default-OFF EXTCLK_TEST V2 image builds in build/extclk-test-v2: 15652 Flash
+bytes and 2600 RAM bytes including reserved stack (V1 used 15404 Flash).
+Its linked image contains
+no app_init/app_poll, storage, radio-send or EEPROM programming routines.
+TIM2_IRQHandler disassembly has no function calls. D5 was checked at both
+1 MHz and 50 MHz; recorded max latency is 45 timer ticks, late=0. Runtime
+stack watermark and analog edge quality remain unverified.
+
+Clean build/extclk-verify Debug/Release/Diagnostics all pass, and their BINs
+match build/odr-sweep-verify byte for byte. Seven CTest targets pass, including
+24-phase A/B completion, tick wrap, pin sequencing, ten failure cases and
+DATA_READY reassertion during initial clearing. The last case guards a V1
+test-only startup race; the host suite fails with the archived V1 source.
+All 15738 CSV classifications still match. Python archive/clock tests cover
+sixth-channel requirements, exact 2048-cycle spacing, wrong spacing, lost
+clock pulses, narrow pulses, disconnected D5 and reference boundaries.
+Configuring EXTCLK_TEST without ODR_TEST is rejected as intended.
+
+Twenty-eight Python tests pass. All three normal BIN files remain unchanged.
+Physical Capture F measures the same sensor at 19.746835 Hz internally and
+15.625229/15.625439 Hz externally, with measured reference 32000.90 Hz.
+The 50 MHz follow-up observes 32000.925116 Hz reference and 2048 clock cycles
+in a 63998.14 us DATA_READY interval. V2 emitted COMPLETE after all 24 phases;
+the bounded UART recording has a gap, so not every phase has retained logs.
+V1 stopped on two startup timeouts; the identified software arming race is
+fixed, but no fault trace proves the cause of those particular aborts.
+
+Full EEPROM/options match throughout the diagnostic/recovery sequence.
+The exact original normal 26216-byte Diagnostics image was restored and
+download-verified, not replaced by the new normal build. Its next recorded
+checkpoint is stage=7, elapsed=900, reset=53, errors=0/0/0. Sensor internal
+time-base error is strongly supported, not a diagnosed component defect.
+Production timing/counting is unchanged. See ADXL362_MEASUREMENTS.md Capture F
+for hashes, raw outliers, capture limits and preservation evidence.
+
 ## Rollback
 
 Keep the complete private backup outside disposable build output. Match the

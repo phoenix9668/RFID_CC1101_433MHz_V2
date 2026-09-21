@@ -14,6 +14,10 @@ option(RFID_DIAGNOSTICS "Enable bounded UART diagnostics" OFF)
 option(RFID_DIAGNOSTIC_HOLD_AWAKE "Bench only: disable STOP to isolate sample timing" OFF)
 option(RFID_SENSOR_ODR_TEST "Bench only: DATA_READY timing; no application or EEPROM writes" OFF)
 option(RFID_SENSOR_ODR_SWEEP "Bench only: repeated 25/50/100 Hz DATA_READY phases" OFF)
+option(RFID_SENSOR_EXTCLK_TEST "Bench only: internal versus PB0 32 kHz clock" OFF)
+if(RFID_SENSOR_EXTCLK_TEST AND (NOT RFID_SENSOR_ODR_TEST OR RFID_SENSOR_ODR_SWEEP))
+  message(FATAL_ERROR "EXTCLK_TEST requires ODR_TEST and cannot use ODR_SWEEP")
+endif()
 if(RFID_SENSOR_ODR_SWEEP AND NOT RFID_SENSOR_ODR_TEST)
   message(FATAL_ERROR "ODR_SWEEP requires ODR_TEST")
 endif()
@@ -44,7 +48,8 @@ target_compile_definitions(firmware_options INTERFACE USE_HAL_DRIVER USE_FULL_LL
 target_compile_definitions(firmware_options INTERFACE
   RFID_DIAGNOSTIC_HOLD_AWAKE=$<BOOL:${RFID_DIAGNOSTIC_HOLD_AWAKE}>
   RFID_SENSOR_ODR_TEST=$<BOOL:${RFID_SENSOR_ODR_TEST}>
-  RFID_SENSOR_ODR_SWEEP=$<BOOL:${RFID_SENSOR_ODR_SWEEP}>)
+  RFID_SENSOR_ODR_SWEEP=$<BOOL:${RFID_SENSOR_ODR_SWEEP}>
+  RFID_SENSOR_EXTCLK_TEST=$<BOOL:${RFID_SENSOR_EXTCLK_TEST}>)
 target_include_directories(firmware_options INTERFACE Core/Inc App/Inc Platform/Inc
   ${HAL}/Inc Drivers/CMSIS/Include Drivers/CMSIS/Device/ST/STM32L0xx/Include
   Drivers/ADI Drivers/PCG)
@@ -57,6 +62,9 @@ add_executable(${PROJECT_NAME}
   Drivers/ADI/adxl362.c Drivers/PCG/pcg_basic.c)
 if(RFID_SENSOR_ODR_TEST)
   target_sources(${PROJECT_NAME} PRIVATE Platform/Src/sensor_odr_test.c)
+endif()
+if(RFID_SENSOR_EXTCLK_TEST)
+  target_sources(${PROJECT_NAME} PRIVATE Platform/Src/sensor_extclock_test.c Platform/Src/sensor_test_clock.c)
 endif()
 set_target_properties(${PROJECT_NAME} PROPERTIES SUFFIX ".elf")
 target_link_libraries(${PROJECT_NAME} PRIVATE stm32_support firmware_options m c)

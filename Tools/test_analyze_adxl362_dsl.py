@@ -65,13 +65,15 @@ class DecodeTests(unittest.TestCase):
 
 
 class ArchiveTests(unittest.TestCase):
-    def capture(self, path, rate=48_000_000, truncate=False):
+    def capture(self, path, rate=48_000_000, truncate=False, channels=5):
         signals = waveform()
+        if channels == 6:
+            signals = np.vstack([signals, np.arange(signals.shape[1], dtype=np.uint8) % 2])
         count = signals.shape[1]
         session = {"DeviceMode": 0, "Enable RLE Compress": 0,
                    "Using External Clock": 0, "Filter Targets": 0,
                    "Sample rate": str(rate), "Sample count": str(count),
-                   "channel": [{"index": i, "enabled": True} for i in range(5)]}
+                   "channel": [{"index": i, "enabled": True} for i in range(channels)]}
         with zipfile.ZipFile(path, "w") as archive:
             archive.writestr("header", f"[version]\nversion=3\n[header]\n"
                               f"total samples={count}\ntotal blocks=2\n")
@@ -113,6 +115,18 @@ class ArchiveTests(unittest.TestCase):
             _, _, rate, actual = load_capture(path, timing_only=True)
             self.assertEqual(rate, 1_000_000)
             np.testing.assert_array_equal(actual, expected)
+
+    def test_sixth_channel_is_explicit_and_required(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory)/"test.dsl"
+            self.capture(path)
+            with self.assertRaisesRegex(ValueError, "channel 5"):
+                load_capture(path, timing_only=True, channel_count=6)
+            expected = self.capture(path, channels=6)
+            _, _, _, actual = load_capture(path, timing_only=True, channel_count=6)
+            np.testing.assert_array_equal(actual, expected)
+            _, _, _, original = load_capture(path)
+            np.testing.assert_array_equal(original, expected[:5])
 
 
 if __name__ == "__main__":

@@ -150,3 +150,44 @@ rfid_status_t sensor_data_ready_end(void)
     return write_register(ADXL362_REG_POWER_CTL, 0);
 }
 #endif
+#if RFID_SENSOR_EXTCLK_TEST
+static rfid_status_t checked_write(uint8_t reg, uint8_t value)
+{
+    rfid_status_t status = write_register(reg, value);
+    uint8_t actual;
+    if (status == RFID_OK)
+        status = sensor_read_register(reg, &actual);
+    return status != RFID_OK ? status : actual == value ? RFID_OK : RFID_IO;
+}
+rfid_status_t sensor_clock_test_prepare(void)
+{
+    /* PB0 must remain high-Z until INTMAP1=0 has been read back. */
+    const uint8_t config[][2] = {
+        {ADXL362_REG_POWER_CTL, 0}, {ADXL362_REG_INTMAP1, 0},
+        {ADXL362_REG_FIFO_CTL, 0}, {ADXL362_REG_INTMAP2, 1},
+        {ADXL362_REG_FILTER_CTL, 0x51}};
+    for (unsigned i = 0; i < sizeof(config) / sizeof(config[0]); ++i)
+    {
+        rfid_status_t status = checked_write(config[i][0], config[i][1]);
+        if (status != RFID_OK) return status;
+    }
+    return RFID_OK;
+}
+rfid_status_t sensor_clock_test_measure(bool external)
+{
+    uint8_t map, power;
+    rfid_status_t status = sensor_read_register(ADXL362_REG_INTMAP1, &map);
+    if (status == RFID_OK)
+        status = sensor_read_register(ADXL362_REG_POWER_CTL, &power);
+    if (status != RFID_OK) return status;
+    if (map != 0 || power != 0) return RFID_INVALID;
+    /* Supply the external clock before selecting it. No INT1 output mapping. */
+    return checked_write(ADXL362_REG_POWER_CTL,
+                         external ? ADXL362_POWER_CTL_EXT_CLK | 2 : 2);
+}
+rfid_status_t sensor_clock_test_end(void)
+{
+    /* Return to internal-clock standby before the MCU releases the clock pin. */
+    return checked_write(ADXL362_REG_POWER_CTL, 0);
+}
+#endif

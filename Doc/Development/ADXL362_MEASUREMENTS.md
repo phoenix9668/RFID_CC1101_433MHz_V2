@@ -461,3 +461,165 @@ the sensor, including ripple. Battery operation or the ST-Link supply reading
 does not establish those analog conditions. Do not declare a failed/counterfeit
 part, use undocumented trim registers, or silently normalize class counts.
 Base-station receipt, real four-hour history and current acceptance stay open.
+
+## Supply Follow-up
+
+User-reported multimeter observation, 2026-09-21: C19 VCC_3V remains at
+3.003 V while SPI activity is visible. The V3.8 netlist connects C19.1 to
+both U2 supply pins on VCC_3V, and C19.2 to ground. After the requested power
+disconnection the reported reading decayed from 0.06 to 0.05 V in about ten
+seconds, with no reading over 0.1 V observed. These are user observations,
+not recorded oscilloscope captures. They support normal DC voltage and the
+checked low-voltage hold condition, but do not measure ripple or power-up
+rise time. Supply investigation is now secondary to the clock-path test.
+
+## Capture F: Internal / External Clock Comparison
+
+The user connected analyzer D5 to PB0/TP18/INT1 and authorized this temporary
+test. D0-D4 retain CS/SCK/MOSI/MISO/INT2. No external signal generator was
+connected. The MCU drives 32 kHz only after disabling and reading back the
+sensor INT1 output mapping. Internal phases leave PB0 high-Z. See
+ADXL362_CAPTURE.md for sequence, electrical limitations and build procedure.
+
+### Images and Startup Race
+
+Both images use the same isolated 24-phase A/B procedure: FIFO off, INTMAP1=00,
+INTMAP2=01, FILTER_CTL=51, POWER_CTL=02 internally or 42 externally. Each
+phase settles for 600 ms, then counts ready events for ten seconds. No
+application, classification, RF, STOP or EEPROM writes run.
+
+- V1 build/extclk-test: Flash 15404, RAM 2600 bytes including reserved stack.
+  HEX SHA256 FFDCA08929F6656F28D7A32DE1754F3FB0EB1FFDF01BA1243CE4179AECEA5F00.
+  ELF SHA256 CCF4F305A135F877A5A0D8D3542796D57B628106552689A1B2B3C1344B0C0CAA.
+- V2 build/extclk-test-v2: Flash 15652, RAM 2600 bytes including reserved stack.
+  HEX SHA256 5D45BF022CC91CBEFC3D6467F218921587E5748617C82BB3B445EB001DC97F61.
+  ELF SHA256 5F52DBBA4B110CF8205AB3F2A13EA2CCA9D7D5188A08DA684C3C0A5DC9E11CDC.
+
+V1 completed phases 0-9, then stopped safely with phase 10 n=0/status=2.
+A reset-only retry stopped at phase 0 with the same n=0/status=2. Valid
+previously completed phases are retained. Inspection identified a test-only
+arming race: a new ready event during the initial clearing read/delay can
+leave INT2 high while the software still waits to see its first low. V2
+requires a verified low before counting (three bounded attempts) and adds
+fault-state logging. The added host race case passes V2; the same host test
+compiled with the archived V1 implementation fails its success assertion.
+There is no fault waveform proving that this race caused either field abort.
+
+V2 began at 22:09:54.845 and emitted COMPLETE at 22:14:59.051, confirming
+the on-board loop reached all 24 phases without taking its error exit.
+Bounded UART files 20260921-220931-COM27 and 20260921-221443-COM27 retain
+phases 0-9, the phase 10 start, phase 22 end and phase 23; intervening UART
+was not recorded. Do not claim a continuous 24-phase serial record.
+Recorded external phases have n=156, status=0, stop=0, late=0 and maximum
+timer latency 45 ticks. Phase 23 used one extra millisecond of startup
+priming (679588 edges versus the usual 679524), outside the count interval.
+
+### Long Waveform (V1)
+
+Original: DSLogic U3Pro16-la-260921-215505.dsl, saved 21:56:33.
+SHA256 E858D5503F13A74213C20709B6AD224AC1EEC50072D6499561749862634FDAC4.
+Private copy/JSON: .local/captures/20260921-215505-adxl362-extclk.dsl/.json.
+1 MHz, 50000896 samples, six channels, 1.5 V, no filter, internal analyzer
+clock; trigger timestamp 21:55:05.289 local. This rate does not decode SPI.
+
+UART 20260921-215402-COM27.txt/.txt.jsonl matches configuration markers for
+phases 3, 4 and 5 near 21:55:09.088, 21:55:21.771 and 21:55:34.42.
+They report FILTER_CTL=51, POWER_CTL=42/02/42 and status=0. Use these markers
+and the phase order, not absence of D5 alone, to identify the internal phase.
+Two D5 bursts span 3.733749-14.350982 and 29.078036-39.695268 seconds, each
+containing 339762 rising edges. Their measured rates are 32000.898916 and
+32000.901930 Hz. Complete clock periods are 31/32 us, high/low widths 15/16 us.
+No missing clock periods are observed at the 1 us resolution.
+
+| Phase | Source | Raw ready edges | Steady edges | Steady ODR Hz | Measured clock / 2048 |
+| --- | --- | ---: | ---: | ---: | ---: |
+| 3 | PB0 external | 156 | 146 | 15.625229 | 15.625439 |
+| 4 | Internal | 198 | 186 | 19.746835 | N/A |
+| 5 | PB0 external | 156 | 146 | 15.625439 | 15.625440 |
+
+Apply the same 500 ms head / 100 ms tail exclusion to all three phases.
+Retain initial one-pulse groups and partial phases 2/6 in JSON, but exclude
+them from the primary comparison. Every one of the 478 retained ready
+pulses has exactly one complete CS acknowledgement before IRQ deassertion.
+
+External phase 3 ready periods are 63967-64217 us (mean 63999.062069).
+Its 64217 us interval is retained, not normalized: reference-cycle counts
+are 2047 x7, 2048 x133, 2049 x4 and 2055 x1. D5 remains continuous around
+that excursion; its cause is not established by this recording. Phase 5
+periods are 63998-63999 us (mean 63998.2), with cycles 2047 x3, 2048 x139,
+2049 x3. One-cycle boundary ambiguity is possible at 1 MHz. Internal phase
+4 periods are 50561-50716 us (mean 50641.027027). These are not claims of
+perfectly uniform sampling or a single exact internal calibration factor.
+
+### High-Speed Waveform (V2)
+
+Original: DSLogic U3Pro16-la-260921-221426.dsl, saved 22:15:16.
+SHA256 799ED3E3CF3E533D4D07350AD2915690A82740ADADD4DBE0D9980A0689B2A031.
+Private prefix: .local/captures/20260921-221426-adxl362-extclk-high;
+files .dsl, .json and -spi.json preserve the raw, clock and SPI evidence.
+50 MHz, 5000192 samples (100.00384 ms), six channels, 1.5 V, internal clock.
+Trigger time 22:14:26.773; D5 rise at sample 1163. The selected UI trigger
+position was 10%, but use the actual saved position, not an assumed 10 ms.
+The trace lies in an external phase of V2; the exact phase configuration
+marker was in the unrecorded UART gap, so no directly observed phase ID
+is assigned to this short trace.
+
+- 3200 D5 rising edges, 32000.925116 Hz across 3199 complete periods.
+- Periods 31.20-31.30 us; high widths 15.60-15.68 us; low 15.58-15.66 us.
+  No missing/extra cycles appear in this 100 ms digital trace. It is not an
+  analog rise-time, voltage-overshoot or long-duration jitter measurement.
+- Two D4 rises at samples 1785488 and 4985395, separated by 63998.14 us.
+  Exactly 2048 D5 rising edges lie between them; measured D5 predicts
+  63998.149822 us. This single interval corroborates the long capture,
+  not an independent long-term ODR acceptance.
+- One complete SPI acknowledgement reads XDATA_L: MOSI 0B 0E 00,
+  MISO 00 00 0F; CS 37.06626-37.09106 ms, 24 complete clock bits.
+  SCK periods 12/13 analyzer samples are consistent with nominal 4 MHz.
+  INT2 falls at 37.11596 ms after that read; the second IRQ's acknowledgement
+  lies beyond the capture end and is not claimed.
+- The generic 500 ms steady-window trim intentionally returns no steady
+  block for a 100 ms capture. The two raw rises and D5 statistics above
+  are reported separately, without changing the long-capture trim rule.
+
+### Preservation and Recovery
+
+Fresh full backup: .local/backups/20260921-215305-<probe>/.
+Full pre-test Flash SHA256:
+6BFE3C6E0EF5A9E67F206734F576D0F2E6AB9B840A10B9DA8CFAF8024CC7B5F4.
+The initial EEPROM backup precedes a normal checkpoint; compare diagnostic
+preservation to the same-connection before-extclk snapshot instead.
+Before V1, before its restart, before V2, after V2, and after normal-image
+programming/before reset, all complete EEPROM snapshots have SHA256:
+2F0EC93E79EEF8678D256B6A412DAB34D57C9879100D4AA10D6AE79FAB901431.
+All option snapshots equal:
+7FC6E8272A2DE908091CDC536B180CE557CAE4D13B4120250A50D564507821D6.
+
+The exact normal HEX 6A823BA0...982D6866 was restored and download-verified.
+Only application Flash pages were erased/programmed, not EEPROM or options.
+The read-only under-reset backup caused one expected diagnostic restart,
+visible after COMPLETE in the second UART file; it is not an unexplained
+reset during capture. No additional experiment was run after restoration.
+Normal UART 20260921-221645-COM27.txt shows 453-word drains at 30504,38144,
+45789,53434 ms, a 387-word checkpoint drain at 60004 ms, and
+checkpoint stage=7 elapsed=900 reset=53 err=0/0/0.
+
+### Interpretation
+
+At the unchanged 25 Hz filter selection, the ADI external-clock formula is
+ODR = reference / 2048. The deliberately selected 32 kHz source therefore
+predicts 15.625 Hz, NOT 25 Hz. External results agree with that prediction;
+switching back to internal clock again gives about 19.75 Hz instead of 25.
+This controlled comparison strongly localizes the deficit to the sensor's
+internal time-base path, rather than SPI transfer loss, IRQ service rate or
+application classification throughput. The inferred internal reference is
+about 40.44 kHz versus nominal 51.2 kHz; it is not a direct oscillator probe.
+
+At 25 samples per output, the measured internal rate predicts roughly 2844
+classifications per hour, consistent with the user's reported low counts.
+This does not prove a defective or counterfeit part, rule out every analog
+influence, or explain the isolated phase-3 timing excursion. Known-good
+same-board comparison or component substitution remains useful for cause
+confirmation. No undocumented trimming, count normalization, algorithm or
+protocol change was applied. The CPU-driven bench clock is NOT a production
+low-power solution. Base-station and long-duration/current acceptance remain
+open; see the ADI data sheet External Clock section and procedure sources.

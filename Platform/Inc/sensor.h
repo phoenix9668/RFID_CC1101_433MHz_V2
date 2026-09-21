@@ -13,4 +13,9 @@ rfid_status_t sensor_data_ready_begin(void);
 rfid_status_t sensor_data_ready_begin_rate(uint16_t nominal_hz);
 rfid_status_t sensor_data_ready_end(void);
 #endif
+#if RFID_SENSOR_EXTCLK_TEST
+rfid_status_t sensor_clock_test_prepare(void);
+rfid_status_t sensor_clock_test_measure(bool external);
+rfid_status_t sensor_clock_test_end(void);
+#endif
 #endif

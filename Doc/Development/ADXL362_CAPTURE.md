@@ -234,6 +234,83 @@ time even for the observed slow 25 Hz setting; it is not selected by whether
 an interval makes the desired frequency. Do not include standby gaps in a
 global rate. Inspect individual CS acknowledgements inside steady IRQ pulses.
 
+## Temporary External Clock A/B Test
+
+RFID_SENSOR_EXTCLK_TEST is default-OFF, requires ODR_TEST/Diagnostics, and is
+mutually exclusive with ODR_SWEEP. The normal firmware and protocol do not
+change. Build into a separate directory:
+
+```powershell
+cmake --preset Diagnostics-local -B build/extclk-test -DRFID_SENSOR_ODR_TEST=ON -DRFID_SENSOR_EXTCLK_TEST=ON
+cmake --build build/extclk-test --parallel 1
+```
+
+V3.8 already connects MCU PB0 to ADXL362 INT1 / TP18. Add analyzer D5 there
+with the board unpowered, retaining D0-D4 and common ground. Never connect a
+second clock source. INT1 is an INPUT in external-clock mode, not a clock
+output from the ADXL362. PB0 has no timer-output alternate function (DS10184
+Table 17). RM0377 Figure 1 places GPIO on the CPU IOPORT path, outside the DMA
+bus. The bench therefore uses TIM2 update interrupts, NOT PWM or GPIO DMA.
+
+HSE/PLL-derived 32 MHz timer / 500 generates 64000 interrupts/s. The short
+priority-0 handler alternates PB0 set/reset for a nominal 32 kHz clock.
+SysTick is lower priority; RTC/USART/external GPIO interrupts are disabled in
+this bench. Record total edges and maximum observed timer count at the GPIO
+write; a value over 200 timer ticks aborts. This counter is only a latency
+guard: it cannot prove no whole timer periods were missed. Physical D5 timing
+is mandatory. No STOP, application, RF, classification or EEPROM writes run.
+
+For every phase, first park PB0 high-Z and initialize the sensor. Enter
+standby, disable INTMAP1 and read it back, disable FIFO, map DATA_READY to INT2
+and confirm FILTER_CTL=51. Only after these readbacks may PB0 start driving.
+Start the external clock BEFORE selecting POWER_CTL=42; internal phases use
+POWER_CTL=02 and keep PB0 high-Z. After 600 ms settling, read XDATA_L and
+verify INT2 low after 1 ms, allowing at most three clearing attempts. A new
+sample may arrive during the read; do not start an unarmed measurement and
+misdiagnose its latched ready level as a stuck pin. Count ready edges for ten
+seconds without logging inside that measurement. On failure record the pin,
+arming state, STATUS and INTMAP2 before cleanup. Stop the
+sensor into internal-clock standby before stopping/releasing PB0. Error paths
+also release PB0 and terminate the test; do not reinitialize while driving it.
+
+Twenty-four alternating internal/external phases have two-second standby
+gaps; normal completion takes about 304 seconds and leaves standby/high-Z.
+The ordinary sensor_init briefly restores the usual INT1 mapping before each
+phase, while PB0 is high-Z. Do not mistake isolated activity transitions on D5
+or initial long DATA_READY pulses during settling for clock/steady data.
+
+At FILTER_CTL=51, the ADI formula gives ODR = reference_clock / 2048:
+32000 Hz predicts 15.625 Hz and 64 ms, NOT 25 Hz. Use the independently
+measured D5 frequency in this formula. Internal phases provide the same-board,
+same-image control. Compare each interval's reference-edge count as well as
+mean rates, and verify timely SPI acknowledgement of every retained IRQ.
+
+Acquire six channels in Stream/Instant at 1 MHz / 50 s, single, 1.5 V,
+unfiltered/internal analyzer clock. This observes reference-clock continuity
+and DATA_READY, not 4 MHz SPI bytes or sub-microsecond jitter. Follow with a
+50 MHz / 100 ms Buffer capture during an external phase to inspect individual
+reference high/low widths and SPI activity. Inspect D5 frequency, missing or
+extra edges and duty cycle before using the A/B result. A reference waveform
+failure makes the experiment inconclusive, not evidence against the sensor.
+
+```powershell
+python -B Tools/analyze_adxl362_extclock.py extclk.dsl --output extclk.json
+```
+
+The analysis retains short startup groups, reference bursts and partial
+phases. The fixed 500 ms/100 ms trims are additional to firmware settling;
+only complete steady phases with adequate data qualify. Match them to UART
+EXTCLK phase/config/END markers; absence of D5 alone cannot distinguish an
+internal phase from a disconnected probe. The 32 kHz digital continuity gate
+requires frequency within 1%, periods within 25%, and both pulse levels between
+25% and 75% of the expected period. These are diagnostic rejection thresholds,
+not ADI electrical specifications or analog signal-integrity acceptance.
+
+Use the same fresh full backup, per-download EEPROM/options hashes and exact
+normal-image restoration process above. No hardware acceptance is claimed by
+building this image. Do not apply this high-CPU test clock to production or
+compensate behavior counts based on the experiment.
+
 ## Sources
 
 - [DSLogic U3Pro16 data sheet](https://www.dreamsourcelab.com/doc/DSLogic_U3Pro16_Datasheet.pdf)
@@ -241,3 +318,7 @@ global rate. Inspect individual CS acknowledgements inside steady IRQ pulses.
   installed ug31.pdf sections 2.2-2.5 and 2.8-2.9 reviewed for this procedure.
 - [ADXL362 data sheet](https://www.analog.com/media/en/technical-documentation/data-sheets/adxl362.pdf)
 - Project pin review: HARDWARE.md; actual configuration: Platform/Src/sensor.c.
+- [STM32L051 DS10184](https://www.st.com/resource/en/datasheet/stm32l051t6.pdf),
+  Table 17 PB0 alternate functions.
+- [STM32L0x1 RM0377](https://www.st.com/resource/en/reference_manual/rm0377-ultralowpower-stm32l0x1-advanced-armbased-32bit-mcus-stmicroelectronics.pdf),
+  Rev 10 Figure 1 / page 49, CPU IOPORT versus DMA bus architecture.

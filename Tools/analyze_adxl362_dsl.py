@@ -20,7 +20,9 @@ def edges(signal, before, after):
     return np.flatnonzero((signal[:-1] == before) & (signal[1:] == after)) + 1
 
 
-def load_capture(path, *, timing_only=False):
+def load_capture(path, *, timing_only=False, channel_count=5):
+    if channel_count not in (5, 6):
+        raise ValueError("Expected five sensor channels or six including INT1 clock")
     with zipfile.ZipFile(path) as archive:
         header = configparser.ConfigParser()
         header.read_string(archive.read("header").decode("utf-8-sig"))
@@ -46,7 +48,7 @@ def load_capture(path, *, timing_only=False):
             raise ValueError("Duplicate ZIP entries or invalid block count")
         signals = []
         enabled = {c["index"] for c in session["channel"] if c["enabled"]}
-        for channel in range(5):
+        for channel in range(channel_count):
             expected = [f"L-{channel}/{i}" for i in range(blocks)]
             found = {name for name in names if name.startswith(f"L-{channel}/")}
             if channel not in enabled or found != set(expected):
