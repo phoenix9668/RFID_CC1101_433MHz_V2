@@ -1,2 +1,4 @@
-# Auto detect text files and perform LF normalization
-* text=auto
+# Immutable upstream snapshots must retain their original bytes on every OS.
+Drivers/ADI/* -text
+Drivers/PCG/* -text
+Core/Startup/startup_stm32l051xx.s -text
