@@ -1,8 +1,16 @@
-# RFID_CC1101_433MHz_V2
- upgrade of RFID_CC1101_433MHz program, use STM32L051C8, use HAL and LL Library, upgrade CC1101 Transceiver function (bytes upon 64).
+# RFID CC1101 V3.8 Firmware
 
-## crc module configure as follow
+STM32L051C8 collar firmware rebuilt from
+`34d57c2a93b57979fecb929067e49df47c17c14d` using GNU Arm GCC, CMake and Ninja.
+Develop with STM32CubeIDE for Visual Studio Code.
 
-![Snipaste_2022-01-21_17-23-00](C:\Users\phoen\Desktop\Snipaste_2022-01-21_17-23-00.png)
+- [Development and debugging](Doc/Development/V38_REBUILD.md)
+- [Source versions and licenses](Doc/Development/SOURCES.md)
+- [Protocol and EEPROM format](Doc/Development/PROTOCOL_STORAGE.md)
+- [V3.8 hardware and power ownership](Doc/Development/HARDWARE.md)
+- [Verification results and open acceptance gates](Doc/Development/VERIFICATION.md)
 
-[](https://stackoverflow.com/questions/39646441/how-to-set-stm32-to-generate-standard-crc32)
+The original six-class algorithm and 191-byte radio payload are compatibility
+contracts. Software regression success is not physical acceptance: current
+sensor sampling rate, base-station reception and power measurements must be
+checked before deployment. Production raw-data radio and UART logs are disabled.

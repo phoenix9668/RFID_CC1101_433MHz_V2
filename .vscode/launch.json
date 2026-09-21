@@ -1,0 +1,90 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "stlinkgdbtarget",
+      "request": "launch",
+      "origin": "snippet",
+      "cwd": "${workspaceFolder}",
+      "deviceName": "STM32L051C8T6",
+      "preLaunchTask": "Debug: verify local access",
+      "gdb": "${env:STM32_CUBE_CLT}/GNU-tools-for-STM32/bin/arm-none-eabi-gdb.exe",
+      "serverExe": "ST-LINK_gdbserver.exe",
+      "serverCwd": "${env:STM32_CUBE_CLT}/STLink-gdb-server/bin",
+      "serverCubeProgPath": "${env:STM32_CUBE_CLT}/STM32CubeProgrammer/bin",
+      "serverHost": "localhost",
+      "serverPort": "61234",
+      "serverInterface": "SWD",
+      "serverInterfaceFrequency": "100",
+      "serverSerialNumber": "${input:probeSerial}",
+      "serverSemihosting": {
+        "enabled": false
+      },
+      "serverRtos": {
+        "enabled": false
+      },
+      "liveWatch": {
+        "enabled": false
+      },
+      "automaticallyKillServer": true,
+      "name": "STM32Cube: build, flash and debug",
+      "preBuild": "${command:st-stm32-ide-debug-launch.build}",
+      "serverVerify": true,
+      "serverReset": "Connect under reset",
+      "runEntry": "main",
+      "deviceDebugInLowPower": true,
+      "deviceStopWDGOnHalt": true,
+      "imagesAndSymbols": [
+        {
+          "imageFileName": "${command:st-stm32-ide-debug-launch.get-projects-binary-from-context1}"
+        }
+      ]
+    },
+    {
+      "type": "stlinkgdbtarget",
+      "request": "launch",
+      "origin": "snippet",
+      "cwd": "${workspaceFolder}",
+      "deviceName": "STM32L051C8T6",
+      "preLaunchTask": "Debug: verify local access",
+      "gdb": "${env:STM32_CUBE_CLT}/GNU-tools-for-STM32/bin/arm-none-eabi-gdb.exe",
+      "serverExe": "ST-LINK_gdbserver.exe",
+      "serverCwd": "${env:STM32_CUBE_CLT}/STLink-gdb-server/bin",
+      "serverCubeProgPath": "${env:STM32_CUBE_CLT}/STM32CubeProgrammer/bin",
+      "serverHost": "localhost",
+      "serverPort": "61234",
+      "serverInterface": "SWD",
+      "serverInterfaceFrequency": "100",
+      "serverSerialNumber": "${input:probeSerial}",
+      "serverSemihosting": {
+        "enabled": false
+      },
+      "serverRtos": {
+        "enabled": false
+      },
+      "liveWatch": {
+        "enabled": false
+      },
+      "automaticallyKillServer": true,
+      "name": "STM32Cube: symbols only (no flash, no reset)",
+      "preBuild": "",
+      "serverReset": "None",
+      "runEntry": "",
+      "quickReset": [],
+      "deviceDebugInLowPower": false,
+      "deviceStopWDGOnHalt": false,
+      "imagesAndSymbols": [
+        {
+          "symbolFileName": "${command:st-stm32-ide-debug-launch.get-projects-binary-from-context1}"
+        }
+      ]
+    }
+  ],
+  "inputs": [
+    {
+      "id": "probeSerial",
+      "type": "promptString",
+      "description": "ST-Link serial number (match your verified backup)"
+    }
+  ]
+}

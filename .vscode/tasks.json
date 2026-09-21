@@ -1,0 +1,30 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Debug: verify local access",
+      "type": "process",
+      "command": "powershell.exe",
+      "args": ["-NoProfile", "-File", "${workspaceFolder}/Tools/debug-network.ps1", "-RequireEnvironment"],
+      "problemMatcher": []
+    },
+    {
+      "label": "Firmware: build",
+      "type": "process",
+      "command": "powershell.exe",
+      "args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-File", "${workspaceFolder}/Tools/build.ps1", "-Preset", "${input:firmwarePreset}"],
+      "problemMatcher": "$gcc",
+      "group": {"kind": "build", "isDefault": true}
+    },
+    {
+      "label": "Host: regressions",
+      "type": "process",
+      "command": "powershell.exe",
+      "args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-File", "${workspaceFolder}/Tools/verify.ps1", "-HostOnly"],
+      "problemMatcher": "$gcc"
+    }
+  ],
+  "inputs": [
+    {"id": "firmwarePreset", "type": "pickString", "description": "Firmware configuration", "options": ["Debug", "Release", "Diagnostics"], "default": "Debug"}
+  ]
+}
