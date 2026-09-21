@@ -21,8 +21,7 @@
 #include "rtc.h"
 
 /* USER CODE BEGIN 0 */
-#include "adxl362.h"
-rtc_t rtc;
+#include "app.h"
 /* USER CODE END 0 */
 
 RTC_HandleTypeDef hrtc;
@@ -56,7 +55,7 @@ void MX_RTC_Init(void)
 
   /** Enable the WakeUp
   */
-  if (HAL_RTCEx_SetWakeUpTimer_IT(&hrtc, 0x5000, RTC_WAKEUPCLOCK_RTCCLK_DIV16) != HAL_OK)
+  if (HAL_RTCEx_SetWakeUpTimer_IT(&hrtc, 0x4fff, RTC_WAKEUPCLOCK_RTCCLK_DIV16) != HAL_OK)
   {
     Error_Handler();
   }
@@ -112,23 +111,11 @@ void HAL_RTC_MspDeInit(RTC_HandleTypeDef* rtcHandle)
   * @param  None
   * @retval None
   */
-void HAL_RTCEx_WakeUpTimerEventCallback(RTC_HandleTypeDef *hrtc)
+void HAL_RTCEx_WakeUpTimerEventCallback(RTC_HandleTypeDef *handle)
 {
-    /* Clear Wake Up Flag */
+    (void)handle;
     __HAL_PWR_CLEAR_FLAG(PWR_FLAG_WU);
-
-    rtc.tenSecTick++;
-
-    if((rtc.tenSecTick % 6) == 0) //1200s
-    {
-        rtc.tenSecIndex = SET;
-    }
-
-    if(rtc.tenSecTick >= 120)//1200s
-    {
-        rtc.twentyMinIndex = SET;
-        rtc.tenSecTick = 0x00;
-    }
+    app_signal(APP_EVENT_RTC);
 }
 
 /* USER CODE END 1 */

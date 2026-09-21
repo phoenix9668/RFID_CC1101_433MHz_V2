@@ -40,11 +40,7 @@ void MX_SPI1_Init(void);
 void MX_SPI2_Init(void);
 
 /* USER CODE BEGIN Prototypes */
-void MX_SPI1_DeInit(void);
-void MX_SPI2_DeInit(void);
-void Activate_SPI(SPI_TypeDef *SPIx);
-uint8_t SPI_ExchangeByte(SPI_TypeDef *SPIx, uint8_t input);
-void SpiFunction(SPI_TypeDef *SPIx, uint8_t *OutputBuff, uint8_t *InputBuff, uint16_t OutNoOfBytes, uint16_t InNoOfBytes);
+
 /* USER CODE END Prototypes */
 
 #ifdef __cplusplus

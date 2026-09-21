@@ -53,38 +53,16 @@ extern "C" {
 
 /* Exported types ------------------------------------------------------------*/
 /* USER CODE BEGIN ET */
-typedef struct
-{
-    uint32_t deviceSerial0;
-    uint32_t deviceSerial1;
-    uint8_t deviceCode1;
-    uint8_t deviceCode2;
-    uint8_t deviceCode3;
-    uint8_t deviceCode4;
-    uint8_t deviceCode5;
-    uint8_t deviceCode6;
-} device_t;
 
-extern device_t device;
 /* USER CODE END ET */
 
 /* Exported constants --------------------------------------------------------*/
 /* USER CODE BEGIN EC */
 #define EEPROM_START_ADDR   0x08080000   /* Start @ of user eeprom area */
-#define PI 3.1415926
 /* USER CODE END EC */
 
 /* Exported macro ------------------------------------------------------------*/
 /* USER CODE BEGIN EM */
-#define _DEBUG              0        //  set device info
-#define _RFID_PRINT_DEBUG   0	        //  use printf debug
-#define _Original_Data_Algorithm   1 //  use original data algorithm
-
-#if (_RFID_PRINT_DEBUG == 1)
-#define rfid_printf(...)     			printf(__VA_ARGS__)
-#else
-#define rfid_printf(...)     			{};
-#endif
 
 /* USER CODE END EM */
 
@@ -126,13 +104,7 @@ void Error_Handler(void);
 #define PB5_GPIO_Port GPIOB
 
 /* USER CODE BEGIN Private defines */
-void System_Initial(void);
-void Get_SerialNum(void);
-void Show_Message(void);
-void Set_DeviceInfo(void);
-void DATAEEPROM_Program(uint32_t Address, uint32_t Data);
-uint32_t DATAEEPROM_Read(uint32_t Address);
-void LED_Blinking(uint32_t Period);
+
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus

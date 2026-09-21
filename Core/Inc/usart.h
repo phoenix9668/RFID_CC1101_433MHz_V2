@@ -33,27 +33,13 @@ extern "C" {
 /* USER CODE END Includes */
 
 /* USER CODE BEGIN Private defines */
-#define RXBUFFERSIZE  		24			// Size of Reception buffer
 
-typedef struct
-{
-    __IO uint8_t rxBuffer[RXBUFFERSIZE];
-    __IO uint8_t rxCounter;
-    __IO FlagStatus rxState;
-
-} usart_t;
-
-extern usart_t usart;
 /* USER CODE END Private defines */
 
 void MX_USART1_UART_Init(void);
 
 /* USER CODE BEGIN Prototypes */
-void Activate_USART1_RXIT(void);
-void PrintInfo(uint8_t *String, uint32_t Size);
-void USART_CharReception_Callback(void);
-void Error_Callback(void);
-void MX_USART1_UART_DeInit(void);
+
 /* USER CODE END Prototypes */
 
 #ifdef __cplusplus

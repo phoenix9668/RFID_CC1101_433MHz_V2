@@ -35,21 +35,13 @@ extern "C" {
 extern ADC_HandleTypeDef hadc;
 
 /* USER CODE BEGIN Private defines */
-typedef struct
-{
-    __IO bool refresh;
-    __IO uint8_t times;
-    __IO uint32_t value[16];
-    __IO uint32_t avgValue;
-} adc_t;
 
-extern adc_t adc;
 /* USER CODE END Private defines */
 
 void MX_ADC_Init(void);
 
 /* USER CODE BEGIN Prototypes */
-void adc_detect(void);
+
 /* USER CODE END Prototypes */
 
 #ifdef __cplusplus

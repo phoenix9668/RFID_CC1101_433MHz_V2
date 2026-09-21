@@ -21,7 +21,7 @@
 #include "adc.h"
 
 /* USER CODE BEGIN 0 */
-adc_t adc;
+
 /* USER CODE END 0 */
 
 ADC_HandleTypeDef hadc;
@@ -46,7 +46,7 @@ void MX_ADC_Init(void)
   hadc.Init.OversamplingMode = DISABLE;
   hadc.Init.ClockPrescaler = ADC_CLOCK_SYNC_PCLK_DIV2;
   hadc.Init.Resolution = ADC_RESOLUTION_12B;
-  hadc.Init.SamplingTime = ADC_SAMPLETIME_19CYCLES_5;
+  hadc.Init.SamplingTime = ADC_SAMPLETIME_160CYCLES_5;
   hadc.Init.ScanConvMode = ADC_SCAN_DIRECTION_FORWARD;
   hadc.Init.DataAlign = ADC_DATAALIGN_RIGHT;
   hadc.Init.ContinuousConvMode = DISABLE;
@@ -100,8 +100,6 @@ void HAL_ADC_MspInit(ADC_HandleTypeDef* adcHandle)
     HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
     /* ADC1 interrupt Init */
-    HAL_NVIC_SetPriority(ADC1_COMP_IRQn, 3, 0);
-    HAL_NVIC_EnableIRQ(ADC1_COMP_IRQn);
   /* USER CODE BEGIN ADC1_MspInit 1 */
 
   /* USER CODE END ADC1_MspInit 1 */
@@ -133,43 +131,5 @@ void HAL_ADC_MspDeInit(ADC_HandleTypeDef* adcHandle)
 }
 
 /* USER CODE BEGIN 1 */
-/**
-  * @brief  Conversion complete callback in non-blocking mode.
-  * @param  hadc ADC handle
-  * @retval None
-  */
-void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc)
-{
-    adc.value[adc.times++] = HAL_ADC_GetValue(hadc);
-    adc.refresh = true;
-}
-
-void adc_detect(void)
-{
-    MX_ADC_Init();
-    memset(&adc, 0, sizeof(adc));
-    HAL_ADC_Start_IT(&hadc);
-
-    while (adc.times < 10)
-    {
-        LL_IWDG_ReloadCounter(IWDG);
-
-        if (adc.refresh == true)
-        {
-            rfid_printf("refresh adc value:%d, %d, %f,in %f s\r\n", adc.times - 1, adc.value[adc.times - 1], adc.value[adc.times - 1] / 4096.0 * 3.0, HAL_GetTick() / 1000.0);
-            adc.refresh = false;
-            HAL_Delay(1);
-            HAL_ADC_Start_IT(&hadc);
-        }
-    }
-
-    adc.avgValue = (adc.value[0] + adc.value[1] + adc.value[2] + adc.value[3] + adc.value[4] + adc.value[5] + adc.value[6] + adc.value[7] + adc.value[8] + adc.value[9]) / 10;
-    rfid_printf("avgValue:%d\n", adc.avgValue);
-
-    if (HAL_ADC_DeInit(&hadc) != HAL_OK)
-    {
-        Error_Handler();
-    }
-}
 
 /* USER CODE END 1 */

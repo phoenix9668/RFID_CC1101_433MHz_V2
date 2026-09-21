@@ -35,15 +35,7 @@ extern "C" {
 extern RTC_HandleTypeDef hrtc;
 
 /* USER CODE BEGIN Private defines */
-typedef struct
-{
-    __IO ITStatus twentyMinIndex;
-	__IO ITStatus tenSecIndex;
-    uint8_t tenSecTick;    //one step == 10s
 
-} rtc_t;
-
-extern rtc_t rtc;
 /* USER CODE END Private defines */
 
 void MX_RTC_Init(void);

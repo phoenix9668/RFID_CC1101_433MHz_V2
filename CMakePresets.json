@@ -1,0 +1,50 @@
+{
+  "version": 3,
+  "configurePresets": [
+    {
+      "name": "firmware",
+      "hidden": true,
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/${presetName}",
+      "toolchainFile": "${sourceDir}/cmake/gcc-arm-none-eabi.cmake"
+    },
+    {
+      "name": "Debug",
+      "inherits": "firmware",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    },
+    {
+      "name": "Release",
+      "inherits": "firmware",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release"
+      }
+    },
+    {
+      "name": "Diagnostics",
+      "inherits": "Debug",
+      "cacheVariables": {
+        "RFID_DIAGNOSTICS": "ON"
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "Debug",
+      "configurePreset": "Debug",
+      "jobs": 1
+    },
+    {
+      "name": "Release",
+      "configurePreset": "Release",
+      "jobs": 1
+    },
+    {
+      "name": "Diagnostics",
+      "configurePreset": "Diagnostics",
+      "jobs": 1
+    }
+  ]
+}

@@ -3,6 +3,9 @@
 #include "radio.h"
 #include "board.h"
 #include <string.h>
+#if RFID_DIAGNOSTICS
+#include <stdio.h>
+#endif
 enum
 {
     REG_IOCFG2 = 0,
@@ -157,6 +160,9 @@ static rfid_status_t initialize(void)
     status = radio_read_status(0x31, &value);
     if (status != RFID_OK || value == 0 || value == 0xff)
         return RFID_IO;
+#if RFID_DIAGNOSTICS
+    uint8_t version = value;
+#endif
     const uint8_t check[][2] = {{7, 7},     {8, 0x45}, {13, 0x10}, {14, 0xa7},
                                 {15, 0x62}, {4, 0x12}, {5, 0x34},  {9, 0xef}};
     for (unsigned i = 0; i < sizeof(check) / sizeof(check[0]); ++i)
@@ -165,6 +171,11 @@ static rfid_status_t initialize(void)
         if (status != RFID_OK || value != check[i][1])
             return RFID_IO;
     }
+#if RFID_DIAGNOSTICS
+    char line[64];
+    snprintf(line, sizeof(line), "CC1101 part=00 version=%02X config=ok\r\n", version);
+    board_log(line);
+#endif
     return RFID_OK;
 }
 static rfid_status_t finish(rfid_status_t result)
