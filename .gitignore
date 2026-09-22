@@ -1,5 +1,6 @@
 # Reproducible sources are tracked; local tools, captures and build output are not.
 /build/
+/tmp/
 /.local/
 /CMakeUserPresets.json
 /compile_commands.json

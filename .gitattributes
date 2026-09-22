@@ -12,3 +12,7 @@ App/Src/resampler.c -text
 App/Src/resampler_kernel.h -text
 Tools/validate-resampling.py -text
 Tools/behavior_acceptance.py -text
+# ReportLab may emit ASCII-only PDFs; never apply text newline conversion.
+output/pdf/ADXL362_25Hz_Supplier_Report.pdf binary
+# The supplier report intentionally uses Markdown two-space line breaks.
+Doc/ADXL362_25Hz_Investigation/README.md whitespace=-blank-at-eol

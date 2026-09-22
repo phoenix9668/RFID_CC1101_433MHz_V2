@@ -1,0 +1,1342 @@
+{
+  "B": {
+    "file": "20260921-153828-adxl362-spi.dsl",
+    "sha256": "616603f5c0e21c350a7571041c0a48655c9b0bf1ac295a121e2708de1d461a44",
+    "sample_rate_hz": 50000000,
+    "sample_count": 5000192,
+    "header_trigger_time_unix_ms": 1789976308790,
+    "header_trigger_sample": 500002,
+    "threshold_v": 1.5,
+    "irq_rising_samples": [
+      500002
+    ],
+    "irq_falling_samples": [
+      673088
+    ],
+    "transactions": [
+      {
+        "start_sample": 635862,
+        "end_sample": 636832,
+        "start_ms": 12.71724,
+        "end_ms": 12.73664,
+        "bytes": 3,
+        "mosi_hex": "0b 0b 00",
+        "miso_hex": "00 00 07",
+        "clock_hz": 4022988.5057471264,
+        "within_byte_period_samples": [
+          12,
+          13
+        ],
+        "command": "read",
+        "address": 11,
+        "data_hex": "07"
+      },
+      {
+        "start_sample": 642599,
+        "end_sample": 643794,
+        "start_ms": 12.85198,
+        "end_ms": 12.87588,
+        "bytes": 4,
+        "mosi_hex": "0b 0c 00 00",
+        "miso_hex": "00 00 c5 01",
+        "clock_hz": 4011461.318051576,
+        "within_byte_period_samples": [
+          12,
+          13
+        ],
+        "command": "read",
+        "address": 12,
+        "data_hex": "c5 01"
+      },
+      {
+        "start_sample": 671750,
+        "end_sample": 787166,
+        "start_ms": 13.435,
+        "end_ms": 15.74332,
+        "bytes": 511,
+        "mosi_hex": "0d 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00",
+        "miso_hex": "00 16 00 57 40 31 82 17 00 56 40 33 82 17 00 57 40 33 82 13 00 58 40 33 82 17 00 57 40 38 82 18 00 58 40 33 82 14 00 53 40 31 82 17 00 54 40 36 82 16 00 56 40 30 82 16 00 58 40 33 82 17 00 54 40 34 82 17 00 58 40 30 82 16 00 54 40 33 82 17 00 56 40 34 82 14 00 58 40 30 82 17 00 57 40 31 82 17 00 59 40 33 82 14 00 58 40 36 82 16 00 57 40 33 82 13 00 57 40 33 82 16 00 58 40 30 82 13 00 57 40 33 82 13 00 56 40 33 82 18 00 58 40 31 82 16 00 58 40 34 82 13 00 56 40 33 82 18 00 58 40 33 82 14 00 56 40 34 82 13 00 58 40 33 82 14 00 57 40 31 82 13 00 57 40 33 82 18 00 58 40 33 82 16 00 58 40 34 82 16 00 54 40 30 82 18 00 56 40 31 82 14 00 56 40 33 82 17 00 53 40 31 82 16 00 58 40 33 82 18 00 58 40 36 82 16 00 57 40 34 82 17 00 57 40 33 82 13 00 58 40 37 82 13 00 56 40 34 82 13 00 57 40 33 82 16 00 53 40 33 82 16 00 53 40 31 82 13 00 58 40 31 82 16 00 58 40 33 82 18 00 56 40 30 82 18 00 58 40 33 82 17 00 54 40 33 82 18 00 54 40 36 82 13 00 58 40 34 82 14 00 58 40 31 82 17 00 57 40 31 82 13 00 57 40 33 82 16 00 58 40 31 82 14 00 56 40 36 82 16 00 56 40 30 82 14 00 53 40 31 82 16 00 54 40 33 82 16 00 58 40 31 82 17 00 59 40 34 82 17 00 59 40 30 82 18 00 54 40 33 82 18 00 56 40 33 82 18 00 59 40 31 82 14 00 54 40 36 82 13 00 57 40 31 82 18 00 56 40 30 82 17 00 54 40 33 82 16 00 56 40 30 82 18 00 57 40 36 82 16 00 53 40 34 82 16 00 58 40 33 82 19 00 58 40 33 82 14 00 56 40 31 82 17 00 56 40 31 82 14 00 56 40 36 82 14 00 57 40 33 82 14 00 56 40 33 82 13 00 58 40 33 82 13 00 57 40 31 82 17 00 57 40 33 82 17 00 57 40 30 82",
+        "clock_hz": 3997809.4194961665,
+        "within_byte_period_samples": [
+          12,
+          13
+        ],
+        "command": "fifo",
+        "data_hex": "16 00 57 40 31 82 17 00 56 40 33 82 17 00 57 40 33 82 13 00 58 40 33 82 17 00 57 40 38 82 18 00 58 40 33 82 14 00 53 40 31 82 17 00 54 40 36 82 16 00 56 40 30 82 16 00 58 40 33 82 17 00 54 40 34 82 17 00 58 40 30 82 16 00 54 40 33 82 17 00 56 40 34 82 14 00 58 40 30 82 17 00 57 40 31 82 17 00 59 40 33 82 14 00 58 40 36 82 16 00 57 40 33 82 13 00 57 40 33 82 16 00 58 40 30 82 13 00 57 40 33 82 13 00 56 40 33 82 18 00 58 40 31 82 16 00 58 40 34 82 13 00 56 40 33 82 18 00 58 40 33 82 14 00 56 40 34 82 13 00 58 40 33 82 14 00 57 40 31 82 13 00 57 40 33 82 18 00 58 40 33 82 16 00 58 40 34 82 16 00 54 40 30 82 18 00 56 40 31 82 14 00 56 40 33 82 17 00 53 40 31 82 16 00 58 40 33 82 18 00 58 40 36 82 16 00 57 40 34 82 17 00 57 40 33 82 13 00 58 40 37 82 13 00 56 40 34 82 13 00 57 40 33 82 16 00 53 40 33 82 16 00 53 40 31 82 13 00 58 40 31 82 16 00 58 40 33 82 18 00 56 40 30 82 18 00 58 40 33 82 17 00 54 40 33 82 18 00 54 40 36 82 13 00 58 40 34 82 14 00 58 40 31 82 17 00 57 40 31 82 13 00 57 40 33 82 16 00 58 40 31 82 14 00 56 40 36 82 16 00 56 40 30 82 14 00 53 40 31 82 16 00 54 40 33 82 16 00 58 40 31 82 17 00 59 40 34 82 17 00 59 40 30 82 18 00 54 40 33 82 18 00 56 40 33 82 18 00 59 40 31 82 14 00 54 40 36 82 13 00 57 40 31 82 18 00 56 40 30 82 17 00 54 40 33 82 16 00 56 40 30 82 18 00 57 40 36 82 16 00 53 40 34 82 16 00 58 40 33 82 19 00 58 40 33 82 14 00 56 40 31 82 17 00 56 40 31 82 14 00 56 40 36 82 14 00 57 40 33 82 14 00 56 40 33 82 13 00 58 40 33 82 13 00 57 40 31 82 17 00 57 40 33 82 17 00 57 40 30 82"
+      },
+      {
+        "start_sample": 810463,
+        "end_sample": 900227,
+        "start_ms": 16.20926,
+        "end_ms": 18.00454,
+        "bytes": 397,
+        "mosi_hex": "0d 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00",
+        "miso_hex": "00 13 00 58 40 36 82 11 00 57 40 36 82 16 00 58 40 31 82 16 00 58 40 33 82 16 00 58 40 34 82 16 00 53 40 33 82 16 00 59 40 34 82 18 00 57 40 33 82 17 00 58 40 33 82 14 00 58 40 36 82 16 00 58 40 37 82 14 00 58 40 36 82 13 00 54 40 36 82 16 00 58 40 30 82 18 00 57 40 33 82 14 00 57 40 34 82 14 00 58 40 31 82 13 00 57 40 31 82 17 00 56 40 33 82 13 00 58 40 33 82 13 00 58 40 33 82 13 00 57 40 37 82 13 00 58 40 33 82 13 00 58 40 33 82 16 00 57 40 33 82 14 00 58 40 34 82 13 00 58 40 33 82 17 00 58 40 33 82 17 00 58 40 31 82 14 00 5b 40 34 82 17 00 56 40 33 82 16 00 57 40 33 82 16 00 56 40 33 82 17 00 53 40 30 82 13 00 58 40 30 82 14 00 58 40 30 82 17 00 54 40 33 82 13 00 58 40 33 82 16 00 58 40 33 82 14 00 56 40 33 82 16 00 58 40 36 82 13 00 57 40 33 82 14 00 57 40 33 82 13 00 58 40 34 82 16 00 58 40 33 82 13 00 56 40 33 82 17 00 56 40 31 82 13 00 56 40 31 82 18 00 56 40 33 82 16 00 56 40 33 82 16 00 59 40 33 82 14 00 56 40 33 82 16 00 57 40 33 82 13 00 58 40 30 82 13 00 57 40 34 82 17 00 58 40 33 82 14 00 54 40 34 82 14 00 56 40 33 82 16 00 57 40 33 82 16 00 58 40 36 82 16 00 59 40 34 82 18 00 57 40 33 82 13 00 58 40 31 82 14 00 58 40 33 82 17 00 57 40 34 82 16 00 58 40 33 82",
+        "clock_hz": 3994882.410442183,
+        "within_byte_period_samples": [
+          12,
+          13
+        ],
+        "command": "fifo",
+        "data_hex": "13 00 58 40 36 82 11 00 57 40 36 82 16 00 58 40 31 82 16 00 58 40 33 82 16 00 58 40 34 82 16 00 53 40 33 82 16 00 59 40 34 82 18 00 57 40 33 82 17 00 58 40 33 82 14 00 58 40 36 82 16 00 58 40 37 82 14 00 58 40 36 82 13 00 54 40 36 82 16 00 58 40 30 82 18 00 57 40 33 82 14 00 57 40 34 82 14 00 58 40 31 82 13 00 57 40 31 82 17 00 56 40 33 82 13 00 58 40 33 82 13 00 58 40 33 82 13 00 57 40 37 82 13 00 58 40 33 82 13 00 58 40 33 82 16 00 57 40 33 82 14 00 58 40 34 82 13 00 58 40 33 82 17 00 58 40 33 82 17 00 58 40 31 82 14 00 5b 40 34 82 17 00 56 40 33 82 16 00 57 40 33 82 16 00 56 40 33 82 17 00 53 40 30 82 13 00 58 40 30 82 14 00 58 40 30 82 17 00 54 40 33 82 13 00 58 40 33 82 16 00 58 40 33 82 14 00 56 40 33 82 16 00 58 40 36 82 13 00 57 40 33 82 14 00 57 40 33 82 13 00 58 40 34 82 16 00 58 40 33 82 13 00 56 40 33 82 17 00 56 40 31 82 13 00 56 40 31 82 18 00 56 40 33 82 16 00 56 40 33 82 16 00 59 40 33 82 14 00 56 40 33 82 16 00 57 40 33 82 13 00 58 40 30 82 13 00 57 40 34 82 17 00 58 40 33 82 14 00 54 40 34 82 14 00 56 40 33 82 16 00 57 40 33 82 16 00 58 40 36 82 16 00 59 40 34 82 18 00 57 40 33 82 13 00 58 40 31 82 14 00 58 40 33 82 17 00 57 40 34 82 16 00 58 40 33 82"
+      }
+    ],
+    "fifo_groups": [
+      {
+        "chunk_bytes": [
+          510,
+          396
+        ],
+        "words": 453,
+        "tag_counts_xyzt": [
+          151,
+          151,
+          151,
+          0
+        ],
+        "starts_with_x": true,
+        "xyz_order_errors": 0,
+        "invalid_sign_extensions": 0,
+        "values_first_12": [
+          22,
+          87,
+          561,
+          23,
+          86,
+          563,
+          23,
+          87,
+          563,
+          19,
+          88,
+          563
+        ]
+      }
+    ],
+    "limits": "Digital trace only; not analog signal integrity, ODR or firmware-stack acceptance."
+  },
+  "C": {
+    "file": "20260921-155625-adxl362-startup.dsl",
+    "sha256": "e6969ba8af2d52ccc37d53b351e049f880d862e7ac6e59b7d8e2d586d466843b",
+    "sample_rate_hz": 50000000,
+    "sample_count": 25000960,
+    "header_trigger_time_unix_ms": 1789977385696,
+    "header_trigger_sample": 2500106,
+    "threshold_v": 1.5,
+    "irq_rising_samples": [],
+    "irq_falling_samples": [
+      2507951
+    ],
+    "transactions": [
+      {
+        "start_sample": 2500106,
+        "end_sample": 2501076,
+        "start_ms": 50.00212,
+        "end_ms": 50.02152,
+        "bytes": 3,
+        "mosi_hex": "0b 02 00",
+        "miso_hex": "00 00 f2",
+        "clock_hz": 4007633.5877862596,
+        "within_byte_period_samples": [
+          12,
+          13
+        ],
+        "command": "read",
+        "address": 2,
+        "data_hex": "f2"
+      },
+      {
+        "start_sample": 2506819,
+        "end_sample": 2507788,
+        "start_ms": 50.13638,
+        "end_ms": 50.15576,
+        "bytes": 3,
+        "mosi_hex": "0a 1f 52",
+        "miso_hex": "00 00 00",
+        "clock_hz": 3992395.437262357,
+        "within_byte_period_samples": [
+          12,
+          13
+        ],
+        "command": "write",
+        "address": 31,
+        "data_hex": "52"
+      },
+      {
+        "start_sample": 3047542,
+        "end_sample": 3048512,
+        "start_ms": 60.95084,
+        "end_ms": 60.97024,
+        "bytes": 3,
+        "mosi_hex": "0b 00 00",
+        "miso_hex": "00 00 ad",
+        "clock_hz": 4007633.5877862596,
+        "within_byte_period_samples": [
+          12,
+          13
+        ],
+        "command": "read",
+        "address": 0,
+        "data_hex": "ad"
+      },
+      {
+        "start_sample": 3054336,
+        "end_sample": 3055306,
+        "start_ms": 61.08672,
+        "end_ms": 61.10612,
+        "bytes": 3,
+        "mosi_hex": "0b 01 00",
+        "miso_hex": "00 00 1d",
+        "clock_hz": 3992395.437262357,
+        "within_byte_period_samples": [
+          12,
+          13
+        ],
+        "command": "read",
+        "address": 1,
+        "data_hex": "1d"
+      },
+      {
+        "start_sample": 3061129,
+        "end_sample": 3062099,
+        "start_ms": 61.22258,
+        "end_ms": 61.24198,
+        "bytes": 3,
+        "mosi_hex": "0b 02 00",
+        "miso_hex": "00 00 f2",
+        "clock_hz": 3992395.437262357,
+        "within_byte_period_samples": [
+          12,
+          13
+        ],
+        "command": "read",
+        "address": 2,
+        "data_hex": "f2"
+      },
+      {
+        "start_sample": 3067915,
+        "end_sample": 3068885,
+        "start_ms": 61.3583,
+        "end_ms": 61.3777,
+        "bytes": 3,
+        "mosi_hex": "0a 20 64",
+        "miso_hex": "00 00 00",
+        "clock_hz": 4007633.5877862596,
+        "within_byte_period_samples": [
+          12,
+          13
+        ],
+        "command": "write",
+        "address": 32,
+        "data_hex": "64"
+      },
+      {
+        "start_sample": 3074645,
+        "end_sample": 3075614,
+        "start_ms": 61.4929,
+        "end_ms": 61.51228,
+        "bytes": 3,
+        "mosi_hex": "0b 20 00",
+        "miso_hex": "00 00 64",
+        "clock_hz": 3992395.437262357,
+        "within_byte_period_samples": [
+          12,
+          13
+        ],
+        "command": "read",
+        "address": 32,
+        "data_hex": "64"
+      },
+      {
+        "start_sample": 3081415,
+        "end_sample": 3082385,
+        "start_ms": 61.6283,
+        "end_ms": 61.6477,
+        "bytes": 3,
+        "mosi_hex": "0a 21 00",
+        "miso_hex": "00 00 00",
+        "clock_hz": 3992395.437262357,
+        "within_byte_period_samples": [
+          12,
+          13
+        ],
+        "command": "write",
+        "address": 33,
+        "data_hex": "00"
+      },
+      {
+        "start_sample": 3088144,
+        "end_sample": 3089114,
+        "start_ms": 61.76288,
+        "end_ms": 61.78228,
+        "bytes": 3,
+        "mosi_hex": "0b 21 00",
+        "miso_hex": "00 00 00",
+        "clock_hz": 4007633.5877862596,
+        "within_byte_period_samples": [
+          12,
+          13
+        ],
+        "command": "read",
+        "address": 33,
+        "data_hex": "00"
+      },
+      {
+        "start_sample": 3095005,
+        "end_sample": 3095975,
+        "start_ms": 61.9001,
+        "end_ms": 61.9195,
+        "bytes": 3,
+        "mosi_hex": "0a 22 06",
+        "miso_hex": "00 00 00",
+        "clock_hz": 4007633.5877862596,
+        "within_byte_period_samples": [
+          12,
+          13
+        ],
+        "command": "write",
+        "address": 34,
+        "data_hex": "06"
+      },
+      {
+        "start_sample": 3101734,
+        "end_sample": 3102704,
+        "start_ms": 62.03468,
+        "end_ms": 62.05408,
+        "bytes": 3,
+        "mosi_hex": "0b 22 00",
+        "miso_hex": "00 00 06",
+        "clock_hz": 3992395.437262357,
+        "within_byte_period_samples": [
+          12,
+          13
+        ],
+        "command": "read",
+        "address": 34,
+        "data_hex": "06"
+      },
+      {
+        "start_sample": 3108505,
+        "end_sample": 3109474,
+        "start_ms": 62.1701,
+        "end_ms": 62.18948,
+        "bytes": 3,
+        "mosi_hex": "0a 23 64",
+        "miso_hex": "00 00 00",
+        "clock_hz": 3992395.437262357,
+        "within_byte_period_samples": [
+          12,
+          13
+        ],
+        "command": "write",
+        "address": 35,
+        "data_hex": "64"
+      },
+      {
+        "start_sample": 3115234,
+        "end_sample": 3116204,
+        "start_ms": 62.30468,
+        "end_ms": 62.32408,
+        "bytes": 3,
+        "mosi_hex": "0b 23 00",
+        "miso_hex": "00 00 64",
+        "clock_hz": 4007633.5877862596,
+        "within_byte_period_samples": [
+          12,
+          13
+        ],
+        "command": "read",
+        "address": 35,
+        "data_hex": "64"
+      },
+      {
+        "start_sample": 3122004,
+        "end_sample": 3122974,
+        "start_ms": 62.44008,
+        "end_ms": 62.45948,
+        "bytes": 3,
+        "mosi_hex": "0a 24 00",
+        "miso_hex": "00 00 00",
+        "clock_hz": 4007633.5877862596,
+        "within_byte_period_samples": [
+          12,
+          13
+        ],
+        "command": "write",
+        "address": 36,
+        "data_hex": "00"
+      },
+      {
+        "start_sample": 3128734,
+        "end_sample": 3129703,
+        "start_ms": 62.57468,
+        "end_ms": 62.59406,
+        "bytes": 3,
+        "mosi_hex": "0b 24 00",
+        "miso_hex": "00 00 00",
+        "clock_hz": 3992395.437262357,
+        "within_byte_period_samples": [
+          12,
+          13
+        ],
+        "command": "read",
+        "address": 36,
+        "data_hex": "00"
+      },
+      {
+        "start_sample": 3135504,
+        "end_sample": 3136474,
+        "start_ms": 62.71008,
+        "end_ms": 62.72948,
+        "bytes": 3,
+        "mosi_hex": "0a 25 06",
+        "miso_hex": "00 00 00",
+        "clock_hz": 3992395.437262357,
+        "within_byte_period_samples": [
+          12,
+          13
+        ],
+        "command": "write",
+        "address": 37,
+        "data_hex": "06"
+      },
+      {
+        "start_sample": 3142233,
+        "end_sample": 3143294,
+        "start_ms": 62.84466,
+        "end_ms": 62.86588,
+        "bytes": 3,
+        "mosi_hex": "0b 25 00",
+        "miso_hex": "00 00 06",
+        "clock_hz": 4007633.5877862596,
+        "within_byte_period_samples": [
+          12,
+          13
+        ],
+        "command": "read",
+        "address": 37,
+        "data_hex": "06"
+      },
+      {
+        "start_sample": 3149094,
+        "end_sample": 3150064,
+        "start_ms": 62.98188,
+        "end_ms": 63.00128,
+        "bytes": 3,
+        "mosi_hex": "0a 26 00",
+        "miso_hex": "00 00 00",
+        "clock_hz": 4007633.5877862596,
+        "within_byte_period_samples": [
+          12,
+          13
+        ],
+        "command": "write",
+        "address": 38,
+        "data_hex": "00"
+      },
+      {
+        "start_sample": 3155824,
+        "end_sample": 3156793,
+        "start_ms": 63.11648,
+        "end_ms": 63.13586,
+        "bytes": 3,
+        "mosi_hex": "0b 26 00",
+        "miso_hex": "00 00 00",
+        "clock_hz": 3992395.437262357,
+        "within_byte_period_samples": [
+          12,
+          13
+        ],
+        "command": "read",
+        "address": 38,
+        "data_hex": "00"
+      },
+      {
+        "start_sample": 3162594,
+        "end_sample": 3163563,
+        "start_ms": 63.25188,
+        "end_ms": 63.27126,
+        "bytes": 3,
+        "mosi_hex": "0a 27 3f",
+        "miso_hex": "00 00 00",
+        "clock_hz": 3992395.437262357,
+        "within_byte_period_samples": [
+          12,
+          13
+        ],
+        "command": "write",
+        "address": 39,
+        "data_hex": "3f"
+      },
+      {
+        "start_sample": 3169323,
+        "end_sample": 3170293,
+        "start_ms": 63.38646,
+        "end_ms": 63.40586,
+        "bytes": 3,
+        "mosi_hex": "0b 27 00",
+        "miso_hex": "00 00 3f",
+        "clock_hz": 4007633.5877862596,
+        "within_byte_period_samples": [
+          12,
+          13
+        ],
+        "command": "read",
+        "address": 39,
+        "data_hex": "3f"
+      },
+      {
+        "start_sample": 3176093,
+        "end_sample": 3177063,
+        "start_ms": 63.52186,
+        "end_ms": 63.54126,
+        "bytes": 3,
+        "mosi_hex": "0a 2a 10",
+        "miso_hex": "00 00 00",
+        "clock_hz": 4007633.5877862596,
+        "within_byte_period_samples": [
+          12,
+          13
+        ],
+        "command": "write",
+        "address": 42,
+        "data_hex": "10"
+      },
+      {
+        "start_sample": 3182823,
+        "end_sample": 3183793,
+        "start_ms": 63.65646,
+        "end_ms": 63.67586,
+        "bytes": 3,
+        "mosi_hex": "0b 2a 00",
+        "miso_hex": "00 00 10",
+        "clock_hz": 3992395.437262357,
+        "within_byte_period_samples": [
+          12,
+          13
+        ],
+        "command": "read",
+        "address": 42,
+        "data_hex": "10"
+      },
+      {
+        "start_sample": 3189593,
+        "end_sample": 3190563,
+        "start_ms": 63.79186,
+        "end_ms": 63.81126,
+        "bytes": 3,
+        "mosi_hex": "0a 2b 04",
+        "miso_hex": "00 00 00",
+        "clock_hz": 4022988.5057471264,
+        "within_byte_period_samples": [
+          12,
+          13
+        ],
+        "command": "write",
+        "address": 43,
+        "data_hex": "04"
+      },
+      {
+        "start_sample": 3196415,
+        "end_sample": 3197384,
+        "start_ms": 63.9283,
+        "end_ms": 63.94768,
+        "bytes": 3,
+        "mosi_hex": "0b 2b 00",
+        "miso_hex": "00 00 04",
+        "clock_hz": 3992395.437262357,
+        "within_byte_period_samples": [
+          12,
+          13
+        ],
+        "command": "read",
+        "address": 43,
+        "data_hex": "04"
+      },
+      {
+        "start_sample": 3203185,
+        "end_sample": 3204154,
+        "start_ms": 64.0637,
+        "end_ms": 64.08308,
+        "bytes": 3,
+        "mosi_hex": "0a 28 0a",
+        "miso_hex": "00 00 00",
+        "clock_hz": 3992395.437262357,
+        "within_byte_period_samples": [
+          12,
+          13
+        ],
+        "command": "write",
+        "address": 40,
+        "data_hex": "0a"
+      },
+      {
+        "start_sample": 3209914,
+        "end_sample": 3210884,
+        "start_ms": 64.19828,
+        "end_ms": 64.21768,
+        "bytes": 3,
+        "mosi_hex": "0b 28 00",
+        "miso_hex": "00 00 0a",
+        "clock_hz": 4007633.5877862596,
+        "within_byte_period_samples": [
+          12,
+          13
+        ],
+        "command": "read",
+        "address": 40,
+        "data_hex": "0a"
+      },
+      {
+        "start_sample": 3216684,
+        "end_sample": 3217654,
+        "start_ms": 64.33368,
+        "end_ms": 64.35308,
+        "bytes": 3,
+        "mosi_hex": "0a 29 c2",
+        "miso_hex": "00 00 00",
+        "clock_hz": 4007633.5877862596,
+        "within_byte_period_samples": [
+          12,
+          13
+        ],
+        "command": "write",
+        "address": 41,
+        "data_hex": "c2"
+      },
+      {
+        "start_sample": 3223414,
+        "end_sample": 3224384,
+        "start_ms": 64.46828,
+        "end_ms": 64.48768,
+        "bytes": 3,
+        "mosi_hex": "0b 29 00",
+        "miso_hex": "00 00 c2",
+        "clock_hz": 3992395.437262357,
+        "within_byte_period_samples": [
+          12,
+          13
+        ],
+        "command": "read",
+        "address": 41,
+        "data_hex": "c2"
+      },
+      {
+        "start_sample": 3230184,
+        "end_sample": 3231154,
+        "start_ms": 64.60368,
+        "end_ms": 64.62308,
+        "bytes": 3,
+        "mosi_hex": "0a 2c 51",
+        "miso_hex": "00 00 00",
+        "clock_hz": 4007633.5877862596,
+        "within_byte_period_samples": [
+          12,
+          13
+        ],
+        "command": "write",
+        "address": 44,
+        "data_hex": "51"
+      },
+      {
+        "start_sample": 3236913,
+        "end_sample": 3237883,
+        "start_ms": 64.73826,
+        "end_ms": 64.75766,
+        "bytes": 3,
+        "mosi_hex": "0b 2c 00",
+        "miso_hex": "00 00 51",
+        "clock_hz": 3992395.437262357,
+        "within_byte_period_samples": [
+          12,
+          13
+        ],
+        "command": "read",
+        "address": 44,
+        "data_hex": "51"
+      },
+      {
+        "start_sample": 3243777,
+        "end_sample": 3244747,
+        "start_ms": 64.87554,
+        "end_ms": 64.89494,
+        "bytes": 3,
+        "mosi_hex": "0a 2d 02",
+        "miso_hex": "00 00 00",
+        "clock_hz": 4007633.5877862596,
+        "within_byte_period_samples": [
+          12,
+          13
+        ],
+        "command": "write",
+        "address": 45,
+        "data_hex": "02"
+      },
+      {
+        "start_sample": 3250507,
+        "end_sample": 3251477,
+        "start_ms": 65.01014,
+        "end_ms": 65.02954,
+        "bytes": 3,
+        "mosi_hex": "0b 2d 00",
+        "miso_hex": "00 00 02",
+        "clock_hz": 3992395.437262357,
+        "within_byte_period_samples": [
+          12,
+          13
+        ],
+        "command": "read",
+        "address": 45,
+        "data_hex": "02"
+      }
+    ],
+    "fifo_groups": [],
+    "limits": "Digital trace only; not analog signal integrity, ODR or firmware-stack acceptance."
+  },
+  "D3": {
+    "high_samples": 1132839,
+    "active_at_start": false,
+    "active_at_end": false,
+    "pulse_starts": 988,
+    "pulse_ends": 988,
+    "complete_pulses": 988,
+    "first_start_sample": 10692,
+    "last_start_sample": 49984408,
+    "frequency_hz": 19.75038238101005,
+    "period_us": {
+      "min": 50516.0,
+      "mean": 50631.931104356634,
+      "max": 50717.0
+    },
+    "width_us": {
+      "min": 146.0,
+      "mean": 1146.5981781376518,
+      "max": 3426.0
+    }
+  },
+  "E": [
+    {
+      "first_sample": 2039838,
+      "last_sample": 12041935,
+      "start_s": 2.039838,
+      "end_s": 12.041935,
+      "pulse_starts": 795,
+      "frequency_hz": 79.38335331081072,
+      "period_us": {
+        "min": 992.0,
+        "mean": 12597.099496221663,
+        "max": 12657.0
+      },
+      "leading_gap_observed": true,
+      "trailing_gap_observed": true,
+      "steady": {
+        "trim_head_ms": 500,
+        "trim_tail_ms": 100,
+        "pulse_starts": 746,
+        "first_sample": 2542685,
+        "last_sample": 11941061,
+        "frequency_hz": 79.26901413605925,
+        "period_us": {
+          "min": 12586.0,
+          "mean": 12615.269798657719,
+          "max": 12657.0
+        }
+      }
+    },
+    {
+      "first_sample": 14105485,
+      "last_sample": 24089517,
+      "start_s": 14.105485,
+      "end_s": 24.089517,
+      "pulse_starts": 199,
+      "frequency_hz": 19.83166720619485,
+      "period_us": {
+        "min": 12924.0,
+        "mean": 50424.40404040404,
+        "max": 50710.0
+      },
+      "leading_gap_observed": true,
+      "trailing_gap_observed": true,
+      "steady": {
+        "trim_head_ms": 500,
+        "trim_tail_ms": 100,
+        "pulse_starts": 186,
+        "first_sample": 14621589,
+        "last_sample": 23988224,
+        "frequency_hz": 19.750956453411497,
+        "period_us": {
+          "min": 50548.0,
+          "mean": 50630.45945945946,
+          "max": 50710.0
+        }
+      }
+    },
+    {
+      "first_sample": 26171132,
+      "last_sample": 36180816,
+      "start_s": 26.171132,
+      "end_s": 36.180816,
+      "pulse_starts": 398,
+      "frequency_hz": 39.6615917145836,
+      "period_us": {
+        "min": 2108.0,
+        "mean": 25213.30982367758,
+        "max": 25356.0
+      },
+      "leading_gap_observed": true,
+      "trailing_gap_observed": true,
+      "steady": {
+        "trim_head_ms": 500,
+        "trim_tail_ms": 100,
+        "pulse_starts": 372,
+        "first_sample": 26687758,
+        "last_sample": 36079662,
+        "frequency_hz": 39.50210734692348,
+        "period_us": {
+          "min": 25261.0,
+          "mean": 25315.1051212938,
+          "max": 25356.0
+        }
+      }
+    },
+    {
+      "first_sample": 38237779,
+      "last_sample": 48243078,
+      "start_s": 38.237779,
+      "end_s": 48.243078,
+      "pulse_starts": 795,
+      "frequency_hz": 79.3579482232365,
+      "period_us": {
+        "min": 991.0,
+        "mean": 12601.132241813602,
+        "max": 12648.0
+      },
+      "leading_gap_observed": true,
+      "trailing_gap_observed": true,
+      "steady": {
+        "trim_head_ms": 500,
+        "trim_tail_ms": 100,
+        "pulse_starts": 746,
+        "first_sample": 38739576,
+        "last_sample": 48142161,
+        "frequency_hz": 79.23352992820591,
+        "period_us": {
+          "min": 12592.0,
+          "mean": 12620.919463087248,
+          "max": 12648.0
+        }
+      }
+    }
+  ],
+  "F": {
+    "sample_rate_hz": 1000000,
+    "sample_count": 50000896,
+    "reference_bursts": [
+      {
+        "first_sample": 3733749,
+        "last_sample": 14350982,
+        "rising_edges": 339762,
+        "clock_candidate": true,
+        "frequency_hz": 32000.89891594166,
+        "period_samples": [
+          [
+            31,
+            255119
+          ],
+          [
+            32,
+            84642
+          ]
+        ],
+        "high_width_samples": [
+          [
+            15,
+            124856
+          ],
+          [
+            16,
+            214905
+          ]
+        ],
+        "low_width_samples": [
+          [
+            15,
+            130263
+          ],
+          [
+            16,
+            209498
+          ]
+        ],
+        "continuous_32khz_candidate": true
+      },
+      {
+        "first_sample": 29078036,
+        "last_sample": 39695268,
+        "rising_edges": 339762,
+        "clock_candidate": true,
+        "frequency_hz": 32000.90192999456,
+        "period_samples": [
+          [
+            31,
+            255120
+          ],
+          [
+            32,
+            84641
+          ]
+        ],
+        "high_width_samples": [
+          [
+            15,
+            124871
+          ],
+          [
+            16,
+            214890
+          ]
+        ],
+        "low_width_samples": [
+          [
+            15,
+            130249
+          ],
+          [
+            16,
+            209512
+          ]
+        ],
+        "continuous_32khz_candidate": true
+      }
+    ],
+    "irq_phases": [
+      {
+        "first_sample": 33770,
+        "last_sample": 1654851,
+        "start_s": 0.03377,
+        "end_s": 1.654851,
+        "pulse_starts": 33,
+        "frequency_hz": 19.739914291759636,
+        "period_us": {
+          "min": 50578.0,
+          "mean": 50658.78125,
+          "max": 50734.0
+        },
+        "leading_gap_observed": false,
+        "trailing_gap_observed": true,
+        "steady": {
+          "trim_head_ms": 500,
+          "trim_tail_ms": 100,
+          "pulse_starts": 21,
+          "first_sample": 539814,
+          "last_sample": 1553493,
+          "frequency_hz": 19.730111800678518,
+          "period_us": {
+            "min": 50622.0,
+            "mean": 50683.95,
+            "max": 50734.0
+          }
+        },
+        "reference_relation": "no_reference_observed",
+        "steady_irqs_with_one_complete_cs_ack": 21
+      },
+      {
+        "first_sample": 3733299,
+        "last_sample": 3733299,
+        "start_s": 3.733299,
+        "end_s": 3.733299,
+        "pulse_starts": 1,
+        "frequency_hz": null,
+        "period_us": null,
+        "leading_gap_observed": true,
+        "trailing_gap_observed": true,
+        "steady": {
+          "trim_head_ms": 500,
+          "trim_tail_ms": 100,
+          "pulse_starts": 0,
+          "first_sample": null,
+          "last_sample": null,
+          "frequency_hz": null,
+          "period_us": null
+        },
+        "reference_relation": "insufficient_steady_data"
+      },
+      {
+        "first_sample": 4376856,
+        "last_sample": 14296702,
+        "start_s": 4.376856,
+        "end_s": 14.296702,
+        "pulse_starts": 156,
+        "frequency_hz": 15.625242569289886,
+        "period_us": {
+          "min": 63967.0,
+          "mean": 63999.006451612906,
+          "max": 64217.0
+        },
+        "leading_gap_observed": true,
+        "trailing_gap_observed": true,
+        "steady": {
+          "trim_head_ms": 500,
+          "trim_tail_ms": 100,
+          "pulse_starts": 146,
+          "first_sample": 4888842,
+          "last_sample": 14168706,
+          "frequency_hz": 15.62522899042486,
+          "period_us": {
+            "min": 63967.0,
+            "mean": 63999.06206896551,
+            "max": 64217.0
+          }
+        },
+        "reference_relation": "continuous_reference",
+        "clock_cycles_per_data_ready": [
+          [
+            2047,
+            7
+          ],
+          [
+            2048,
+            133
+          ],
+          [
+            2049,
+            4
+          ],
+          [
+            2055,
+            1
+          ]
+        ],
+        "reference_hz": 32000.89891594166,
+        "expected_odr_hz_at_25_setting": 15.625438923799639,
+        "reference_continuity_ok": true,
+        "steady_irqs_with_one_complete_cs_ack": 146
+      },
+      {
+        "first_sample": 16405942,
+        "last_sample": 16405942,
+        "start_s": 16.405942,
+        "end_s": 16.405942,
+        "pulse_starts": 1,
+        "frequency_hz": null,
+        "period_us": null,
+        "leading_gap_observed": true,
+        "trailing_gap_observed": true,
+        "steady": {
+          "trim_head_ms": 500,
+          "trim_tail_ms": 100,
+          "pulse_starts": 0,
+          "first_sample": null,
+          "last_sample": null,
+          "frequency_hz": null,
+          "period_us": null
+        },
+        "reference_relation": "insufficient_steady_data"
+      },
+      {
+        "first_sample": 17024486,
+        "last_sample": 27001118,
+        "start_s": 17.024486,
+        "end_s": 27.001118,
+        "pulse_starts": 198,
+        "frequency_hz": 19.74614278646341,
+        "period_us": {
+          "min": 50556.0,
+          "mean": 50642.802030456856,
+          "max": 50716.0
+        },
+        "leading_gap_observed": true,
+        "trailing_gap_observed": true,
+        "steady": {
+          "trim_head_ms": 500,
+          "trim_tail_ms": 100,
+          "pulse_starts": 186,
+          "first_sample": 17531391,
+          "last_sample": 26899981,
+          "frequency_hz": 19.74683490258406,
+          "period_us": {
+            "min": 50561.0,
+            "mean": 50641.02702702703,
+            "max": 50716.0
+          }
+        },
+        "reference_relation": "no_reference_observed",
+        "steady_irqs_with_one_complete_cs_ack": 186
+      },
+      {
+        "first_sample": 29077585,
+        "last_sample": 29077585,
+        "start_s": 29.077585,
+        "end_s": 29.077585,
+        "pulse_starts": 1,
+        "frequency_hz": null,
+        "period_us": null,
+        "leading_gap_observed": true,
+        "trailing_gap_observed": true,
+        "steady": {
+          "trim_head_ms": 500,
+          "trim_tail_ms": 100,
+          "pulse_starts": 0,
+          "first_sample": null,
+          "last_sample": null,
+          "frequency_hz": null,
+          "period_us": null
+        },
+        "reference_relation": "insufficient_steady_data"
+      },
+      {
+        "first_sample": 29721143,
+        "last_sample": 39640863,
+        "start_s": 29.721143,
+        "end_s": 39.640863,
+        "pulse_starts": 156,
+        "frequency_hz": 15.625441040674534,
+        "period_us": {
+          "min": 63998.0,
+          "mean": 63998.1935483871,
+          "max": 63999.0
+        },
+        "leading_gap_observed": true,
+        "trailing_gap_observed": true,
+        "steady": {
+          "trim_head_ms": 500,
+          "trim_tail_ms": 100,
+          "pulse_starts": 146,
+          "first_sample": 30233128,
+          "last_sample": 39512867,
+          "frequency_hz": 15.625439465484966,
+          "period_us": {
+            "min": 63998.0,
+            "mean": 63998.2,
+            "max": 63999.0
+          }
+        },
+        "reference_relation": "continuous_reference",
+        "clock_cycles_per_data_ready": [
+          [
+            2047,
+            3
+          ],
+          [
+            2048,
+            139
+          ],
+          [
+            2049,
+            3
+          ]
+        ],
+        "reference_hz": 32000.90192999456,
+        "expected_odr_hz_at_25_setting": 15.625440395505157,
+        "reference_continuity_ok": true,
+        "steady_irqs_with_one_complete_cs_ack": 146
+      },
+      {
+        "first_sample": 41750228,
+        "last_sample": 41750228,
+        "start_s": 41.750228,
+        "end_s": 41.750228,
+        "pulse_starts": 1,
+        "frequency_hz": null,
+        "period_us": null,
+        "leading_gap_observed": true,
+        "trailing_gap_observed": true,
+        "steady": {
+          "trim_head_ms": 500,
+          "trim_tail_ms": 100,
+          "pulse_starts": 0,
+          "first_sample": null,
+          "last_sample": null,
+          "frequency_hz": null,
+          "period_us": null
+        },
+        "reference_relation": "insufficient_steady_data"
+      },
+      {
+        "first_sample": 42368814,
+        "last_sample": 49970650,
+        "start_s": 42.368814,
+        "end_s": 49.97065,
+        "pulse_starts": 151,
+        "frequency_hz": 19.732075251294557,
+        "period_us": {
+          "min": 50622.0,
+          "mean": 50678.90666666667,
+          "max": 50725.0
+        },
+        "leading_gap_observed": true,
+        "trailing_gap_observed": false,
+        "steady": {
+          "trim_head_ms": 500,
+          "trim_tail_ms": 100,
+          "pulse_starts": 139,
+          "first_sample": 42875550,
+          "last_sample": 49869254,
+          "frequency_hz": 19.732033268780032,
+          "period_us": {
+            "min": 50622.0,
+            "mean": 50679.014492753624,
+            "max": 50725.0
+          }
+        },
+        "reference_relation": "no_reference_observed",
+        "steady_irqs_with_one_complete_cs_ack": 139
+      }
+    ],
+    "limits": "UART must confirm clock selection and FILTER_CTL=0x51. Short startup IRQ groups and partial phases are retained. Digital timing only; 1 MHz cannot establish SPI bytes or analog edge quality."
+  },
+  "G": {
+    "clock": {
+      "sample_rate_hz": 50000000,
+      "sample_count": 5000192,
+      "reference_bursts": [
+        {
+          "first_sample": 1163,
+          "last_sample": 4999456,
+          "rising_edges": 3200,
+          "clock_candidate": true,
+          "frequency_hz": 32000.925115834547,
+          "period_samples": [
+            [
+              1560,
+              6
+            ],
+            [
+              1561,
+              44
+            ],
+            [
+              1562,
+              1690
+            ],
+            [
+              1563,
+              1409
+            ],
+            [
+              1564,
+              48
+            ],
+            [
+              1565,
+              2
+            ]
+          ],
+          "high_width_samples": [
+            [
+              780,
+              46
+            ],
+            [
+              781,
+              1105
+            ],
+            [
+              782,
+              1998
+            ],
+            [
+              783,
+              39
+            ],
+            [
+              784,
+              11
+            ]
+          ],
+          "low_width_samples": [
+            [
+              779,
+              40
+            ],
+            [
+              780,
+              598
+            ],
+            [
+              781,
+              2512
+            ],
+            [
+              782,
+              28
+            ],
+            [
+              783,
+              21
+            ]
+          ],
+          "continuous_32khz_candidate": true
+        }
+      ],
+      "irq_phases": [
+        {
+          "first_sample": 1785488,
+          "last_sample": 4985395,
+          "start_s": 0.03570976,
+          "end_s": 0.0997079,
+          "pulse_starts": 2,
+          "frequency_hz": 15.62545411476021,
+          "period_us": {
+            "min": 63998.14,
+            "mean": 63998.14,
+            "max": 63998.14
+          },
+          "leading_gap_observed": false,
+          "trailing_gap_observed": false,
+          "steady": {
+            "trim_head_ms": 500,
+            "trim_tail_ms": 100,
+            "pulse_starts": 0,
+            "first_sample": null,
+            "last_sample": null,
+            "frequency_hz": null,
+            "period_us": null
+          },
+          "reference_relation": "insufficient_steady_data"
+        }
+      ],
+      "limits": "UART must confirm clock selection and FILTER_CTL=0x51. Short startup IRQ groups and partial phases are retained. Digital timing only; 1 MHz cannot establish SPI bytes or analog edge quality."
+    },
+    "cycles_between_irq": [
+      2048
+    ],
+    "spi": {
+      "file": "20260921-221426-adxl362-extclk-high.dsl",
+      "sha256": "799ed3e3cf3e533d4d07350ad2915690a82740adadd4dbe0d9980a0689b2a031",
+      "sample_rate_hz": 50000000,
+      "sample_count": 5000192,
+      "header_trigger_time_unix_ms": 1790000066773,
+      "header_trigger_sample": 1163,
+      "threshold_v": 1.5,
+      "irq_rising_samples": [
+        1785488,
+        4985395
+      ],
+      "irq_falling_samples": [
+        1855798
+      ],
+      "transactions": [
+        {
+          "start_sample": 1853313,
+          "end_sample": 1854553,
+          "start_ms": 37.06626,
+          "end_ms": 37.09106,
+          "bytes": 3,
+          "mosi_hex": "0b 0e 00",
+          "miso_hex": "00 00 0f",
+          "clock_hz": 4007633.5877862596,
+          "within_byte_period_samples": [
+            12,
+            13
+          ],
+          "command": "read",
+          "address": 14,
+          "data_hex": "0f"
+        }
+      ],
+      "fifo_groups": [],
+      "limits": "Digital trace only; not analog signal integrity, ODR or firmware-stack acceptance."
+    }
+  }
+}

@@ -1,0 +1,115 @@
+{
+  "report": "ADXL362-ODR-20260921",
+  "date": "2026-09-21",
+  "diagnostic_commit": "3c02631",
+  "captures": [
+    {
+      "id": "A",
+      "original_file": "DSLogic U3Pro16-la-260921-152326.dsl",
+      "sha256": "74DD03753694FD1B7238F5C1B7CC0012988146958D13A14C85A4861E0F15253A",
+      "bytes": 142140,
+      "sample_rate_hz": 1000000,
+      "samples": 50000896,
+      "duration_seconds": 50.000896,
+      "threshold_v": 1.5,
+      "trigger_unix_ms": 1789975406277
+    },
+    {
+      "id": "B",
+      "original_file": "DSLogic U3Pro16-la-260921-153828.dsl",
+      "sha256": "616603F5C0E21C350A7571041C0A48655C9B0BF1AC295A121E2708DE1D461A44",
+      "bytes": 21036,
+      "sample_rate_hz": 50000000,
+      "samples": 5000192,
+      "duration_seconds": 0.10000384,
+      "threshold_v": 1.5,
+      "trigger_unix_ms": 1789976308790
+    },
+    {
+      "id": "C",
+      "original_file": "DSLogic U3Pro16-la-260921-155625.dsl",
+      "sha256": "E6969BA8AF2D52CCC37D53B351E049F880D862E7AC6E59B7D8E2D586D466843B",
+      "bytes": 72206,
+      "sample_rate_hz": 50000000,
+      "samples": 25000960,
+      "duration_seconds": 0.5000192,
+      "threshold_v": 1.5,
+      "trigger_unix_ms": 1789977385696
+    },
+    {
+      "id": "D3",
+      "original_file": "DSLogic U3Pro16-la-260921-163735.dsl",
+      "sha256": "00676EF8ADC037EA569122703581E7238B3F898D588D759DFC202FA13F2F6D30",
+      "bytes": 163410,
+      "sample_rate_hz": 1000000,
+      "samples": 50000896,
+      "duration_seconds": 50.000896,
+      "threshold_v": 1.5,
+      "trigger_unix_ms": 1789979855950
+    },
+    {
+      "id": "E",
+      "original_file": "DSLogic U3Pro16-la-260921-165326.dsl",
+      "sha256": "B13F1FF0D4E1D0CC344A821D38B0F2773C5681E3A42328E22BCD96DD30D9F4AB",
+      "bytes": 193778,
+      "sample_rate_hz": 1000000,
+      "samples": 50000896,
+      "duration_seconds": 50.000896,
+      "threshold_v": 1.5,
+      "trigger_unix_ms": 1789980806435
+    },
+    {
+      "id": "F",
+      "original_file": "DSLogic U3Pro16-la-260921-215505.dsl",
+      "sha256": "E858D5503F13A74213C20709B6AD224AC1EEC50072D6499561749862634FDAC4",
+      "bytes": 226787,
+      "sample_rate_hz": 1000000,
+      "samples": 50000896,
+      "duration_seconds": 50.000896,
+      "threshold_v": 1.5,
+      "trigger_unix_ms": 1789998905289
+    },
+    {
+      "id": "G",
+      "original_file": "DSLogic U3Pro16-la-260921-221426.dsl",
+      "sha256": "799ED3E3CF3E533D4D07350AD2915690A82740ADADD4DBE0D9980A0689B2A031",
+      "bytes": 27300,
+      "sample_rate_hz": 50000000,
+      "samples": 5000192,
+      "duration_seconds": 0.10000384,
+      "threshold_v": 1.5,
+      "trigger_unix_ms": 1790000066773
+    }
+  ],
+  "figure_policy": "Actual sampled transitions or explicitly identified schematic/summary; no smoothing.",
+  "excluded_personal_data": [
+    "device identity",
+    "probe serial",
+    "EEPROM contents",
+    "purchase contracts"
+  ],
+  "schematic": {
+    "file": "SCH_RFID_CC1101_433MHz(2025.8.18)_2026-09-21.pdf",
+    "sha256": "A095759CE634D54061572A1DF45C6B027B7294932BAB41508E135951B29BFE80",
+    "page": 2,
+    "crop_pdf_points_left_bottom_right_top": [
+      105,
+      370,
+      505,
+      100
+    ]
+  },
+  "figure_sources": {
+    "01": "F, phases 4/5",
+    "02": "schematic page 2, native crop",
+    "03": "explanatory process diagram",
+    "04": "A full 50 s, event starts",
+    "05": "B, 9.5-18.8 ms, all transitions",
+    "06": "C decoded writes/readbacks",
+    "07": "D3 0-280 ms all transitions; all 987 intervals",
+    "08": "E full-phase steady windows",
+    "09": "explanatory diagram, hardware + diagnostic code",
+    "10": "F whole record, standby intervals >=500 ms omitted from lower plot only",
+    "11": "G whole 100 ms IRQ/CS; D5 at 36.0-36.2 ms, all transitions"
+  }
+}
