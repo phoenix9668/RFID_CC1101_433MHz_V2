@@ -1,0 +1,126 @@
+{
+  "source_rate_hz_assumed": 25,
+  "source_odr_setting_confirmed": 25,
+  "source_actual_rate_measured": false,
+  "human_labels": false,
+  "high_rate_inputs": "synthetic reconstruction, NOT new collar measurements",
+  "sources": [
+    {
+      "file": "climb_analysis\\vofa_9.15.11.xlsx",
+      "sheet": "Sheet1",
+      "sha256": "e7674e0faa9c7ad4a41b22e38b34818e9dd3403244beeb342099e014dad5a8ef",
+      "samples": 49994,
+      "segment_lengths": [
+        49994
+      ],
+      "index_break_rows": [],
+      "xyz_min": [
+        -1280,
+        -1207,
+        -1591
+      ],
+      "xyz_max": [
+        2047,
+        1519,
+        1232
+      ],
+      "rail_values": 1
+    },
+    {
+      "file": "climb_analysis\\vofa_9.15.12.xlsx",
+      "sheet": "Sheet1",
+      "sha256": "13bb108dd59a9210cb1d1887f64d694e75f9b4886313f15e82e06a1b1a433fd1",
+      "samples": 49619,
+      "segment_lengths": [
+        49619
+      ],
+      "index_break_rows": [],
+      "xyz_min": [
+        -809,
+        -925,
+        -1783
+      ],
+      "xyz_max": [
+        1935,
+        1248,
+        822
+      ],
+      "rail_values": 0
+    },
+    {
+      "file": "climb_analysis\\vofa_9.15.3.xlsx",
+      "sheet": "Sheet1",
+      "sha256": "42177a2d26c7173e3d34a52973e711421b9f4cefad10dec53822b5996a619774",
+      "samples": 49998,
+      "segment_lengths": [
+        49998
+      ],
+      "index_break_rows": [],
+      "xyz_min": [
+        -1495,
+        -1374,
+        -2047
+      ],
+      "xyz_max": [
+        1344,
+        1818,
+        998
+      ],
+      "rail_values": 0
+    },
+    {
+      "file": "example_data.xlsx",
+      "sheet": "Sheet1",
+      "sha256": "0cbd4a3ebd5659091baaceb6f6780fec84100b17deebfcafcefaf2b3cf70808b",
+      "samples": 822,
+      "segment_lengths": [
+        822
+      ],
+      "index_break_rows": [],
+      "xyz_min": [
+        -620,
+        -1096,
+        -1341
+      ],
+      "xyz_max": [
+        446,
+        1255,
+        1596
+      ],
+      "rail_values": 0
+    },
+    {
+      "file": "example_data.xlsx",
+      "sheet": "Sheet2",
+      "sha256": "0cbd4a3ebd5659091baaceb6f6780fec84100b17deebfcafcefaf2b3cf70808b",
+      "samples": 93,
+      "segment_lengths": [
+        31,
+        31,
+        31
+      ],
+      "index_break_rows": [
+        33,
+        64
+      ],
+      "xyz_min": [
+        -98,
+        -162,
+        -1069
+      ],
+      "xyz_max": [
+        63,
+        203,
+        -656
+      ],
+      "rail_values": 0
+    }
+  ],
+  "code_sha256": {
+    "App\\Src\\behavior.c": "2aec149194570930b8f0e6be8b33f62fc217270e82446acb82f4ff808b602d6b",
+    "App\\Src\\resampler.c": "0329dca2da09ecfd7fd86654507999e7eceae012238e053a88848b28ced6396b",
+    "App\\Src\\resampler_kernel.h": "b4784e2f50a8dc307a2ecae56fedf9a4f8e935f262cfed1eec49e4d09e5639ca",
+    "Tools\\validate-resampling.py": "2bd542f2dc260c4335963813399da91685451292c92be847a6684b9bd49d98f9"
+  },
+  "executable_sha256": "244c99648d23d55cbb8ca87fdbe189ee569be4d5e271a324c6a7ac15b4d25778"
+}

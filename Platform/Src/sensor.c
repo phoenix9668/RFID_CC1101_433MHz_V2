@@ -49,7 +49,9 @@ rfid_status_t sensor_init(void)
         {ADXL362_REG_TIME_INACT_H, 0},    {ADXL362_REG_ACT_INACT_CTL, 0x3f},
         {ADXL362_REG_INTMAP1, 0x10},      {ADXL362_REG_INTMAP2, 0x04},
         {ADXL362_REG_FIFO_CTL, 0x0a},     {ADXL362_REG_FIFO_SAMPLES, 0xc2},
-        {ADXL362_REG_FILTER_CTL, 0x51},   {ADXL362_REG_POWER_CTL, 0x02}};
+        /* Bench timing experiments retain their original 25 Hz baseline. */
+        {ADXL362_REG_FILTER_CTL, RFID_SENSOR_ODR_TEST ? 0x51 : 0x52},
+        {ADXL362_REG_POWER_CTL, 0x02}};
     for (unsigned i = 0; i < sizeof(config) / sizeof(config[0]); ++i)
     {
         uint8_t value;
@@ -62,7 +64,8 @@ rfid_status_t sensor_init(void)
     }
     device->selected_range = 4;
 #if RFID_DIAGNOSTICS
-    board_log("ADXL362 ids=AD/1D/F2 config=ok fifo=450 words 4g/25Hz/half\r\n");
+    board_log(RFID_SENSOR_ODR_TEST ? "ADXL362 bench: 4g/25Hz/half\r\n" :
+              "ADXL362 ids=AD/1D/F2 fifo=450 words 4g/50Hz/half resample=25Hz\r\n");
 #endif
     return RFID_OK;
 }

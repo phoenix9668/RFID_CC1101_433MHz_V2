@@ -1,0 +1,2214 @@
+[
+  {
+    "source": "vofa_9.15.11_Sheet1_seg1",
+    "samples": 49994,
+    "nominal_seconds": 1999.76,
+    "input_rate_simulated": 25.0,
+    "rate_requested": 25.0,
+    "compared_seconds": 1979,
+    "different_seconds": 218,
+    "agreement": 0.8898433552299141,
+    "baseline_counts_common": [
+      351,
+      777,
+      4,
+      0,
+      0,
+      847
+    ],
+    "candidate_counts_common": [
+      393,
+      777,
+      4,
+      0,
+      0,
+      805
+    ],
+    "class_matrix": [
+      [
+        339,
+        0,
+        0,
+        0,
+        0,
+        12
+      ],
+      [
+        0,
+        701,
+        0,
+        0,
+        0,
+        76
+      ],
+      [
+        0,
+        0,
+        4,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        54,
+        76,
+        0,
+        0,
+        0,
+        717
+      ]
+    ],
+    "legacy_equivalence": "PASS: 1998 seconds; counts 351 779 4 0 0 864",
+    "synthetic_clipped_axis_values": 0,
+    "candidate_output_samples": 49961
+  },
+  {
+    "source": "vofa_9.15.11_Sheet1_seg1",
+    "samples": 49994,
+    "nominal_seconds": 1999.76,
+    "input_rate_simulated": 39.502053388090346,
+    "rate_requested": 39.502107,
+    "compared_seconds": 1979,
+    "different_seconds": 221,
+    "agreement": 0.8883274381000505,
+    "baseline_counts_common": [
+      351,
+      777,
+      4,
+      0,
+      0,
+      847
+    ],
+    "candidate_counts_common": [
+      395,
+      774,
+      4,
+      0,
+      0,
+      806
+    ],
+    "class_matrix": [
+      [
+        340,
+        0,
+        0,
+        0,
+        0,
+        11
+      ],
+      [
+        0,
+        698,
+        0,
+        0,
+        0,
+        79
+      ],
+      [
+        0,
+        0,
+        4,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        55,
+        76,
+        0,
+        0,
+        0,
+        716
+      ]
+    ],
+    "legacy_equivalence": "PASS: 1998 seconds; counts 351 779 4 0 0 864",
+    "synthetic_clipped_axis_values": 2,
+    "candidate_output_samples": 49961
+  },
+  {
+    "source": "vofa_9.15.11_Sheet1_seg1",
+    "samples": 49994,
+    "nominal_seconds": 1999.76,
+    "input_rate_simulated": 50.0,
+    "rate_requested": 50.0,
+    "compared_seconds": 1979,
+    "different_seconds": 217,
+    "agreement": 0.8903486609398686,
+    "baseline_counts_common": [
+      351,
+      777,
+      4,
+      0,
+      0,
+      847
+    ],
+    "candidate_counts_common": [
+      391,
+      774,
+      4,
+      0,
+      0,
+      810
+    ],
+    "class_matrix": [
+      [
+        339,
+        0,
+        0,
+        0,
+        0,
+        12
+      ],
+      [
+        0,
+        699,
+        0,
+        0,
+        0,
+        78
+      ],
+      [
+        0,
+        0,
+        4,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        52,
+        75,
+        0,
+        0,
+        0,
+        720
+      ]
+    ],
+    "legacy_equivalence": "PASS: 1998 seconds; counts 351 779 4 0 0 864",
+    "synthetic_clipped_axis_values": 2,
+    "candidate_output_samples": 49961
+  },
+  {
+    "source": "vofa_9.15.11_Sheet1_seg1",
+    "samples": 49994,
+    "nominal_seconds": 1999.76,
+    "input_rate_simulated": 57.5,
+    "rate_requested": 57.5,
+    "compared_seconds": 1979,
+    "different_seconds": 216,
+    "agreement": 0.8908539666498232,
+    "baseline_counts_common": [
+      351,
+      777,
+      4,
+      0,
+      0,
+      847
+    ],
+    "candidate_counts_common": [
+      393,
+      775,
+      4,
+      0,
+      0,
+      807
+    ],
+    "class_matrix": [
+      [
+        340,
+        0,
+        0,
+        0,
+        0,
+        11
+      ],
+      [
+        0,
+        700,
+        0,
+        0,
+        0,
+        77
+      ],
+      [
+        0,
+        0,
+        4,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        53,
+        75,
+        0,
+        0,
+        0,
+        719
+      ]
+    ],
+    "legacy_equivalence": "PASS: 1998 seconds; counts 351 779 4 0 0 864",
+    "synthetic_clipped_axis_values": 1,
+    "candidate_output_samples": 49961
+  },
+  {
+    "source": "vofa_9.15.12_Sheet1_seg1",
+    "samples": 49619,
+    "nominal_seconds": 1984.76,
+    "input_rate_simulated": 25.0,
+    "rate_requested": 25.0,
+    "compared_seconds": 1964,
+    "different_seconds": 169,
+    "agreement": 0.9139511201629328,
+    "baseline_counts_common": [
+      159,
+      1186,
+      0,
+      0,
+      0,
+      619
+    ],
+    "candidate_counts_common": [
+      198,
+      1172,
+      0,
+      0,
+      0,
+      594
+    ],
+    "class_matrix": [
+      [
+        157,
+        0,
+        0,
+        0,
+        0,
+        2
+      ],
+      [
+        0,
+        1116,
+        0,
+        0,
+        0,
+        70
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        41,
+        56,
+        0,
+        0,
+        0,
+        522
+      ]
+    ],
+    "legacy_equivalence": "PASS: 1980 seconds; counts 161 1186 0 0 0 633",
+    "synthetic_clipped_axis_values": 0,
+    "candidate_output_samples": 49586
+  },
+  {
+    "source": "vofa_9.15.12_Sheet1_seg1",
+    "samples": 49619,
+    "nominal_seconds": 1984.76,
+    "input_rate_simulated": 39.502053388090346,
+    "rate_requested": 39.502107,
+    "compared_seconds": 1964,
+    "different_seconds": 172,
+    "agreement": 0.9124236252545825,
+    "baseline_counts_common": [
+      159,
+      1186,
+      0,
+      0,
+      0,
+      619
+    ],
+    "candidate_counts_common": [
+      200,
+      1175,
+      0,
+      0,
+      0,
+      589
+    ],
+    "class_matrix": [
+      [
+        157,
+        0,
+        0,
+        0,
+        0,
+        2
+      ],
+      [
+        0,
+        1117,
+        0,
+        0,
+        0,
+        69
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        43,
+        58,
+        0,
+        0,
+        0,
+        518
+      ]
+    ],
+    "legacy_equivalence": "PASS: 1980 seconds; counts 161 1186 0 0 0 633",
+    "synthetic_clipped_axis_values": 0,
+    "candidate_output_samples": 49586
+  },
+  {
+    "source": "vofa_9.15.12_Sheet1_seg1",
+    "samples": 49619,
+    "nominal_seconds": 1984.76,
+    "input_rate_simulated": 50.0,
+    "rate_requested": 50.0,
+    "compared_seconds": 1964,
+    "different_seconds": 175,
+    "agreement": 0.9108961303462322,
+    "baseline_counts_common": [
+      159,
+      1186,
+      0,
+      0,
+      0,
+      619
+    ],
+    "candidate_counts_common": [
+      201,
+      1171,
+      0,
+      0,
+      0,
+      592
+    ],
+    "class_matrix": [
+      [
+        158,
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      [
+        0,
+        1113,
+        0,
+        0,
+        0,
+        73
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        43,
+        58,
+        0,
+        0,
+        0,
+        518
+      ]
+    ],
+    "legacy_equivalence": "PASS: 1980 seconds; counts 161 1186 0 0 0 633",
+    "synthetic_clipped_axis_values": 0,
+    "candidate_output_samples": 49586
+  },
+  {
+    "source": "vofa_9.15.12_Sheet1_seg1",
+    "samples": 49619,
+    "nominal_seconds": 1984.76,
+    "input_rate_simulated": 57.5,
+    "rate_requested": 57.5,
+    "compared_seconds": 1964,
+    "different_seconds": 169,
+    "agreement": 0.9139511201629328,
+    "baseline_counts_common": [
+      159,
+      1186,
+      0,
+      0,
+      0,
+      619
+    ],
+    "candidate_counts_common": [
+      195,
+      1175,
+      0,
+      0,
+      0,
+      594
+    ],
+    "class_matrix": [
+      [
+        157,
+        0,
+        0,
+        0,
+        0,
+        2
+      ],
+      [
+        0,
+        1116,
+        0,
+        0,
+        0,
+        70
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        38,
+        59,
+        0,
+        0,
+        0,
+        522
+      ]
+    ],
+    "legacy_equivalence": "PASS: 1980 seconds; counts 161 1186 0 0 0 633",
+    "synthetic_clipped_axis_values": 0,
+    "candidate_output_samples": 49586
+  },
+  {
+    "source": "vofa_9.15.3_Sheet1_seg1",
+    "samples": 49998,
+    "nominal_seconds": 1999.92,
+    "input_rate_simulated": 25.0,
+    "rate_requested": 25.0,
+    "compared_seconds": 1979,
+    "different_seconds": 167,
+    "agreement": 0.9156139464375948,
+    "baseline_counts_common": [
+      107,
+      1192,
+      3,
+      0,
+      0,
+      677
+    ],
+    "candidate_counts_common": [
+      131,
+      1171,
+      3,
+      0,
+      0,
+      674
+    ],
+    "class_matrix": [
+      [
+        104,
+        0,
+        0,
+        0,
+        0,
+        3
+      ],
+      [
+        0,
+        1113,
+        0,
+        0,
+        0,
+        79
+      ],
+      [
+        0,
+        0,
+        3,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        27,
+        58,
+        0,
+        0,
+        0,
+        592
+      ]
+    ],
+    "legacy_equivalence": "PASS: 1998 seconds; counts 107 1193 3 0 0 695",
+    "synthetic_clipped_axis_values": 0,
+    "candidate_output_samples": 49965
+  },
+  {
+    "source": "vofa_9.15.3_Sheet1_seg1",
+    "samples": 49998,
+    "nominal_seconds": 1999.92,
+    "input_rate_simulated": 39.502053388090346,
+    "rate_requested": 39.502107,
+    "compared_seconds": 1979,
+    "different_seconds": 163,
+    "agreement": 0.9176351692774128,
+    "baseline_counts_common": [
+      107,
+      1192,
+      3,
+      0,
+      0,
+      677
+    ],
+    "candidate_counts_common": [
+      133,
+      1175,
+      3,
+      0,
+      0,
+      668
+    ],
+    "class_matrix": [
+      [
+        104,
+        0,
+        0,
+        0,
+        0,
+        3
+      ],
+      [
+        0,
+        1118,
+        0,
+        0,
+        0,
+        74
+      ],
+      [
+        0,
+        0,
+        3,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        29,
+        57,
+        0,
+        0,
+        0,
+        591
+      ]
+    ],
+    "legacy_equivalence": "PASS: 1998 seconds; counts 107 1193 3 0 0 695",
+    "synthetic_clipped_axis_values": 1,
+    "candidate_output_samples": 49965
+  },
+  {
+    "source": "vofa_9.15.3_Sheet1_seg1",
+    "samples": 49998,
+    "nominal_seconds": 1999.92,
+    "input_rate_simulated": 50.0,
+    "rate_requested": 50.0,
+    "compared_seconds": 1979,
+    "different_seconds": 164,
+    "agreement": 0.9171298635674583,
+    "baseline_counts_common": [
+      107,
+      1192,
+      3,
+      0,
+      0,
+      677
+    ],
+    "candidate_counts_common": [
+      129,
+      1172,
+      3,
+      0,
+      0,
+      675
+    ],
+    "class_matrix": [
+      [
+        104,
+        0,
+        0,
+        0,
+        0,
+        3
+      ],
+      [
+        0,
+        1114,
+        0,
+        0,
+        0,
+        78
+      ],
+      [
+        0,
+        0,
+        3,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        25,
+        58,
+        0,
+        0,
+        0,
+        594
+      ]
+    ],
+    "legacy_equivalence": "PASS: 1998 seconds; counts 107 1193 3 0 0 695",
+    "synthetic_clipped_axis_values": 0,
+    "candidate_output_samples": 49965
+  },
+  {
+    "source": "vofa_9.15.3_Sheet1_seg1",
+    "samples": 49998,
+    "nominal_seconds": 1999.92,
+    "input_rate_simulated": 57.5,
+    "rate_requested": 57.5,
+    "compared_seconds": 1979,
+    "different_seconds": 171,
+    "agreement": 0.9135927235977767,
+    "baseline_counts_common": [
+      107,
+      1192,
+      3,
+      0,
+      0,
+      677
+    ],
+    "candidate_counts_common": [
+      131,
+      1169,
+      3,
+      0,
+      0,
+      676
+    ],
+    "class_matrix": [
+      [
+        104,
+        0,
+        0,
+        0,
+        0,
+        3
+      ],
+      [
+        0,
+        1110,
+        0,
+        0,
+        0,
+        82
+      ],
+      [
+        0,
+        0,
+        3,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        27,
+        59,
+        0,
+        0,
+        0,
+        591
+      ]
+    ],
+    "legacy_equivalence": "PASS: 1998 seconds; counts 107 1193 3 0 0 695",
+    "synthetic_clipped_axis_values": 1,
+    "candidate_output_samples": 49965
+  },
+  {
+    "source": "example_data_Sheet1_seg1",
+    "samples": 822,
+    "nominal_seconds": 32.88,
+    "input_rate_simulated": 25.0,
+    "rate_requested": 25.0,
+    "compared_seconds": 12,
+    "different_seconds": 1,
+    "agreement": 0.9166666666666666,
+    "baseline_counts_common": [
+      0,
+      0,
+      4,
+      0,
+      0,
+      8
+    ],
+    "candidate_counts_common": [
+      1,
+      0,
+      4,
+      0,
+      0,
+      7
+    ],
+    "class_matrix": [
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        4,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        1,
+        0,
+        0,
+        0,
+        0,
+        7
+      ]
+    ],
+    "legacy_equivalence": "PASS: 30 seconds; counts 0 0 5 0 0 25",
+    "synthetic_clipped_axis_values": 0,
+    "candidate_output_samples": 789
+  },
+  {
+    "source": "example_data_Sheet1_seg1",
+    "samples": 822,
+    "nominal_seconds": 32.88,
+    "input_rate_simulated": 39.502053388090346,
+    "rate_requested": 39.502107,
+    "compared_seconds": 12,
+    "different_seconds": 1,
+    "agreement": 0.9166666666666666,
+    "baseline_counts_common": [
+      0,
+      0,
+      4,
+      0,
+      0,
+      8
+    ],
+    "candidate_counts_common": [
+      1,
+      0,
+      4,
+      0,
+      0,
+      7
+    ],
+    "class_matrix": [
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        4,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        1,
+        0,
+        0,
+        0,
+        0,
+        7
+      ]
+    ],
+    "legacy_equivalence": "PASS: 30 seconds; counts 0 0 5 0 0 25",
+    "synthetic_clipped_axis_values": 0,
+    "candidate_output_samples": 789
+  },
+  {
+    "source": "example_data_Sheet1_seg1",
+    "samples": 822,
+    "nominal_seconds": 32.88,
+    "input_rate_simulated": 50.0,
+    "rate_requested": 50.0,
+    "compared_seconds": 12,
+    "different_seconds": 1,
+    "agreement": 0.9166666666666666,
+    "baseline_counts_common": [
+      0,
+      0,
+      4,
+      0,
+      0,
+      8
+    ],
+    "candidate_counts_common": [
+      1,
+      0,
+      4,
+      0,
+      0,
+      7
+    ],
+    "class_matrix": [
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        4,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        1,
+        0,
+        0,
+        0,
+        0,
+        7
+      ]
+    ],
+    "legacy_equivalence": "PASS: 30 seconds; counts 0 0 5 0 0 25",
+    "synthetic_clipped_axis_values": 0,
+    "candidate_output_samples": 789
+  },
+  {
+    "source": "example_data_Sheet1_seg1",
+    "samples": 822,
+    "nominal_seconds": 32.88,
+    "input_rate_simulated": 57.5,
+    "rate_requested": 57.5,
+    "compared_seconds": 12,
+    "different_seconds": 1,
+    "agreement": 0.9166666666666666,
+    "baseline_counts_common": [
+      0,
+      0,
+      4,
+      0,
+      0,
+      8
+    ],
+    "candidate_counts_common": [
+      1,
+      0,
+      4,
+      0,
+      0,
+      7
+    ],
+    "class_matrix": [
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        4,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        1,
+        0,
+        0,
+        0,
+        0,
+        7
+      ]
+    ],
+    "legacy_equivalence": "PASS: 30 seconds; counts 0 0 5 0 0 25",
+    "synthetic_clipped_axis_values": 0,
+    "candidate_output_samples": 789
+  },
+  {
+    "source": "example_data_Sheet2_seg1",
+    "samples": 31,
+    "nominal_seconds": 1.24,
+    "input_rate_simulated": 25.0,
+    "rate_requested": 25.0,
+    "compared_seconds": 0,
+    "different_seconds": 0,
+    "agreement": null,
+    "baseline_counts_common": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "candidate_counts_common": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "class_matrix": [
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    ],
+    "legacy_equivalence": "not enough for a 150-sample legacy block",
+    "synthetic_clipped_axis_values": 0,
+    "candidate_output_samples": 0
+  },
+  {
+    "source": "example_data_Sheet2_seg1",
+    "samples": 31,
+    "nominal_seconds": 1.24,
+    "input_rate_simulated": 39.502053388090346,
+    "rate_requested": 39.502107,
+    "compared_seconds": 0,
+    "different_seconds": 0,
+    "agreement": null,
+    "baseline_counts_common": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "candidate_counts_common": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "class_matrix": [
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    ],
+    "legacy_equivalence": "not enough for a 150-sample legacy block",
+    "synthetic_clipped_axis_values": 0,
+    "candidate_output_samples": 0
+  },
+  {
+    "source": "example_data_Sheet2_seg1",
+    "samples": 31,
+    "nominal_seconds": 1.24,
+    "input_rate_simulated": 50.0,
+    "rate_requested": 50.0,
+    "compared_seconds": 0,
+    "different_seconds": 0,
+    "agreement": null,
+    "baseline_counts_common": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "candidate_counts_common": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "class_matrix": [
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    ],
+    "legacy_equivalence": "not enough for a 150-sample legacy block",
+    "synthetic_clipped_axis_values": 0,
+    "candidate_output_samples": 0
+  },
+  {
+    "source": "example_data_Sheet2_seg1",
+    "samples": 31,
+    "nominal_seconds": 1.24,
+    "input_rate_simulated": 57.5,
+    "rate_requested": 57.5,
+    "compared_seconds": 0,
+    "different_seconds": 0,
+    "agreement": null,
+    "baseline_counts_common": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "candidate_counts_common": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "class_matrix": [
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    ],
+    "legacy_equivalence": "not enough for a 150-sample legacy block",
+    "synthetic_clipped_axis_values": 0,
+    "candidate_output_samples": 0
+  },
+  {
+    "source": "example_data_Sheet2_seg2",
+    "samples": 31,
+    "nominal_seconds": 1.24,
+    "input_rate_simulated": 25.0,
+    "rate_requested": 25.0,
+    "compared_seconds": 0,
+    "different_seconds": 0,
+    "agreement": null,
+    "baseline_counts_common": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "candidate_counts_common": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "class_matrix": [
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    ],
+    "legacy_equivalence": "not enough for a 150-sample legacy block",
+    "synthetic_clipped_axis_values": 0,
+    "candidate_output_samples": 0
+  },
+  {
+    "source": "example_data_Sheet2_seg2",
+    "samples": 31,
+    "nominal_seconds": 1.24,
+    "input_rate_simulated": 39.502053388090346,
+    "rate_requested": 39.502107,
+    "compared_seconds": 0,
+    "different_seconds": 0,
+    "agreement": null,
+    "baseline_counts_common": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "candidate_counts_common": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "class_matrix": [
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    ],
+    "legacy_equivalence": "not enough for a 150-sample legacy block",
+    "synthetic_clipped_axis_values": 0,
+    "candidate_output_samples": 0
+  },
+  {
+    "source": "example_data_Sheet2_seg2",
+    "samples": 31,
+    "nominal_seconds": 1.24,
+    "input_rate_simulated": 50.0,
+    "rate_requested": 50.0,
+    "compared_seconds": 0,
+    "different_seconds": 0,
+    "agreement": null,
+    "baseline_counts_common": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "candidate_counts_common": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "class_matrix": [
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    ],
+    "legacy_equivalence": "not enough for a 150-sample legacy block",
+    "synthetic_clipped_axis_values": 0,
+    "candidate_output_samples": 0
+  },
+  {
+    "source": "example_data_Sheet2_seg2",
+    "samples": 31,
+    "nominal_seconds": 1.24,
+    "input_rate_simulated": 57.5,
+    "rate_requested": 57.5,
+    "compared_seconds": 0,
+    "different_seconds": 0,
+    "agreement": null,
+    "baseline_counts_common": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "candidate_counts_common": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "class_matrix": [
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    ],
+    "legacy_equivalence": "not enough for a 150-sample legacy block",
+    "synthetic_clipped_axis_values": 0,
+    "candidate_output_samples": 0
+  },
+  {
+    "source": "example_data_Sheet2_seg3",
+    "samples": 31,
+    "nominal_seconds": 1.24,
+    "input_rate_simulated": 25.0,
+    "rate_requested": 25.0,
+    "compared_seconds": 0,
+    "different_seconds": 0,
+    "agreement": null,
+    "baseline_counts_common": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "candidate_counts_common": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "class_matrix": [
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    ],
+    "legacy_equivalence": "not enough for a 150-sample legacy block",
+    "synthetic_clipped_axis_values": 0,
+    "candidate_output_samples": 0
+  },
+  {
+    "source": "example_data_Sheet2_seg3",
+    "samples": 31,
+    "nominal_seconds": 1.24,
+    "input_rate_simulated": 39.502053388090346,
+    "rate_requested": 39.502107,
+    "compared_seconds": 0,
+    "different_seconds": 0,
+    "agreement": null,
+    "baseline_counts_common": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "candidate_counts_common": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "class_matrix": [
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    ],
+    "legacy_equivalence": "not enough for a 150-sample legacy block",
+    "synthetic_clipped_axis_values": 0,
+    "candidate_output_samples": 0
+  },
+  {
+    "source": "example_data_Sheet2_seg3",
+    "samples": 31,
+    "nominal_seconds": 1.24,
+    "input_rate_simulated": 50.0,
+    "rate_requested": 50.0,
+    "compared_seconds": 0,
+    "different_seconds": 0,
+    "agreement": null,
+    "baseline_counts_common": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "candidate_counts_common": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "class_matrix": [
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    ],
+    "legacy_equivalence": "not enough for a 150-sample legacy block",
+    "synthetic_clipped_axis_values": 0,
+    "candidate_output_samples": 0
+  },
+  {
+    "source": "example_data_Sheet2_seg3",
+    "samples": 31,
+    "nominal_seconds": 1.24,
+    "input_rate_simulated": 57.5,
+    "rate_requested": 57.5,
+    "compared_seconds": 0,
+    "different_seconds": 0,
+    "agreement": null,
+    "baseline_counts_common": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "candidate_counts_common": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "class_matrix": [
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    ],
+    "legacy_equivalence": "not enough for a 150-sample legacy block",
+    "synthetic_clipped_axis_values": 0,
+    "candidate_output_samples": 0
+  }
+]

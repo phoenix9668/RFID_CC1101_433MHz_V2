@@ -56,7 +56,7 @@ target_include_directories(firmware_options INTERFACE Core/Inc App/Inc Platform/
 target_link_libraries(stm32_support PUBLIC firmware_options)
 add_executable(${PROJECT_NAME}
   Core/Startup/startup_stm32l051xx.s Platform/Src/entry.c Platform/Src/interrupts.c
-  App/Src/behavior.c App/Src/fifo_parser.c App/Src/protocol.c App/Src/storage.c
+  App/Src/behavior.c App/Src/resampler.c App/Src/sample_clock.c App/Src/fifo_parser.c App/Src/protocol.c App/Src/storage.c
   App/Src/history.c App/Src/app.c Platform/Src/board.c Platform/Src/sensor.c
   Platform/Src/no_os_port.c Platform/Src/radio.c Platform/Src/syscalls.c Platform/Src/clock.c
   Drivers/ADI/adxl362.c Drivers/PCG/pcg_basic.c)

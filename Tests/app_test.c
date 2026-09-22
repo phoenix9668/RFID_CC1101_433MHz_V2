@@ -11,6 +11,9 @@ static unsigned fifo_words, sample_number, fifo_failures, overrun_requests, writ
 static bool radio_active, fail_radio, fail_store, post_during_write;
 static bool allow_stop=true;
 static uint8_t sent[191];
+static uint32_t sample_phase;
+static uint32_t input_millihz = 39502;
+static bool lost_irq;
 uint32_t board_millis(void) { return ticks; }
 uint32_t board_rtc_millis(void) { return now; }
 uint32_t board_critical_enter(void) { uint32_t p=critical; critical=1; return p; }
@@ -53,7 +56,9 @@ rfid_status_t radio_begin(const uint8_t *p,size_t n)
     assert(sent[182]==report_count%12);
     unsigned slot=(report_count-1)%12, sum=0;
     for(unsigned c=0;c<6;++c) sum+=(sent[38+c*24+slot*2]<<8)|sent[39+c*24+slot*2];
-    assert(sum==1200);
+    /* The initial calibration/FIR warmup is unknown, not invented activity. */
+    if (report_count == 1) assert(sum >= 1188 && sum < 1200);
+    else assert(sum==1200);
     assert(rfid_crc32(sent,187)==((uint32_t)sent[187]<<24|(uint32_t)sent[188]<<16|(uint32_t)sent[189]<<8|sent[190]));
     return RFID_OK;
 }
@@ -70,13 +75,18 @@ static unsigned current_sum(void)
 }
 static void step(void)
 {
-    now+=40; ticks+=40; sample_number++; fifo_words+=3;
-    if(fifo_words>=450) app_signal(APP_EVENT_FIFO);
+    now+=10; ticks+=10; sample_phase += input_millihz;
+    if (sample_phase >= 100000) { sample_phase -= 100000; sample_number++; fifo_words+=3; }
+    assert(fifo_words <= 512);
+    if(fifo_words>=450 && !lost_irq) app_signal(APP_EVENT_FIFO);
     if(now%10000==0) app_signal(APP_EVENT_RTC);
-    if(app_events_pending() || !allow_stop || now%1000==0) allow_stop=app_poll();
+    if(app_events_pending() || !allow_stop || now%1000==0 || app_wakeup_delay_ms()==0) allow_stop=app_poll();
 }
-int main(void)
+int main(int argc, char **argv)
 {
+    if (argc > 1 && strcmp(argv[1], "--nominal") == 0) input_millihz = 50000;
+    if (argc > 1 && strcmp(argv[1], "--fast") == 0) input_millihz = 65000;
+    if (argc > 1 && strcmp(argv[1], "--lost-irq") == 0) lost_irq = true;
     memset(nv,0xff,sizeof(nv));
     nv[0]=0x01020304; nv[1]=0x05060000;
     app_init(); assert(!critical);
@@ -113,13 +123,14 @@ int main(void)
     uint32_t origin = now;
     app_init(); app_snapshot(&s);
     delta = (60 - s.elapsed % 60) * 1000;
-    assert(app_wakeup_delay_ms()==10000);
+    assert(app_wakeup_delay_ms()<=2400);
     now = origin + delta - 1;
+    (void)app_poll();
     assert(app_wakeup_delay_ms()==1);
     now++;
     assert(app_wakeup_delay_ms()==0);
     (void)app_poll();
-    assert(app_wakeup_delay_ms()==10000);
-    puts("PASS: 4h20 scheduler, 13 exact reports, resets, concurrent events and sensor failures");
+    assert(app_wakeup_delay_ms()<=2400);
+    puts("PASS: 4h20 resampled scheduler, warmup explicit, 12 steady 1200-count windows, resets and failures");
     return 0;
 }

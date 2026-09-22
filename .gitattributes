@@ -6,3 +6,9 @@ Drivers/PCG/* -text
 Core/Startup/startup_stm32l051xx.s -text
 PCB/RFID_CC1101_433MHz_V3.8/* -text
 PCB/RFID_CC1101_433MHz_V3.8/*.pdf binary
+# Replay evidence and hashed source files must survive checkout byte-for-byte.
+Doc/ADXL362_Resampling_Validation/** -text
+App/Src/resampler.c -text
+App/Src/resampler_kernel.h -text
+Tools/validate-resampling.py -text
+Tools/behavior_acceptance.py -text

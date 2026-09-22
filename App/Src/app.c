@@ -6,6 +6,8 @@
 #include "history.h"
 #include "protocol.h"
 #include "fifo_parser.h"
+#include "resampler.h"
+#include "sample_clock.h"
 #include "pcg_basic.h"
 #include <string.h>
 #include <stdio.h>
@@ -13,6 +15,9 @@ static volatile uint32_t events;
 static rfid_history_t history;
 static storage_t store = {.read_word = board_eeprom_read, .write_word = board_eeprom_write};
 static fifo_parser_t parser;
+static resampler_t resampler;
+static sample_clock_t sample_clock;
+static uint32_t next_fifo_check;
 static pcg32_random_t rng;
 static uint8_t fifo_bytes[1024], payload[RFID_PAYLOAD_SIZE], identity[6];
 static uint32_t period_start, next_save, next_sensor_retry, next_report;
@@ -24,7 +29,7 @@ uint32_t app_wakeup_delay_ms(void)
     uint32_t now = board_rtc_millis();
     uint32_t delay = 10000;
     const uint32_t deadlines[] = {next_save, period_start + RFID_PERIOD_SECONDS * 1000,
-                                  sensor_ready ? now + 10000 : next_sensor_retry};
+                                  sensor_ready ? next_fifo_check : next_sensor_retry};
     for (unsigned i = 0; i < sizeof(deadlines) / sizeof(deadlines[0]); ++i)
     {
         int32_t remaining = (int32_t)(deadlines[i] - now);
@@ -112,6 +117,10 @@ static void process_fifo(uint32_t now, bool drain)
     {
         sensor_ready = false;
         sensor_errors++;
+        resampler_reset(&resampler);
+        sample_clock_reset(&sample_clock);
+        fifo_parser_reset(&parser);
+        behavior_reset();
         return;
     }
     if (overrun)
@@ -119,15 +128,20 @@ static void process_fifo(uint32_t now, bool drain)
         sensor_errors++;
         fifo_parser_reset(&parser);
         behavior_reset();
+        resampler_reset(&resampler);
+        sample_clock_reset(&sample_clock);
+        next_fifo_check = now + 2400;
         if (sensor_fifo_restart() != RFID_OK)
             sensor_ready = false;
         return;
     }
-    if ((!drain && entries < 450) || !entries)
+    if (!entries)
+    {
+        next_fifo_check = now + 2400;
         return;
-    /* Timestamp each word against the FIFO occupancy captured before reading.
-       ADXL362 ODR is nominal: do not invent samples to force RTC totals. */
-    uint32_t start = now - ((uint32_t)entries * 40 / 3);
+    }
+    if (!drain && entries < 450)
+        return;
     status = sensor_fifo_read(fifo_bytes, entries * 2);
     if (status != RFID_OK)
     {
@@ -135,11 +149,26 @@ static void process_fifo(uint32_t now, bool drain)
         sensor_errors++;
         fifo_parser_reset(&parser);
         behavior_reset();
+        resampler_reset(&resampler);
+        sample_clock_reset(&sample_clock);
+        return;
+    }
+    rfid_status_t timing = sample_clock_batch(&sample_clock, now, entries);
+    uint32_t deadline = sample_clock.ready ? 160000000U / sample_clock.rate_millihz : 2400;
+    if (deadline > 4800) deadline = 4800;
+    next_fifo_check = now + deadline;
+    if (timing != RFID_OK)
+    {
+        fifo_parser_reset(&parser);
+        resampler_reset(&resampler);
+        behavior_reset();
+        if (timing == RFID_INVALID) ++sensor_errors;
         return;
     }
 #if RFID_DIAGNOSTICS
     char trace[80];
-    snprintf(trace, sizeof(trace), "fifo t=%lu words=%u\r\n", (unsigned long)now, entries);
+    snprintf(trace, sizeof(trace), "fifo t=%lu words=%u rate_mHz=%lu\r\n",
+             (unsigned long)now, entries, (unsigned long)sample_clock.rate_millihz);
     board_log(trace);
 #endif
     for (unsigned i = 0; i < entries; ++i)
@@ -151,14 +180,28 @@ static void process_fifo(uint32_t now, bool drain)
         if (parser.discarded != discarded)
         {
             behavior_reset();
+            resampler_reset(&resampler);
             sensor_errors++;
         }
         if (complete)
         {
-            uint8_t result;
-            if (behavior_push(sample, &result))
+            accel_sample_t normalized;
+            uint64_t center;
+            rfid_status_t result_status = resampler_push(&resampler, sample,
+                sample_clock_word_time(&sample_clock, i), &normalized, &center);
+            if (result_status == RFID_INVALID)
             {
-                uint32_t timestamp = start + (i + 1) * 40 / 3;
+                behavior_reset();
+                ++sensor_errors;
+                continue;
+            }
+            if (result_status != RFID_OK) continue;
+            uint8_t result;
+            if (behavior_push(normalized, &result))
+            {
+                /* Preserve legacy classification-at-emission accounting. FIR
+                 * signal time is 320 ms earlier; never backfill sealed windows. */
+                uint32_t timestamp = (uint32_t)((center + RESAMPLER_HALF_US) / 1000);
                 /* A classification ending exactly on the boundary belongs to
                    the second just completed, before the window is sealed. */
                 advance_to(timestamp - 1);
@@ -196,6 +239,9 @@ void app_init(void)
     next_save = period_start + ((uint32_t)history.elapsed / 60 + 1) * 60000;
     behavior_reset();
     fifo_parser_reset(&parser);
+    resampler_reset(&resampler);
+    sample_clock_reset(&sample_clock);
+    next_fifo_check = now + 2400;
     sensor_ready = sensor_init() == RFID_OK;
     if (!sensor_ready)
         sensor_errors++;
@@ -218,11 +264,15 @@ bool app_poll(void)
         {
             behavior_reset();
             fifo_parser_reset(&parser);
+            resampler_reset(&resampler);
+            sample_clock_reset(&sample_clock);
+            next_fifo_check = now + 2400;
         }
         next_sensor_retry = now + 10000;
     }
-    if (sensor_ready && ((flags & (APP_EVENT_FIFO | APP_EVENT_RTC)) || checkpoint || rollover))
-        process_fifo(now, checkpoint || rollover);
+    bool fifo_due = (int32_t)(now - next_fifo_check) >= 0;
+    if (sensor_ready && ((flags & (APP_EVENT_FIFO | APP_EVENT_RTC)) || checkpoint || rollover || fifo_due))
+        process_fifo(now, checkpoint || rollover || fifo_due);
     advance_to(now);
     if (checkpoint)
     {

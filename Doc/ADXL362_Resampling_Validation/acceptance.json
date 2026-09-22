@@ -1,0 +1,2578 @@
+{
+  "interpretation": "Reference agreement, NOT accuracy; no human labels. High-rate inputs are synthetic.",
+  "gate": "Both reference recall and reference precision must meet the class threshold.",
+  "aggregation": "Pool seconds within each rate, never across synthetic rate scenarios. Per-record gates are also reported.",
+  "coverage": "Undefined metrics never pass. Small positive support is reported, not a statistical guarantee.",
+  "results_sha256": "7a0eb73abe68213d210a9e6fb3d40dcba1ed69a47f492d3ec87fefd7a8295fcc",
+  "evaluator_sha256": "08c0b7e276b0cdc6422c59a4df568524fe7103e3e29274d29e6ca127a5af98cb",
+  "verified_csv_sha256": {
+    "vofa_9.15.11_Sheet1_seg1_scheme2_25.csv": "37ea618739da750d6ba359c19d3fcdff93be39c516a7a83b91792c6b91e1751a",
+    "vofa_9.15.11_Sheet1_seg1_scheme2_39.5021.csv": "4dd6327ad9c4cf90887f3beddc36ed7120fe355406b4529a93a49bf90cbe40da",
+    "vofa_9.15.11_Sheet1_seg1_scheme2_50.csv": "3173782fb661d99def1d89fcd7ae49679e904f6e00edb27109ce574564541e6e",
+    "vofa_9.15.11_Sheet1_seg1_scheme2_57.5.csv": "5f85d34294a1b709ee3a887bcd71b30d29365fb4208a270618cf35979383675b",
+    "vofa_9.15.12_Sheet1_seg1_scheme2_25.csv": "23ff557fd16f7ec66b45074da983e65d7a6d2a8a883d13510709735b72164899",
+    "vofa_9.15.12_Sheet1_seg1_scheme2_39.5021.csv": "7f5f09b50d6b0242a96894ef753c553ddb45d75e979b098b44cd0bcf8114714e",
+    "vofa_9.15.12_Sheet1_seg1_scheme2_50.csv": "16d38c9d07bd0854a99fe1c2ee5e74a869dc98e68976a2f6b029df3f36c14659",
+    "vofa_9.15.12_Sheet1_seg1_scheme2_57.5.csv": "97fb69892edd1233db8d8e9330b691b0ac0db2a602fff32f8f4f056cc1733f90",
+    "vofa_9.15.3_Sheet1_seg1_scheme2_25.csv": "0ff3b59ef4004e6622d32805ac0651d449513479ce73fa00f591507231913a4d",
+    "vofa_9.15.3_Sheet1_seg1_scheme2_39.5021.csv": "9e85931d0ea627dfba7b3cc27f240bd8956ee5b74e2fe767e58fe030ac6b02b3",
+    "vofa_9.15.3_Sheet1_seg1_scheme2_50.csv": "0e85e5c89d570e0be723e0a333392eed259865895286b907759fdd767104a767",
+    "vofa_9.15.3_Sheet1_seg1_scheme2_57.5.csv": "e4e4dbdabae0749d0770936300b1c4c7ca2dc8f87bf5f8ca0f67bd8d88a21553",
+    "example_data_Sheet1_seg1_scheme2_25.csv": "ab6c5ac1b3769906faf8d6047849e5caa85f5584131f1010f097288c4da6bc16",
+    "example_data_Sheet1_seg1_scheme2_39.5021.csv": "ab6c5ac1b3769906faf8d6047849e5caa85f5584131f1010f097288c4da6bc16",
+    "example_data_Sheet1_seg1_scheme2_50.csv": "ab6c5ac1b3769906faf8d6047849e5caa85f5584131f1010f097288c4da6bc16",
+    "example_data_Sheet1_seg1_scheme2_57.5.csv": "ab6c5ac1b3769906faf8d6047849e5caa85f5584131f1010f097288c4da6bc16",
+    "example_data_Sheet2_seg1_scheme2_25.csv": "e7f2fe2a5e5cd4485191cc902ff32343b13e56e2737b64b7abc22f08742f261c",
+    "example_data_Sheet2_seg1_scheme2_39.5021.csv": "e7f2fe2a5e5cd4485191cc902ff32343b13e56e2737b64b7abc22f08742f261c",
+    "example_data_Sheet2_seg1_scheme2_50.csv": "e7f2fe2a5e5cd4485191cc902ff32343b13e56e2737b64b7abc22f08742f261c",
+    "example_data_Sheet2_seg1_scheme2_57.5.csv": "e7f2fe2a5e5cd4485191cc902ff32343b13e56e2737b64b7abc22f08742f261c",
+    "example_data_Sheet2_seg2_scheme2_25.csv": "e7f2fe2a5e5cd4485191cc902ff32343b13e56e2737b64b7abc22f08742f261c",
+    "example_data_Sheet2_seg2_scheme2_39.5021.csv": "e7f2fe2a5e5cd4485191cc902ff32343b13e56e2737b64b7abc22f08742f261c",
+    "example_data_Sheet2_seg2_scheme2_50.csv": "e7f2fe2a5e5cd4485191cc902ff32343b13e56e2737b64b7abc22f08742f261c",
+    "example_data_Sheet2_seg2_scheme2_57.5.csv": "e7f2fe2a5e5cd4485191cc902ff32343b13e56e2737b64b7abc22f08742f261c",
+    "example_data_Sheet2_seg3_scheme2_25.csv": "e7f2fe2a5e5cd4485191cc902ff32343b13e56e2737b64b7abc22f08742f261c",
+    "example_data_Sheet2_seg3_scheme2_39.5021.csv": "e7f2fe2a5e5cd4485191cc902ff32343b13e56e2737b64b7abc22f08742f261c",
+    "example_data_Sheet2_seg3_scheme2_50.csv": "e7f2fe2a5e5cd4485191cc902ff32343b13e56e2737b64b7abc22f08742f261c",
+    "example_data_Sheet2_seg3_scheme2_57.5.csv": "e7f2fe2a5e5cd4485191cc902ff32343b13e56e2737b64b7abc22f08742f261c"
+  },
+  "scenarios": [
+    {
+      "rate_requested": 25.0,
+      "filter_only_control": true,
+      "class_matrix": [
+        [
+          600,
+          0,
+          0,
+          0,
+          0,
+          17
+        ],
+        [
+          0,
+          2930,
+          0,
+          0,
+          0,
+          225
+        ],
+        [
+          0,
+          0,
+          11,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          123,
+          190,
+          0,
+          0,
+          0,
+          1838
+        ]
+      ],
+      "status": "unassessable",
+      "classes": [
+        {
+          "class_id": 1,
+          "name": "rest",
+          "threshold_percent": null,
+          "reference_seconds": 617,
+          "candidate_seconds": 723,
+          "matched_seconds": 600,
+          "recall": 0.9724473257698542,
+          "precision": 0.8298755186721992,
+          "status": "not_required"
+        },
+        {
+          "class_id": 2,
+          "name": "ingestion",
+          "threshold_percent": 90,
+          "reference_seconds": 3155,
+          "candidate_seconds": 3120,
+          "matched_seconds": 2930,
+          "recall": 0.9286846275752774,
+          "precision": 0.9391025641025641,
+          "status": "pass"
+        },
+        {
+          "class_id": 3,
+          "name": "movement",
+          "threshold_percent": 95,
+          "reference_seconds": 11,
+          "candidate_seconds": 11,
+          "matched_seconds": 11,
+          "recall": 1.0,
+          "precision": 1.0,
+          "status": "pass"
+        },
+        {
+          "class_id": 4,
+          "name": "climb",
+          "threshold_percent": 95,
+          "reference_seconds": 0,
+          "candidate_seconds": 0,
+          "matched_seconds": 0,
+          "recall": null,
+          "precision": null,
+          "status": "unassessable"
+        },
+        {
+          "class_id": 5,
+          "name": "ruminate",
+          "threshold_percent": 90,
+          "reference_seconds": 0,
+          "candidate_seconds": 0,
+          "matched_seconds": 0,
+          "recall": null,
+          "precision": null,
+          "status": "unassessable"
+        },
+        {
+          "class_id": 6,
+          "name": "other",
+          "threshold_percent": null,
+          "reference_seconds": 2151,
+          "candidate_seconds": 2080,
+          "matched_seconds": 1838,
+          "recall": 0.8544862854486286,
+          "precision": 0.8836538461538461,
+          "status": "not_required"
+        }
+      ]
+    },
+    {
+      "rate_requested": 39.502107,
+      "filter_only_control": false,
+      "class_matrix": [
+        [
+          601,
+          0,
+          0,
+          0,
+          0,
+          16
+        ],
+        [
+          0,
+          2933,
+          0,
+          0,
+          0,
+          222
+        ],
+        [
+          0,
+          0,
+          11,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          128,
+          191,
+          0,
+          0,
+          0,
+          1832
+        ]
+      ],
+      "status": "unassessable",
+      "classes": [
+        {
+          "class_id": 1,
+          "name": "rest",
+          "threshold_percent": null,
+          "reference_seconds": 617,
+          "candidate_seconds": 729,
+          "matched_seconds": 601,
+          "recall": 0.9740680713128039,
+          "precision": 0.8244170096021948,
+          "status": "not_required"
+        },
+        {
+          "class_id": 2,
+          "name": "ingestion",
+          "threshold_percent": 90,
+          "reference_seconds": 3155,
+          "candidate_seconds": 3124,
+          "matched_seconds": 2933,
+          "recall": 0.929635499207607,
+          "precision": 0.9388604353393086,
+          "status": "pass"
+        },
+        {
+          "class_id": 3,
+          "name": "movement",
+          "threshold_percent": 95,
+          "reference_seconds": 11,
+          "candidate_seconds": 11,
+          "matched_seconds": 11,
+          "recall": 1.0,
+          "precision": 1.0,
+          "status": "pass"
+        },
+        {
+          "class_id": 4,
+          "name": "climb",
+          "threshold_percent": 95,
+          "reference_seconds": 0,
+          "candidate_seconds": 0,
+          "matched_seconds": 0,
+          "recall": null,
+          "precision": null,
+          "status": "unassessable"
+        },
+        {
+          "class_id": 5,
+          "name": "ruminate",
+          "threshold_percent": 90,
+          "reference_seconds": 0,
+          "candidate_seconds": 0,
+          "matched_seconds": 0,
+          "recall": null,
+          "precision": null,
+          "status": "unassessable"
+        },
+        {
+          "class_id": 6,
+          "name": "other",
+          "threshold_percent": null,
+          "reference_seconds": 2151,
+          "candidate_seconds": 2070,
+          "matched_seconds": 1832,
+          "recall": 0.8516968851696886,
+          "precision": 0.885024154589372,
+          "status": "not_required"
+        }
+      ]
+    },
+    {
+      "rate_requested": 50.0,
+      "filter_only_control": false,
+      "class_matrix": [
+        [
+          601,
+          0,
+          0,
+          0,
+          0,
+          16
+        ],
+        [
+          0,
+          2926,
+          0,
+          0,
+          0,
+          229
+        ],
+        [
+          0,
+          0,
+          11,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          121,
+          191,
+          0,
+          0,
+          0,
+          1839
+        ]
+      ],
+      "status": "unassessable",
+      "classes": [
+        {
+          "class_id": 1,
+          "name": "rest",
+          "threshold_percent": null,
+          "reference_seconds": 617,
+          "candidate_seconds": 722,
+          "matched_seconds": 601,
+          "recall": 0.9740680713128039,
+          "precision": 0.832409972299169,
+          "status": "not_required"
+        },
+        {
+          "class_id": 2,
+          "name": "ingestion",
+          "threshold_percent": 90,
+          "reference_seconds": 3155,
+          "candidate_seconds": 3117,
+          "matched_seconds": 2926,
+          "recall": 0.9274167987321712,
+          "precision": 0.9387231312159128,
+          "status": "pass"
+        },
+        {
+          "class_id": 3,
+          "name": "movement",
+          "threshold_percent": 95,
+          "reference_seconds": 11,
+          "candidate_seconds": 11,
+          "matched_seconds": 11,
+          "recall": 1.0,
+          "precision": 1.0,
+          "status": "pass"
+        },
+        {
+          "class_id": 4,
+          "name": "climb",
+          "threshold_percent": 95,
+          "reference_seconds": 0,
+          "candidate_seconds": 0,
+          "matched_seconds": 0,
+          "recall": null,
+          "precision": null,
+          "status": "unassessable"
+        },
+        {
+          "class_id": 5,
+          "name": "ruminate",
+          "threshold_percent": 90,
+          "reference_seconds": 0,
+          "candidate_seconds": 0,
+          "matched_seconds": 0,
+          "recall": null,
+          "precision": null,
+          "status": "unassessable"
+        },
+        {
+          "class_id": 6,
+          "name": "other",
+          "threshold_percent": null,
+          "reference_seconds": 2151,
+          "candidate_seconds": 2084,
+          "matched_seconds": 1839,
+          "recall": 0.8549511854951185,
+          "precision": 0.8824376199616123,
+          "status": "not_required"
+        }
+      ]
+    },
+    {
+      "rate_requested": 57.5,
+      "filter_only_control": false,
+      "class_matrix": [
+        [
+          601,
+          0,
+          0,
+          0,
+          0,
+          16
+        ],
+        [
+          0,
+          2926,
+          0,
+          0,
+          0,
+          229
+        ],
+        [
+          0,
+          0,
+          11,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          119,
+          193,
+          0,
+          0,
+          0,
+          1839
+        ]
+      ],
+      "status": "unassessable",
+      "classes": [
+        {
+          "class_id": 1,
+          "name": "rest",
+          "threshold_percent": null,
+          "reference_seconds": 617,
+          "candidate_seconds": 720,
+          "matched_seconds": 601,
+          "recall": 0.9740680713128039,
+          "precision": 0.8347222222222223,
+          "status": "not_required"
+        },
+        {
+          "class_id": 2,
+          "name": "ingestion",
+          "threshold_percent": 90,
+          "reference_seconds": 3155,
+          "candidate_seconds": 3119,
+          "matched_seconds": 2926,
+          "recall": 0.9274167987321712,
+          "precision": 0.9381211926899647,
+          "status": "pass"
+        },
+        {
+          "class_id": 3,
+          "name": "movement",
+          "threshold_percent": 95,
+          "reference_seconds": 11,
+          "candidate_seconds": 11,
+          "matched_seconds": 11,
+          "recall": 1.0,
+          "precision": 1.0,
+          "status": "pass"
+        },
+        {
+          "class_id": 4,
+          "name": "climb",
+          "threshold_percent": 95,
+          "reference_seconds": 0,
+          "candidate_seconds": 0,
+          "matched_seconds": 0,
+          "recall": null,
+          "precision": null,
+          "status": "unassessable"
+        },
+        {
+          "class_id": 5,
+          "name": "ruminate",
+          "threshold_percent": 90,
+          "reference_seconds": 0,
+          "candidate_seconds": 0,
+          "matched_seconds": 0,
+          "recall": null,
+          "precision": null,
+          "status": "unassessable"
+        },
+        {
+          "class_id": 6,
+          "name": "other",
+          "threshold_percent": null,
+          "reference_seconds": 2151,
+          "candidate_seconds": 2084,
+          "matched_seconds": 1839,
+          "recall": 0.8549511854951185,
+          "precision": 0.8824376199616123,
+          "status": "not_required"
+        }
+      ]
+    }
+  ],
+  "per_record": [
+    {
+      "source": "vofa_9.15.11_Sheet1_seg1",
+      "rate_requested": 25.0,
+      "status": "unassessable",
+      "classes": [
+        {
+          "class_id": 1,
+          "name": "rest",
+          "threshold_percent": null,
+          "reference_seconds": 351,
+          "candidate_seconds": 393,
+          "matched_seconds": 339,
+          "recall": 0.9658119658119658,
+          "precision": 0.8625954198473282,
+          "status": "not_required"
+        },
+        {
+          "class_id": 2,
+          "name": "ingestion",
+          "threshold_percent": 90,
+          "reference_seconds": 777,
+          "candidate_seconds": 777,
+          "matched_seconds": 701,
+          "recall": 0.9021879021879022,
+          "precision": 0.9021879021879022,
+          "status": "pass"
+        },
+        {
+          "class_id": 3,
+          "name": "movement",
+          "threshold_percent": 95,
+          "reference_seconds": 4,
+          "candidate_seconds": 4,
+          "matched_seconds": 4,
+          "recall": 1.0,
+          "precision": 1.0,
+          "status": "pass"
+        },
+        {
+          "class_id": 4,
+          "name": "climb",
+          "threshold_percent": 95,
+          "reference_seconds": 0,
+          "candidate_seconds": 0,
+          "matched_seconds": 0,
+          "recall": null,
+          "precision": null,
+          "status": "unassessable"
+        },
+        {
+          "class_id": 5,
+          "name": "ruminate",
+          "threshold_percent": 90,
+          "reference_seconds": 0,
+          "candidate_seconds": 0,
+          "matched_seconds": 0,
+          "recall": null,
+          "precision": null,
+          "status": "unassessable"
+        },
+        {
+          "class_id": 6,
+          "name": "other",
+          "threshold_percent": null,
+          "reference_seconds": 847,
+          "candidate_seconds": 805,
+          "matched_seconds": 717,
+          "recall": 0.846517119244392,
+          "precision": 0.8906832298136645,
+          "status": "not_required"
+        }
+      ]
+    },
+    {
+      "source": "vofa_9.15.11_Sheet1_seg1",
+      "rate_requested": 39.502107,
+      "status": "fail",
+      "classes": [
+        {
+          "class_id": 1,
+          "name": "rest",
+          "threshold_percent": null,
+          "reference_seconds": 351,
+          "candidate_seconds": 395,
+          "matched_seconds": 340,
+          "recall": 0.9686609686609686,
+          "precision": 0.8607594936708861,
+          "status": "not_required"
+        },
+        {
+          "class_id": 2,
+          "name": "ingestion",
+          "threshold_percent": 90,
+          "reference_seconds": 777,
+          "candidate_seconds": 774,
+          "matched_seconds": 698,
+          "recall": 0.8983268983268984,
+          "precision": 0.9018087855297158,
+          "status": "fail"
+        },
+        {
+          "class_id": 3,
+          "name": "movement",
+          "threshold_percent": 95,
+          "reference_seconds": 4,
+          "candidate_seconds": 4,
+          "matched_seconds": 4,
+          "recall": 1.0,
+          "precision": 1.0,
+          "status": "pass"
+        },
+        {
+          "class_id": 4,
+          "name": "climb",
+          "threshold_percent": 95,
+          "reference_seconds": 0,
+          "candidate_seconds": 0,
+          "matched_seconds": 0,
+          "recall": null,
+          "precision": null,
+          "status": "unassessable"
+        },
+        {
+          "class_id": 5,
+          "name": "ruminate",
+          "threshold_percent": 90,
+          "reference_seconds": 0,
+          "candidate_seconds": 0,
+          "matched_seconds": 0,
+          "recall": null,
+          "precision": null,
+          "status": "unassessable"
+        },
+        {
+          "class_id": 6,
+          "name": "other",
+          "threshold_percent": null,
+          "reference_seconds": 847,
+          "candidate_seconds": 806,
+          "matched_seconds": 716,
+          "recall": 0.8453364817001181,
+          "precision": 0.8883374689826302,
+          "status": "not_required"
+        }
+      ]
+    },
+    {
+      "source": "vofa_9.15.11_Sheet1_seg1",
+      "rate_requested": 50.0,
+      "status": "fail",
+      "classes": [
+        {
+          "class_id": 1,
+          "name": "rest",
+          "threshold_percent": null,
+          "reference_seconds": 351,
+          "candidate_seconds": 391,
+          "matched_seconds": 339,
+          "recall": 0.9658119658119658,
+          "precision": 0.8670076726342711,
+          "status": "not_required"
+        },
+        {
+          "class_id": 2,
+          "name": "ingestion",
+          "threshold_percent": 90,
+          "reference_seconds": 777,
+          "candidate_seconds": 774,
+          "matched_seconds": 699,
+          "recall": 0.8996138996138996,
+          "precision": 0.9031007751937985,
+          "status": "fail"
+        },
+        {
+          "class_id": 3,
+          "name": "movement",
+          "threshold_percent": 95,
+          "reference_seconds": 4,
+          "candidate_seconds": 4,
+          "matched_seconds": 4,
+          "recall": 1.0,
+          "precision": 1.0,
+          "status": "pass"
+        },
+        {
+          "class_id": 4,
+          "name": "climb",
+          "threshold_percent": 95,
+          "reference_seconds": 0,
+          "candidate_seconds": 0,
+          "matched_seconds": 0,
+          "recall": null,
+          "precision": null,
+          "status": "unassessable"
+        },
+        {
+          "class_id": 5,
+          "name": "ruminate",
+          "threshold_percent": 90,
+          "reference_seconds": 0,
+          "candidate_seconds": 0,
+          "matched_seconds": 0,
+          "recall": null,
+          "precision": null,
+          "status": "unassessable"
+        },
+        {
+          "class_id": 6,
+          "name": "other",
+          "threshold_percent": null,
+          "reference_seconds": 847,
+          "candidate_seconds": 810,
+          "matched_seconds": 720,
+          "recall": 0.8500590318772137,
+          "precision": 0.8888888888888888,
+          "status": "not_required"
+        }
+      ]
+    },
+    {
+      "source": "vofa_9.15.11_Sheet1_seg1",
+      "rate_requested": 57.5,
+      "status": "unassessable",
+      "classes": [
+        {
+          "class_id": 1,
+          "name": "rest",
+          "threshold_percent": null,
+          "reference_seconds": 351,
+          "candidate_seconds": 393,
+          "matched_seconds": 340,
+          "recall": 0.9686609686609686,
+          "precision": 0.8651399491094147,
+          "status": "not_required"
+        },
+        {
+          "class_id": 2,
+          "name": "ingestion",
+          "threshold_percent": 90,
+          "reference_seconds": 777,
+          "candidate_seconds": 775,
+          "matched_seconds": 700,
+          "recall": 0.9009009009009009,
+          "precision": 0.9032258064516129,
+          "status": "pass"
+        },
+        {
+          "class_id": 3,
+          "name": "movement",
+          "threshold_percent": 95,
+          "reference_seconds": 4,
+          "candidate_seconds": 4,
+          "matched_seconds": 4,
+          "recall": 1.0,
+          "precision": 1.0,
+          "status": "pass"
+        },
+        {
+          "class_id": 4,
+          "name": "climb",
+          "threshold_percent": 95,
+          "reference_seconds": 0,
+          "candidate_seconds": 0,
+          "matched_seconds": 0,
+          "recall": null,
+          "precision": null,
+          "status": "unassessable"
+        },
+        {
+          "class_id": 5,
+          "name": "ruminate",
+          "threshold_percent": 90,
+          "reference_seconds": 0,
+          "candidate_seconds": 0,
+          "matched_seconds": 0,
+          "recall": null,
+          "precision": null,
+          "status": "unassessable"
+        },
+        {
+          "class_id": 6,
+          "name": "other",
+          "threshold_percent": null,
+          "reference_seconds": 847,
+          "candidate_seconds": 807,
+          "matched_seconds": 719,
+          "recall": 0.8488783943329398,
+          "precision": 0.8909541511771994,
+          "status": "not_required"
+        }
+      ]
+    },
+    {
+      "source": "vofa_9.15.12_Sheet1_seg1",
+      "rate_requested": 25.0,
+      "status": "unassessable",
+      "classes": [
+        {
+          "class_id": 1,
+          "name": "rest",
+          "threshold_percent": null,
+          "reference_seconds": 159,
+          "candidate_seconds": 198,
+          "matched_seconds": 157,
+          "recall": 0.9874213836477987,
+          "precision": 0.7929292929292929,
+          "status": "not_required"
+        },
+        {
+          "class_id": 2,
+          "name": "ingestion",
+          "threshold_percent": 90,
+          "reference_seconds": 1186,
+          "candidate_seconds": 1172,
+          "matched_seconds": 1116,
+          "recall": 0.9409780775716695,
+          "precision": 0.9522184300341296,
+          "status": "pass"
+        },
+        {
+          "class_id": 3,
+          "name": "movement",
+          "threshold_percent": 95,
+          "reference_seconds": 0,
+          "candidate_seconds": 0,
+          "matched_seconds": 0,
+          "recall": null,
+          "precision": null,
+          "status": "unassessable"
+        },
+        {
+          "class_id": 4,
+          "name": "climb",
+          "threshold_percent": 95,
+          "reference_seconds": 0,
+          "candidate_seconds": 0,
+          "matched_seconds": 0,
+          "recall": null,
+          "precision": null,
+          "status": "unassessable"
+        },
+        {
+          "class_id": 5,
+          "name": "ruminate",
+          "threshold_percent": 90,
+          "reference_seconds": 0,
+          "candidate_seconds": 0,
+          "matched_seconds": 0,
+          "recall": null,
+          "precision": null,
+          "status": "unassessable"
+        },
+        {
+          "class_id": 6,
+          "name": "other",
+          "threshold_percent": null,
+          "reference_seconds": 619,
+          "candidate_seconds": 594,
+          "matched_seconds": 522,
+          "recall": 0.8432956381260097,
+          "precision": 0.8787878787878788,
+          "status": "not_required"
+        }
+      ]
+    },
+    {
+      "source": "vofa_9.15.12_Sheet1_seg1",
+      "rate_requested": 39.502107,
+      "status": "unassessable",
+      "classes": [
+        {
+          "class_id": 1,
+          "name": "rest",
+          "threshold_percent": null,
+          "reference_seconds": 159,
+          "candidate_seconds": 200,
+          "matched_seconds": 157,
+          "recall": 0.9874213836477987,
+          "precision": 0.785,
+          "status": "not_required"
+        },
+        {
+          "class_id": 2,
+          "name": "ingestion",
+          "threshold_percent": 90,
+          "reference_seconds": 1186,
+          "candidate_seconds": 1175,
+          "matched_seconds": 1117,
+          "recall": 0.9418212478920742,
+          "precision": 0.9506382978723404,
+          "status": "pass"
+        },
+        {
+          "class_id": 3,
+          "name": "movement",
+          "threshold_percent": 95,
+          "reference_seconds": 0,
+          "candidate_seconds": 0,
+          "matched_seconds": 0,
+          "recall": null,
+          "precision": null,
+          "status": "unassessable"
+        },
+        {
+          "class_id": 4,
+          "name": "climb",
+          "threshold_percent": 95,
+          "reference_seconds": 0,
+          "candidate_seconds": 0,
+          "matched_seconds": 0,
+          "recall": null,
+          "precision": null,
+          "status": "unassessable"
+        },
+        {
+          "class_id": 5,
+          "name": "ruminate",
+          "threshold_percent": 90,
+          "reference_seconds": 0,
+          "candidate_seconds": 0,
+          "matched_seconds": 0,
+          "recall": null,
+          "precision": null,
+          "status": "unassessable"
+        },
+        {
+          "class_id": 6,
+          "name": "other",
+          "threshold_percent": null,
+          "reference_seconds": 619,
+          "candidate_seconds": 589,
+          "matched_seconds": 518,
+          "recall": 0.8368336025848142,
+          "precision": 0.8794567062818336,
+          "status": "not_required"
+        }
+      ]
+    },
+    {
+      "source": "vofa_9.15.12_Sheet1_seg1",
+      "rate_requested": 50.0,
+      "status": "unassessable",
+      "classes": [
+        {
+          "class_id": 1,
+          "name": "rest",
+          "threshold_percent": null,
+          "reference_seconds": 159,
+          "candidate_seconds": 201,
+          "matched_seconds": 158,
+          "recall": 0.9937106918238994,
+          "precision": 0.7860696517412935,
+          "status": "not_required"
+        },
+        {
+          "class_id": 2,
+          "name": "ingestion",
+          "threshold_percent": 90,
+          "reference_seconds": 1186,
+          "candidate_seconds": 1171,
+          "matched_seconds": 1113,
+          "recall": 0.9384485666104553,
+          "precision": 0.950469684030743,
+          "status": "pass"
+        },
+        {
+          "class_id": 3,
+          "name": "movement",
+          "threshold_percent": 95,
+          "reference_seconds": 0,
+          "candidate_seconds": 0,
+          "matched_seconds": 0,
+          "recall": null,
+          "precision": null,
+          "status": "unassessable"
+        },
+        {
+          "class_id": 4,
+          "name": "climb",
+          "threshold_percent": 95,
+          "reference_seconds": 0,
+          "candidate_seconds": 0,
+          "matched_seconds": 0,
+          "recall": null,
+          "precision": null,
+          "status": "unassessable"
+        },
+        {
+          "class_id": 5,
+          "name": "ruminate",
+          "threshold_percent": 90,
+          "reference_seconds": 0,
+          "candidate_seconds": 0,
+          "matched_seconds": 0,
+          "recall": null,
+          "precision": null,
+          "status": "unassessable"
+        },
+        {
+          "class_id": 6,
+          "name": "other",
+          "threshold_percent": null,
+          "reference_seconds": 619,
+          "candidate_seconds": 592,
+          "matched_seconds": 518,
+          "recall": 0.8368336025848142,
+          "precision": 0.875,
+          "status": "not_required"
+        }
+      ]
+    },
+    {
+      "source": "vofa_9.15.12_Sheet1_seg1",
+      "rate_requested": 57.5,
+      "status": "unassessable",
+      "classes": [
+        {
+          "class_id": 1,
+          "name": "rest",
+          "threshold_percent": null,
+          "reference_seconds": 159,
+          "candidate_seconds": 195,
+          "matched_seconds": 157,
+          "recall": 0.9874213836477987,
+          "precision": 0.8051282051282052,
+          "status": "not_required"
+        },
+        {
+          "class_id": 2,
+          "name": "ingestion",
+          "threshold_percent": 90,
+          "reference_seconds": 1186,
+          "candidate_seconds": 1175,
+          "matched_seconds": 1116,
+          "recall": 0.9409780775716695,
+          "precision": 0.9497872340425532,
+          "status": "pass"
+        },
+        {
+          "class_id": 3,
+          "name": "movement",
+          "threshold_percent": 95,
+          "reference_seconds": 0,
+          "candidate_seconds": 0,
+          "matched_seconds": 0,
+          "recall": null,
+          "precision": null,
+          "status": "unassessable"
+        },
+        {
+          "class_id": 4,
+          "name": "climb",
+          "threshold_percent": 95,
+          "reference_seconds": 0,
+          "candidate_seconds": 0,
+          "matched_seconds": 0,
+          "recall": null,
+          "precision": null,
+          "status": "unassessable"
+        },
+        {
+          "class_id": 5,
+          "name": "ruminate",
+          "threshold_percent": 90,
+          "reference_seconds": 0,
+          "candidate_seconds": 0,
+          "matched_seconds": 0,
+          "recall": null,
+          "precision": null,
+          "status": "unassessable"
+        },
+        {
+          "class_id": 6,
+          "name": "other",
+          "threshold_percent": null,
+          "reference_seconds": 619,
+          "candidate_seconds": 594,
+          "matched_seconds": 522,
+          "recall": 0.8432956381260097,
+          "precision": 0.8787878787878788,
+          "status": "not_required"
+        }
+      ]
+    },
+    {
+      "source": "vofa_9.15.3_Sheet1_seg1",
+      "rate_requested": 25.0,
+      "status": "unassessable",
+      "classes": [
+        {
+          "class_id": 1,
+          "name": "rest",
+          "threshold_percent": null,
+          "reference_seconds": 107,
+          "candidate_seconds": 131,
+          "matched_seconds": 104,
+          "recall": 0.9719626168224299,
+          "precision": 0.7938931297709924,
+          "status": "not_required"
+        },
+        {
+          "class_id": 2,
+          "name": "ingestion",
+          "threshold_percent": 90,
+          "reference_seconds": 1192,
+          "candidate_seconds": 1171,
+          "matched_seconds": 1113,
+          "recall": 0.9337248322147651,
+          "precision": 0.950469684030743,
+          "status": "pass"
+        },
+        {
+          "class_id": 3,
+          "name": "movement",
+          "threshold_percent": 95,
+          "reference_seconds": 3,
+          "candidate_seconds": 3,
+          "matched_seconds": 3,
+          "recall": 1.0,
+          "precision": 1.0,
+          "status": "pass"
+        },
+        {
+          "class_id": 4,
+          "name": "climb",
+          "threshold_percent": 95,
+          "reference_seconds": 0,
+          "candidate_seconds": 0,
+          "matched_seconds": 0,
+          "recall": null,
+          "precision": null,
+          "status": "unassessable"
+        },
+        {
+          "class_id": 5,
+          "name": "ruminate",
+          "threshold_percent": 90,
+          "reference_seconds": 0,
+          "candidate_seconds": 0,
+          "matched_seconds": 0,
+          "recall": null,
+          "precision": null,
+          "status": "unassessable"
+        },
+        {
+          "class_id": 6,
+          "name": "other",
+          "threshold_percent": null,
+          "reference_seconds": 677,
+          "candidate_seconds": 674,
+          "matched_seconds": 592,
+          "recall": 0.8744460856720827,
+          "precision": 0.8783382789317508,
+          "status": "not_required"
+        }
+      ]
+    },
+    {
+      "source": "vofa_9.15.3_Sheet1_seg1",
+      "rate_requested": 39.502107,
+      "status": "unassessable",
+      "classes": [
+        {
+          "class_id": 1,
+          "name": "rest",
+          "threshold_percent": null,
+          "reference_seconds": 107,
+          "candidate_seconds": 133,
+          "matched_seconds": 104,
+          "recall": 0.9719626168224299,
+          "precision": 0.7819548872180451,
+          "status": "not_required"
+        },
+        {
+          "class_id": 2,
+          "name": "ingestion",
+          "threshold_percent": 90,
+          "reference_seconds": 1192,
+          "candidate_seconds": 1175,
+          "matched_seconds": 1118,
+          "recall": 0.9379194630872483,
+          "precision": 0.9514893617021276,
+          "status": "pass"
+        },
+        {
+          "class_id": 3,
+          "name": "movement",
+          "threshold_percent": 95,
+          "reference_seconds": 3,
+          "candidate_seconds": 3,
+          "matched_seconds": 3,
+          "recall": 1.0,
+          "precision": 1.0,
+          "status": "pass"
+        },
+        {
+          "class_id": 4,
+          "name": "climb",
+          "threshold_percent": 95,
+          "reference_seconds": 0,
+          "candidate_seconds": 0,
+          "matched_seconds": 0,
+          "recall": null,
+          "precision": null,
+          "status": "unassessable"
+        },
+        {
+          "class_id": 5,
+          "name": "ruminate",
+          "threshold_percent": 90,
+          "reference_seconds": 0,
+          "candidate_seconds": 0,
+          "matched_seconds": 0,
+          "recall": null,
+          "precision": null,
+          "status": "unassessable"
+        },
+        {
+          "class_id": 6,
+          "name": "other",
+          "threshold_percent": null,
+          "reference_seconds": 677,
+          "candidate_seconds": 668,
+          "matched_seconds": 591,
+          "recall": 0.8729689807976366,
+          "precision": 0.8847305389221557,
+          "status": "not_required"
+        }
+      ]
+    },
+    {
+      "source": "vofa_9.15.3_Sheet1_seg1",
+      "rate_requested": 50.0,
+      "status": "unassessable",
+      "classes": [
+        {
+          "class_id": 1,
+          "name": "rest",
+          "threshold_percent": null,
+          "reference_seconds": 107,
+          "candidate_seconds": 129,
+          "matched_seconds": 104,
+          "recall": 0.9719626168224299,
+          "precision": 0.8062015503875969,
+          "status": "not_required"
+        },
+        {
+          "class_id": 2,
+          "name": "ingestion",
+          "threshold_percent": 90,
+          "reference_seconds": 1192,
+          "candidate_seconds": 1172,
+          "matched_seconds": 1114,
+          "recall": 0.9345637583892618,
+          "precision": 0.9505119453924915,
+          "status": "pass"
+        },
+        {
+          "class_id": 3,
+          "name": "movement",
+          "threshold_percent": 95,
+          "reference_seconds": 3,
+          "candidate_seconds": 3,
+          "matched_seconds": 3,
+          "recall": 1.0,
+          "precision": 1.0,
+          "status": "pass"
+        },
+        {
+          "class_id": 4,
+          "name": "climb",
+          "threshold_percent": 95,
+          "reference_seconds": 0,
+          "candidate_seconds": 0,
+          "matched_seconds": 0,
+          "recall": null,
+          "precision": null,
+          "status": "unassessable"
+        },
+        {
+          "class_id": 5,
+          "name": "ruminate",
+          "threshold_percent": 90,
+          "reference_seconds": 0,
+          "candidate_seconds": 0,
+          "matched_seconds": 0,
+          "recall": null,
+          "precision": null,
+          "status": "unassessable"
+        },
+        {
+          "class_id": 6,
+          "name": "other",
+          "threshold_percent": null,
+          "reference_seconds": 677,
+          "candidate_seconds": 675,
+          "matched_seconds": 594,
+          "recall": 0.8774002954209749,
+          "precision": 0.88,
+          "status": "not_required"
+        }
+      ]
+    },
+    {
+      "source": "vofa_9.15.3_Sheet1_seg1",
+      "rate_requested": 57.5,
+      "status": "unassessable",
+      "classes": [
+        {
+          "class_id": 1,
+          "name": "rest",
+          "threshold_percent": null,
+          "reference_seconds": 107,
+          "candidate_seconds": 131,
+          "matched_seconds": 104,
+          "recall": 0.9719626168224299,
+          "precision": 0.7938931297709924,
+          "status": "not_required"
+        },
+        {
+          "class_id": 2,
+          "name": "ingestion",
+          "threshold_percent": 90,
+          "reference_seconds": 1192,
+          "candidate_seconds": 1169,
+          "matched_seconds": 1110,
+          "recall": 0.9312080536912751,
+          "precision": 0.9495295124037639,
+          "status": "pass"
+        },
+        {
+          "class_id": 3,
+          "name": "movement",
+          "threshold_percent": 95,
+          "reference_seconds": 3,
+          "candidate_seconds": 3,
+          "matched_seconds": 3,
+          "recall": 1.0,
+          "precision": 1.0,
+          "status": "pass"
+        },
+        {
+          "class_id": 4,
+          "name": "climb",
+          "threshold_percent": 95,
+          "reference_seconds": 0,
+          "candidate_seconds": 0,
+          "matched_seconds": 0,
+          "recall": null,
+          "precision": null,
+          "status": "unassessable"
+        },
+        {
+          "class_id": 5,
+          "name": "ruminate",
+          "threshold_percent": 90,
+          "reference_seconds": 0,
+          "candidate_seconds": 0,
+          "matched_seconds": 0,
+          "recall": null,
+          "precision": null,
+          "status": "unassessable"
+        },
+        {
+          "class_id": 6,
+          "name": "other",
+          "threshold_percent": null,
+          "reference_seconds": 677,
+          "candidate_seconds": 676,
+          "matched_seconds": 591,
+          "recall": 0.8729689807976366,
+          "precision": 0.8742603550295858,
+          "status": "not_required"
+        }
+      ]
+    },
+    {
+      "source": "example_data_Sheet1_seg1",
+      "rate_requested": 25.0,
+      "status": "unassessable",
+      "classes": [
+        {
+          "class_id": 1,
+          "name": "rest",
+          "threshold_percent": null,
+          "reference_seconds": 0,
+          "candidate_seconds": 1,
+          "matched_seconds": 0,
+          "recall": null,
+          "precision": 0.0,
+          "status": "not_required"
+        },
+        {
+          "class_id": 2,
+          "name": "ingestion",
+          "threshold_percent": 90,
+          "reference_seconds": 0,
+          "candidate_seconds": 0,
+          "matched_seconds": 0,
+          "recall": null,
+          "precision": null,
+          "status": "unassessable"
+        },
+        {
+          "class_id": 3,
+          "name": "movement",
+          "threshold_percent": 95,
+          "reference_seconds": 4,
+          "candidate_seconds": 4,
+          "matched_seconds": 4,
+          "recall": 1.0,
+          "precision": 1.0,
+          "status": "pass"
+        },
+        {
+          "class_id": 4,
+          "name": "climb",
+          "threshold_percent": 95,
+          "reference_seconds": 0,
+          "candidate_seconds": 0,
+          "matched_seconds": 0,
+          "recall": null,
+          "precision": null,
+          "status": "unassessable"
+        },
+        {
+          "class_id": 5,
+          "name": "ruminate",
+          "threshold_percent": 90,
+          "reference_seconds": 0,
+          "candidate_seconds": 0,
+          "matched_seconds": 0,
+          "recall": null,
+          "precision": null,
+          "status": "unassessable"
+        },
+        {
+          "class_id": 6,
+          "name": "other",
+          "threshold_percent": null,
+          "reference_seconds": 8,
+          "candidate_seconds": 7,
+          "matched_seconds": 7,
+          "recall": 0.875,
+          "precision": 1.0,
+          "status": "not_required"
+        }
+      ]
+    },
+    {
+      "source": "example_data_Sheet1_seg1",
+      "rate_requested": 39.502107,
+      "status": "unassessable",
+      "classes": [
+        {
+          "class_id": 1,
+          "name": "rest",
+          "threshold_percent": null,
+          "reference_seconds": 0,
+          "candidate_seconds": 1,
+          "matched_seconds": 0,
+          "recall": null,
+          "precision": 0.0,
+          "status": "not_required"
+        },
+        {
+          "class_id": 2,
+          "name": "ingestion",
+          "threshold_percent": 90,
+          "reference_seconds": 0,
+          "candidate_seconds": 0,
+          "matched_seconds": 0,
+          "recall": null,
+          "precision": null,
+          "status": "unassessable"
+        },
+        {
+          "class_id": 3,
+          "name": "movement",
+          "threshold_percent": 95,
+          "reference_seconds": 4,
+          "candidate_seconds": 4,
+          "matched_seconds": 4,
+          "recall": 1.0,
+          "precision": 1.0,
+          "status": "pass"
+        },
+        {
+          "class_id": 4,
+          "name": "climb",
+          "threshold_percent": 95,
+          "reference_seconds": 0,
+          "candidate_seconds": 0,
+          "matched_seconds": 0,
+          "recall": null,
+          "precision": null,
+          "status": "unassessable"
+        },
+        {
+          "class_id": 5,
+          "name": "ruminate",
+          "threshold_percent": 90,
+          "reference_seconds": 0,
+          "candidate_seconds": 0,
+          "matched_seconds": 0,
+          "recall": null,
+          "precision": null,
+          "status": "unassessable"
+        },
+        {
+          "class_id": 6,
+          "name": "other",
+          "threshold_percent": null,
+          "reference_seconds": 8,
+          "candidate_seconds": 7,
+          "matched_seconds": 7,
+          "recall": 0.875,
+          "precision": 1.0,
+          "status": "not_required"
+        }
+      ]
+    },
+    {
+      "source": "example_data_Sheet1_seg1",
+      "rate_requested": 50.0,
+      "status": "unassessable",
+      "classes": [
+        {
+          "class_id": 1,
+          "name": "rest",
+          "threshold_percent": null,
+          "reference_seconds": 0,
+          "candidate_seconds": 1,
+          "matched_seconds": 0,
+          "recall": null,
+          "precision": 0.0,
+          "status": "not_required"
+        },
+        {
+          "class_id": 2,
+          "name": "ingestion",
+          "threshold_percent": 90,
+          "reference_seconds": 0,
+          "candidate_seconds": 0,
+          "matched_seconds": 0,
+          "recall": null,
+          "precision": null,
+          "status": "unassessable"
+        },
+        {
+          "class_id": 3,
+          "name": "movement",
+          "threshold_percent": 95,
+          "reference_seconds": 4,
+          "candidate_seconds": 4,
+          "matched_seconds": 4,
+          "recall": 1.0,
+          "precision": 1.0,
+          "status": "pass"
+        },
+        {
+          "class_id": 4,
+          "name": "climb",
+          "threshold_percent": 95,
+          "reference_seconds": 0,
+          "candidate_seconds": 0,
+          "matched_seconds": 0,
+          "recall": null,
+          "precision": null,
+          "status": "unassessable"
+        },
+        {
+          "class_id": 5,
+          "name": "ruminate",
+          "threshold_percent": 90,
+          "reference_seconds": 0,
+          "candidate_seconds": 0,
+          "matched_seconds": 0,
+          "recall": null,
+          "precision": null,
+          "status": "unassessable"
+        },
+        {
+          "class_id": 6,
+          "name": "other",
+          "threshold_percent": null,
+          "reference_seconds": 8,
+          "candidate_seconds": 7,
+          "matched_seconds": 7,
+          "recall": 0.875,
+          "precision": 1.0,
+          "status": "not_required"
+        }
+      ]
+    },
+    {
+      "source": "example_data_Sheet1_seg1",
+      "rate_requested": 57.5,
+      "status": "unassessable",
+      "classes": [
+        {
+          "class_id": 1,
+          "name": "rest",
+          "threshold_percent": null,
+          "reference_seconds": 0,
+          "candidate_seconds": 1,
+          "matched_seconds": 0,
+          "recall": null,
+          "precision": 0.0,
+          "status": "not_required"
+        },
+        {
+          "class_id": 2,
+          "name": "ingestion",
+          "threshold_percent": 90,
+          "reference_seconds": 0,
+          "candidate_seconds": 0,
+          "matched_seconds": 0,
+          "recall": null,
+          "precision": null,
+          "status": "unassessable"
+        },
+        {
+          "class_id": 3,
+          "name": "movement",
+          "threshold_percent": 95,
+          "reference_seconds": 4,
+          "candidate_seconds": 4,
+          "matched_seconds": 4,
+          "recall": 1.0,
+          "precision": 1.0,
+          "status": "pass"
+        },
+        {
+          "class_id": 4,
+          "name": "climb",
+          "threshold_percent": 95,
+          "reference_seconds": 0,
+          "candidate_seconds": 0,
+          "matched_seconds": 0,
+          "recall": null,
+          "precision": null,
+          "status": "unassessable"
+        },
+        {
+          "class_id": 5,
+          "name": "ruminate",
+          "threshold_percent": 90,
+          "reference_seconds": 0,
+          "candidate_seconds": 0,
+          "matched_seconds": 0,
+          "recall": null,
+          "precision": null,
+          "status": "unassessable"
+        },
+        {
+          "class_id": 6,
+          "name": "other",
+          "threshold_percent": null,
+          "reference_seconds": 8,
+          "candidate_seconds": 7,
+          "matched_seconds": 7,
+          "recall": 0.875,
+          "precision": 1.0,
+          "status": "not_required"
+        }
+      ]
+    },
+    {
+      "source": "example_data_Sheet2_seg1",
+      "rate_requested": 25.0,
+      "status": "unassessable",
+      "classes": [
+        {
+          "class_id": 1,
+          "name": "rest",
+          "threshold_percent": null,
+          "reference_seconds": 0,
+          "candidate_seconds": 0,
+          "matched_seconds": 0,
+          "recall": null,
+          "precision": null,
+          "status": "not_required"
+        },
+        {
+          "class_id": 2,
+          "name": "ingestion",
+          "threshold_percent": 90,
+          "reference_seconds": 0,
+          "candidate_seconds": 0,
+          "matched_seconds": 0,
+          "recall": null,
+          "precision": null,
+          "status": "unassessable"
+        },
+        {
+          "class_id": 3,
+          "name": "movement",
+          "threshold_percent": 95,
+          "reference_seconds": 0,
+          "candidate_seconds": 0,
+          "matched_seconds": 0,
+          "recall": null,
+          "precision": null,
+          "status": "unassessable"
+        },
+        {
+          "class_id": 4,
+          "name": "climb",
+          "threshold_percent": 95,
+          "reference_seconds": 0,
+          "candidate_seconds": 0,
+          "matched_seconds": 0,
+          "recall": null,
+          "precision": null,
+          "status": "unassessable"
+        },
+        {
+          "class_id": 5,
+          "name": "ruminate",
+          "threshold_percent": 90,
+          "reference_seconds": 0,
+          "candidate_seconds": 0,
+          "matched_seconds": 0,
+          "recall": null,
+          "precision": null,
+          "status": "unassessable"
+        },
+        {
+          "class_id": 6,
+          "name": "other",
+          "threshold_percent": null,
+          "reference_seconds": 0,
+          "candidate_seconds": 0,
+          "matched_seconds": 0,
+          "recall": null,
+          "precision": null,
+          "status": "not_required"
+        }
+      ]
+    },
+    {
+      "source": "example_data_Sheet2_seg1",
+      "rate_requested": 39.502107,
+      "status": "unassessable",
+      "classes": [
+        {
+          "class_id": 1,
+          "name": "rest",
+          "threshold_percent": null,
+          "reference_seconds": 0,
+          "candidate_seconds": 0,
+          "matched_seconds": 0,
+          "recall": null,
+          "precision": null,
+          "status": "not_required"
+        },
+        {
+          "class_id": 2,
+          "name": "ingestion",
+          "threshold_percent": 90,
+          "reference_seconds": 0,
+          "candidate_seconds": 0,
+          "matched_seconds": 0,
+          "recall": null,
+          "precision": null,
+          "status": "unassessable"
+        },
+        {
+          "class_id": 3,
+          "name": "movement",
+          "threshold_percent": 95,
+          "reference_seconds": 0,
+          "candidate_seconds": 0,
+          "matched_seconds": 0,
+          "recall": null,
+          "precision": null,
+          "status": "unassessable"
+        },
+        {
+          "class_id": 4,
+          "name": "climb",
+          "threshold_percent": 95,
+          "reference_seconds": 0,
+          "candidate_seconds": 0,
+          "matched_seconds": 0,
+          "recall": null,
+          "precision": null,
+          "status": "unassessable"
+        },
+        {
+          "class_id": 5,
+          "name": "ruminate",
+          "threshold_percent": 90,
+          "reference_seconds": 0,
+          "candidate_seconds": 0,
+          "matched_seconds": 0,
+          "recall": null,
+          "precision": null,
+          "status": "unassessable"
+        },
+        {
+          "class_id": 6,
+          "name": "other",
+          "threshold_percent": null,
+          "reference_seconds": 0,
+          "candidate_seconds": 0,
+          "matched_seconds": 0,
+          "recall": null,
+          "precision": null,
+          "status": "not_required"
+        }
+      ]
+    },
+    {
+      "source": "example_data_Sheet2_seg1",
+      "rate_requested": 50.0,
+      "status": "unassessable",
+      "classes": [
+        {
+          "class_id": 1,
+          "name": "rest",
+          "threshold_percent": null,
+          "reference_seconds": 0,
+          "candidate_seconds": 0,
+          "matched_seconds": 0,
+          "recall": null,
+          "precision": null,
+          "status": "not_required"
+        },
+        {
+          "class_id": 2,
+          "name": "ingestion",
+          "threshold_percent": 90,
+          "reference_seconds": 0,
+          "candidate_seconds": 0,
+          "matched_seconds": 0,
+          "recall": null,
+          "precision": null,
+          "status": "unassessable"
+        },
+        {
+          "class_id": 3,
+          "name": "movement",
+          "threshold_percent": 95,
+          "reference_seconds": 0,
+          "candidate_seconds": 0,
+          "matched_seconds": 0,
+          "recall": null,
+          "precision": null,
+          "status": "unassessable"
+        },
+        {
+          "class_id": 4,
+          "name": "climb",
+          "threshold_percent": 95,
+          "reference_seconds": 0,
+          "candidate_seconds": 0,
+          "matched_seconds": 0,
+          "recall": null,
+          "precision": null,
+          "status": "unassessable"
+        },
+        {
+          "class_id": 5,
+          "name": "ruminate",
+          "threshold_percent": 90,
+          "reference_seconds": 0,
+          "candidate_seconds": 0,
+          "matched_seconds": 0,
+          "recall": null,
+          "precision": null,
+          "status": "unassessable"
+        },
+        {
+          "class_id": 6,
+          "name": "other",
+          "threshold_percent": null,
+          "reference_seconds": 0,
+          "candidate_seconds": 0,
+          "matched_seconds": 0,
+          "recall": null,
+          "precision": null,
+          "status": "not_required"
+        }
+      ]
+    },
+    {
+      "source": "example_data_Sheet2_seg1",
+      "rate_requested": 57.5,
+      "status": "unassessable",
+      "classes": [
+        {
+          "class_id": 1,
+          "name": "rest",
+          "threshold_percent": null,
+          "reference_seconds": 0,
+          "candidate_seconds": 0,
+          "matched_seconds": 0,
+          "recall": null,
+          "precision": null,
+          "status": "not_required"
+        },
+        {
+          "class_id": 2,
+          "name": "ingestion",
+          "threshold_percent": 90,
+          "reference_seconds": 0,
+          "candidate_seconds": 0,
+          "matched_seconds": 0,
+          "recall": null,
+          "precision": null,
+          "status": "unassessable"
+        },
+        {
+          "class_id": 3,
+          "name": "movement",
+          "threshold_percent": 95,
+          "reference_seconds": 0,
+          "candidate_seconds": 0,
+          "matched_seconds": 0,
+          "recall": null,
+          "precision": null,
+          "status": "unassessable"
+        },
+        {
+          "class_id": 4,
+          "name": "climb",
+          "threshold_percent": 95,
+          "reference_seconds": 0,
+          "candidate_seconds": 0,
+          "matched_seconds": 0,
+          "recall": null,
+          "precision": null,
+          "status": "unassessable"
+        },
+        {
+          "class_id": 5,
+          "name": "ruminate",
+          "threshold_percent": 90,
+          "reference_seconds": 0,
+          "candidate_seconds": 0,
+          "matched_seconds": 0,
+          "recall": null,
+          "precision": null,
+          "status": "unassessable"
+        },
+        {
+          "class_id": 6,
+          "name": "other",
+          "threshold_percent": null,
+          "reference_seconds": 0,
+          "candidate_seconds": 0,
+          "matched_seconds": 0,
+          "recall": null,
+          "precision": null,
+          "status": "not_required"
+        }
+      ]
+    },
+    {
+      "source": "example_data_Sheet2_seg2",
+      "rate_requested": 25.0,
+      "status": "unassessable",
+      "classes": [
+        {
+          "class_id": 1,
+          "name": "rest",
+          "threshold_percent": null,
+          "reference_seconds": 0,
+          "candidate_seconds": 0,
+          "matched_seconds": 0,
+          "recall": null,
+          "precision": null,
+          "status": "not_required"
+        },
+        {
+          "class_id": 2,
+          "name": "ingestion",
+          "threshold_percent": 90,
+          "reference_seconds": 0,
+          "candidate_seconds": 0,
+          "matched_seconds": 0,
+          "recall": null,
+          "precision": null,
+          "status": "unassessable"
+        },
+        {
+          "class_id": 3,
+          "name": "movement",
+          "threshold_percent": 95,
+          "reference_seconds": 0,
+          "candidate_seconds": 0,
+          "matched_seconds": 0,
+          "recall": null,
+          "precision": null,
+          "status": "unassessable"
+        },
+        {
+          "class_id": 4,
+          "name": "climb",
+          "threshold_percent": 95,
+          "reference_seconds": 0,
+          "candidate_seconds": 0,
+          "matched_seconds": 0,
+          "recall": null,
+          "precision": null,
+          "status": "unassessable"
+        },
+        {
+          "class_id": 5,
+          "name": "ruminate",
+          "threshold_percent": 90,
+          "reference_seconds": 0,
+          "candidate_seconds": 0,
+          "matched_seconds": 0,
+          "recall": null,
+          "precision": null,
+          "status": "unassessable"
+        },
+        {
+          "class_id": 6,
+          "name": "other",
+          "threshold_percent": null,
+          "reference_seconds": 0,
+          "candidate_seconds": 0,
+          "matched_seconds": 0,
+          "recall": null,
+          "precision": null,
+          "status": "not_required"
+        }
+      ]
+    },
+    {
+      "source": "example_data_Sheet2_seg2",
+      "rate_requested": 39.502107,
+      "status": "unassessable",
+      "classes": [
+        {
+          "class_id": 1,
+          "name": "rest",
+          "threshold_percent": null,
+          "reference_seconds": 0,
+          "candidate_seconds": 0,
+          "matched_seconds": 0,
+          "recall": null,
+          "precision": null,
+          "status": "not_required"
+        },
+        {
+          "class_id": 2,
+          "name": "ingestion",
+          "threshold_percent": 90,
+          "reference_seconds": 0,
+          "candidate_seconds": 0,
+          "matched_seconds": 0,
+          "recall": null,
+          "precision": null,
+          "status": "unassessable"
+        },
+        {
+          "class_id": 3,
+          "name": "movement",
+          "threshold_percent": 95,
+          "reference_seconds": 0,
+          "candidate_seconds": 0,
+          "matched_seconds": 0,
+          "recall": null,
+          "precision": null,
+          "status": "unassessable"
+        },
+        {
+          "class_id": 4,
+          "name": "climb",
+          "threshold_percent": 95,
+          "reference_seconds": 0,
+          "candidate_seconds": 0,
+          "matched_seconds": 0,
+          "recall": null,
+          "precision": null,
+          "status": "unassessable"
+        },
+        {
+          "class_id": 5,
+          "name": "ruminate",
+          "threshold_percent": 90,
+          "reference_seconds": 0,
+          "candidate_seconds": 0,
+          "matched_seconds": 0,
+          "recall": null,
+          "precision": null,
+          "status": "unassessable"
+        },
+        {
+          "class_id": 6,
+          "name": "other",
+          "threshold_percent": null,
+          "reference_seconds": 0,
+          "candidate_seconds": 0,
+          "matched_seconds": 0,
+          "recall": null,
+          "precision": null,
+          "status": "not_required"
+        }
+      ]
+    },
+    {
+      "source": "example_data_Sheet2_seg2",
+      "rate_requested": 50.0,
+      "status": "unassessable",
+      "classes": [
+        {
+          "class_id": 1,
+          "name": "rest",
+          "threshold_percent": null,
+          "reference_seconds": 0,
+          "candidate_seconds": 0,
+          "matched_seconds": 0,
+          "recall": null,
+          "precision": null,
+          "status": "not_required"
+        },
+        {
+          "class_id": 2,
+          "name": "ingestion",
+          "threshold_percent": 90,
+          "reference_seconds": 0,
+          "candidate_seconds": 0,
+          "matched_seconds": 0,
+          "recall": null,
+          "precision": null,
+          "status": "unassessable"
+        },
+        {
+          "class_id": 3,
+          "name": "movement",
+          "threshold_percent": 95,
+          "reference_seconds": 0,
+          "candidate_seconds": 0,
+          "matched_seconds": 0,
+          "recall": null,
+          "precision": null,
+          "status": "unassessable"
+        },
+        {
+          "class_id": 4,
+          "name": "climb",
+          "threshold_percent": 95,
+          "reference_seconds": 0,
+          "candidate_seconds": 0,
+          "matched_seconds": 0,
+          "recall": null,
+          "precision": null,
+          "status": "unassessable"
+        },
+        {
+          "class_id": 5,
+          "name": "ruminate",
+          "threshold_percent": 90,
+          "reference_seconds": 0,
+          "candidate_seconds": 0,
+          "matched_seconds": 0,
+          "recall": null,
+          "precision": null,
+          "status": "unassessable"
+        },
+        {
+          "class_id": 6,
+          "name": "other",
+          "threshold_percent": null,
+          "reference_seconds": 0,
+          "candidate_seconds": 0,
+          "matched_seconds": 0,
+          "recall": null,
+          "precision": null,
+          "status": "not_required"
+        }
+      ]
+    },
+    {
+      "source": "example_data_Sheet2_seg2",
+      "rate_requested": 57.5,
+      "status": "unassessable",
+      "classes": [
+        {
+          "class_id": 1,
+          "name": "rest",
+          "threshold_percent": null,
+          "reference_seconds": 0,
+          "candidate_seconds": 0,
+          "matched_seconds": 0,
+          "recall": null,
+          "precision": null,
+          "status": "not_required"
+        },
+        {
+          "class_id": 2,
+          "name": "ingestion",
+          "threshold_percent": 90,
+          "reference_seconds": 0,
+          "candidate_seconds": 0,
+          "matched_seconds": 0,
+          "recall": null,
+          "precision": null,
+          "status": "unassessable"
+        },
+        {
+          "class_id": 3,
+          "name": "movement",
+          "threshold_percent": 95,
+          "reference_seconds": 0,
+          "candidate_seconds": 0,
+          "matched_seconds": 0,
+          "recall": null,
+          "precision": null,
+          "status": "unassessable"
+        },
+        {
+          "class_id": 4,
+          "name": "climb",
+          "threshold_percent": 95,
+          "reference_seconds": 0,
+          "candidate_seconds": 0,
+          "matched_seconds": 0,
+          "recall": null,
+          "precision": null,
+          "status": "unassessable"
+        },
+        {
+          "class_id": 5,
+          "name": "ruminate",
+          "threshold_percent": 90,
+          "reference_seconds": 0,
+          "candidate_seconds": 0,
+          "matched_seconds": 0,
+          "recall": null,
+          "precision": null,
+          "status": "unassessable"
+        },
+        {
+          "class_id": 6,
+          "name": "other",
+          "threshold_percent": null,
+          "reference_seconds": 0,
+          "candidate_seconds": 0,
+          "matched_seconds": 0,
+          "recall": null,
+          "precision": null,
+          "status": "not_required"
+        }
+      ]
+    },
+    {
+      "source": "example_data_Sheet2_seg3",
+      "rate_requested": 25.0,
+      "status": "unassessable",
+      "classes": [
+        {
+          "class_id": 1,
+          "name": "rest",
+          "threshold_percent": null,
+          "reference_seconds": 0,
+          "candidate_seconds": 0,
+          "matched_seconds": 0,
+          "recall": null,
+          "precision": null,
+          "status": "not_required"
+        },
+        {
+          "class_id": 2,
+          "name": "ingestion",
+          "threshold_percent": 90,
+          "reference_seconds": 0,
+          "candidate_seconds": 0,
+          "matched_seconds": 0,
+          "recall": null,
+          "precision": null,
+          "status": "unassessable"
+        },
+        {
+          "class_id": 3,
+          "name": "movement",
+          "threshold_percent": 95,
+          "reference_seconds": 0,
+          "candidate_seconds": 0,
+          "matched_seconds": 0,
+          "recall": null,
+          "precision": null,
+          "status": "unassessable"
+        },
+        {
+          "class_id": 4,
+          "name": "climb",
+          "threshold_percent": 95,
+          "reference_seconds": 0,
+          "candidate_seconds": 0,
+          "matched_seconds": 0,
+          "recall": null,
+          "precision": null,
+          "status": "unassessable"
+        },
+        {
+          "class_id": 5,
+          "name": "ruminate",
+          "threshold_percent": 90,
+          "reference_seconds": 0,
+          "candidate_seconds": 0,
+          "matched_seconds": 0,
+          "recall": null,
+          "precision": null,
+          "status": "unassessable"
+        },
+        {
+          "class_id": 6,
+          "name": "other",
+          "threshold_percent": null,
+          "reference_seconds": 0,
+          "candidate_seconds": 0,
+          "matched_seconds": 0,
+          "recall": null,
+          "precision": null,
+          "status": "not_required"
+        }
+      ]
+    },
+    {
+      "source": "example_data_Sheet2_seg3",
+      "rate_requested": 39.502107,
+      "status": "unassessable",
+      "classes": [
+        {
+          "class_id": 1,
+          "name": "rest",
+          "threshold_percent": null,
+          "reference_seconds": 0,
+          "candidate_seconds": 0,
+          "matched_seconds": 0,
+          "recall": null,
+          "precision": null,
+          "status": "not_required"
+        },
+        {
+          "class_id": 2,
+          "name": "ingestion",
+          "threshold_percent": 90,
+          "reference_seconds": 0,
+          "candidate_seconds": 0,
+          "matched_seconds": 0,
+          "recall": null,
+          "precision": null,
+          "status": "unassessable"
+        },
+        {
+          "class_id": 3,
+          "name": "movement",
+          "threshold_percent": 95,
+          "reference_seconds": 0,
+          "candidate_seconds": 0,
+          "matched_seconds": 0,
+          "recall": null,
+          "precision": null,
+          "status": "unassessable"
+        },
+        {
+          "class_id": 4,
+          "name": "climb",
+          "threshold_percent": 95,
+          "reference_seconds": 0,
+          "candidate_seconds": 0,
+          "matched_seconds": 0,
+          "recall": null,
+          "precision": null,
+          "status": "unassessable"
+        },
+        {
+          "class_id": 5,
+          "name": "ruminate",
+          "threshold_percent": 90,
+          "reference_seconds": 0,
+          "candidate_seconds": 0,
+          "matched_seconds": 0,
+          "recall": null,
+          "precision": null,
+          "status": "unassessable"
+        },
+        {
+          "class_id": 6,
+          "name": "other",
+          "threshold_percent": null,
+          "reference_seconds": 0,
+          "candidate_seconds": 0,
+          "matched_seconds": 0,
+          "recall": null,
+          "precision": null,
+          "status": "not_required"
+        }
+      ]
+    },
+    {
+      "source": "example_data_Sheet2_seg3",
+      "rate_requested": 50.0,
+      "status": "unassessable",
+      "classes": [
+        {
+          "class_id": 1,
+          "name": "rest",
+          "threshold_percent": null,
+          "reference_seconds": 0,
+          "candidate_seconds": 0,
+          "matched_seconds": 0,
+          "recall": null,
+          "precision": null,
+          "status": "not_required"
+        },
+        {
+          "class_id": 2,
+          "name": "ingestion",
+          "threshold_percent": 90,
+          "reference_seconds": 0,
+          "candidate_seconds": 0,
+          "matched_seconds": 0,
+          "recall": null,
+          "precision": null,
+          "status": "unassessable"
+        },
+        {
+          "class_id": 3,
+          "name": "movement",
+          "threshold_percent": 95,
+          "reference_seconds": 0,
+          "candidate_seconds": 0,
+          "matched_seconds": 0,
+          "recall": null,
+          "precision": null,
+          "status": "unassessable"
+        },
+        {
+          "class_id": 4,
+          "name": "climb",
+          "threshold_percent": 95,
+          "reference_seconds": 0,
+          "candidate_seconds": 0,
+          "matched_seconds": 0,
+          "recall": null,
+          "precision": null,
+          "status": "unassessable"
+        },
+        {
+          "class_id": 5,
+          "name": "ruminate",
+          "threshold_percent": 90,
+          "reference_seconds": 0,
+          "candidate_seconds": 0,
+          "matched_seconds": 0,
+          "recall": null,
+          "precision": null,
+          "status": "unassessable"
+        },
+        {
+          "class_id": 6,
+          "name": "other",
+          "threshold_percent": null,
+          "reference_seconds": 0,
+          "candidate_seconds": 0,
+          "matched_seconds": 0,
+          "recall": null,
+          "precision": null,
+          "status": "not_required"
+        }
+      ]
+    },
+    {
+      "source": "example_data_Sheet2_seg3",
+      "rate_requested": 57.5,
+      "status": "unassessable",
+      "classes": [
+        {
+          "class_id": 1,
+          "name": "rest",
+          "threshold_percent": null,
+          "reference_seconds": 0,
+          "candidate_seconds": 0,
+          "matched_seconds": 0,
+          "recall": null,
+          "precision": null,
+          "status": "not_required"
+        },
+        {
+          "class_id": 2,
+          "name": "ingestion",
+          "threshold_percent": 90,
+          "reference_seconds": 0,
+          "candidate_seconds": 0,
+          "matched_seconds": 0,
+          "recall": null,
+          "precision": null,
+          "status": "unassessable"
+        },
+        {
+          "class_id": 3,
+          "name": "movement",
+          "threshold_percent": 95,
+          "reference_seconds": 0,
+          "candidate_seconds": 0,
+          "matched_seconds": 0,
+          "recall": null,
+          "precision": null,
+          "status": "unassessable"
+        },
+        {
+          "class_id": 4,
+          "name": "climb",
+          "threshold_percent": 95,
+          "reference_seconds": 0,
+          "candidate_seconds": 0,
+          "matched_seconds": 0,
+          "recall": null,
+          "precision": null,
+          "status": "unassessable"
+        },
+        {
+          "class_id": 5,
+          "name": "ruminate",
+          "threshold_percent": 90,
+          "reference_seconds": 0,
+          "candidate_seconds": 0,
+          "matched_seconds": 0,
+          "recall": null,
+          "precision": null,
+          "status": "unassessable"
+        },
+        {
+          "class_id": 6,
+          "name": "other",
+          "threshold_percent": null,
+          "reference_seconds": 0,
+          "candidate_seconds": 0,
+          "matched_seconds": 0,
+          "recall": null,
+          "precision": null,
+          "status": "not_required"
+        }
+      ]
+    }
+  ]
+}
