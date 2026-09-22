@@ -1,4 +1,4 @@
-# Reproducible sources are tracked; local tools, captures and build output are not.
+# Sources and selected measurement data are tracked; local/private output is not.
 /build/
 /tmp/
 /.local/
@@ -21,4 +21,14 @@
 *.bak
 __pycache__/
 *.pyc
+
+# Verified duplicates and generated report previews; keep the canonical evidence.
+/Doc/data/*_result_precommit.csv
+/output/pdf/panting_algorithm_validation_report/*.html
+/output/pdf/panting_algorithm_validation_report/artifact.json
+
+# One-off local contract formatting helpers with machine-specific dependencies.
+/Tools/build_simple_pcb_purchase_contract.py
+/Tools/format_user_contract.py
+/Tools/fontconfig-cjk.xml
 # Vendor sources must stay byte-identical; do not ignore licences or hardware data.

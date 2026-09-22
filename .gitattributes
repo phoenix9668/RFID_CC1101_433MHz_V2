@@ -16,3 +16,18 @@ Tools/behavior_acceptance.py -text
 output/pdf/ADXL362_25Hz_Supplier_Report.pdf binary
 # The supplier report intentionally uses Markdown two-space line breaks.
 Doc/ADXL362_25Hz_Investigation/README.md whitespace=-blank-at-eol
+
+# Raw measurements and large replay data use LFS, without rewriting old history.
+Doc/*.dsl filter=lfs diff=lfs merge=lfs -text
+"Doc/Power Consumption Data/*.iotpl" filter=lfs diff=lfs merge=lfs -text
+Doc/data/*.mp4 filter=lfs diff=lfs merge=lfs -text
+Doc/data/*_result.csv filter=lfs diff=lfs merge=lfs -text
+Doc/MATLAB/*.xlsx filter=lfs diff=lfs merge=lfs -text
+Doc/MATLAB/**/*.xlsx filter=lfs diff=lfs merge=lfs -text
+
+# Keep small historical analysis evidence in ordinary Git, byte-for-byte.
+Doc/Paper/validation/*.csv -text
+Doc/Paper/validation/*.json -text
+Doc/Paper/validation/output/*.csv -text
+Doc/Paper/validation/output/*.json -text
+output/pdf/panting_algorithm_validation_report/*.pdf binary

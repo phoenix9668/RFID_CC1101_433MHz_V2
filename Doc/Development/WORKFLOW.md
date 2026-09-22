@@ -46,3 +46,4 @@ usable when the toolchain is already on PATH. Do not flash automatically when
 building; this resampling candidate has not completed hardware qualification.
 
 See [RESAMPLING.md](RESAMPLING.md) for regression commands and acceptance limits.
+See [DATA_STORAGE.md](DATA_STORAGE.md) for LFS data and local-only artifact rules.

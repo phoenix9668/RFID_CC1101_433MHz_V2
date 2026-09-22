@@ -1,0 +1,68 @@
+{
+  "sample_rate_hz": 25.0,
+  "state_map": {
+    "50": "rest",
+    "100": "feed",
+    "150": "activity",
+    "200": "mount",
+    "250": "rumination",
+    "300": "panting"
+  },
+  "main": {
+    "panting_n": 23,
+    "panting_pass": 8,
+    "panting_sensitivity": 0.34782608695652173,
+    "panting_ci": [
+      0.18811054636982238,
+      0.5511002309310836
+    ],
+    "rumination_n": 291,
+    "rumination_reject": 178,
+    "rumination_specificity": 0.6116838487972509,
+    "rumination_ci": [
+      0.5545785145462312,
+      0.6658788428958666
+    ],
+    "other_n": 20,
+    "other_specificity": 0.45,
+    "balanced_accuracy": 0.4797549678768863
+  },
+  "behavior_summary": [
+    {
+      "behavior": "activity",
+      "n": 17,
+      "rule_positive": 9,
+      "pass_rate": 0.529,
+      "median_F12": 2.171,
+      "median_F23": 2.053,
+      "median_peak12_bpm": 93.0
+    },
+    {
+      "behavior": "panting",
+      "n": 23,
+      "rule_positive": 8,
+      "pass_rate": 0.348,
+      "median_F12": 2.105,
+      "median_F23": 2.337,
+      "median_peak12_bpm": 99.0
+    },
+    {
+      "behavior": "rest",
+      "n": 3,
+      "rule_positive": 2,
+      "pass_rate": 0.667,
+      "median_F12": 8.492,
+      "median_F23": 4.931,
+      "median_peak12_bpm": 117.0
+    },
+    {
+      "behavior": "rumination",
+      "n": 291,
+      "rule_positive": 113,
+      "pass_rate": 0.388,
+      "median_F12": 2.586,
+      "median_F23": 3.092,
+      "median_peak12_bpm": 108.0
+    }
+  ]
+}

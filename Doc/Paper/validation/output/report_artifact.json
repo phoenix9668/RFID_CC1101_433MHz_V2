@@ -1,0 +1,551 @@
+{
+  "surface": "report",
+  "manifest": {
+    "version": 1,
+    "surface": "report",
+    "title": "喘息频谱算法验证：有区分信号，但尚未证明正确",
+    "description": "使用所提供的三轴加速度 CSV，对论文中 F₁₋₂ > F₂₋₃ 喘息/反刍频谱判据进行独立复算与稳健性检查。",
+    "generatedAt": "2026-07-23T12:17:53+08:00",
+    "charts": [
+      {
+        "id": "recording_pass_chart",
+        "title": "各记录的 F₁₋₂ > F₂₋₃ 判据通过率",
+        "subtitle": "反刍对照为 7.7%，三个喘息记录为 12.5%–85.7%",
+        "type": "bar",
+        "intent": "comparison",
+        "dataset": "recording_results",
+        "sourceId": "recording_results_source",
+        "valueFormat": "percent",
+        "encodings": {
+          "x": {
+            "field": "recording",
+            "type": "nominal",
+            "label": "记录"
+          },
+          "y": {
+            "field": "criterion_pass_rate",
+            "type": "quantitative",
+            "label": "判据通过率",
+            "format": "percent"
+          },
+          "color": {
+            "field": "expected_label",
+            "type": "nominal",
+            "label": "文件级标签"
+          },
+          "tooltip": [
+            {
+              "field": "windows",
+              "type": "quantitative",
+              "label": "窗口数",
+              "format": "number"
+            },
+            {
+              "field": "criterion_passes",
+              "type": "quantitative",
+              "label": "通过窗",
+              "format": "number"
+            },
+            {
+              "field": "median_spectral_ratio",
+              "type": "quantitative",
+              "label": "F₁₋₂/F₂₋₃ 中位数",
+              "format": "number"
+            },
+            {
+              "field": "median_peak_1_2_bpm",
+              "type": "quantitative",
+              "label": "1–2 Hz 峰值中位数",
+              "format": "number",
+              "unit": "次/分"
+            }
+          ]
+        },
+        "settings": {
+          "orientation": "horizontal",
+          "groupMode": "single",
+          "showValues": true,
+          "sort": "descending"
+        },
+        "palette": {
+          "kind": "categorical"
+        },
+        "legend": {
+          "position": "bottom",
+          "title": "文件级标签"
+        },
+        "layout": "full"
+      },
+      {
+        "id": "robustness_chart",
+        "title": "不同处理解释下的描述性平衡率",
+        "subtitle": "误按 10 Hz 处理或采用差分幅值时，区分能力明显下降",
+        "type": "bar",
+        "intent": "comparison",
+        "dataset": "robustness_results",
+        "sourceId": "robustness_results_source",
+        "valueFormat": "percent",
+        "encodings": {
+          "x": {
+            "field": "scenario",
+            "type": "nominal",
+            "label": "处理场景"
+          },
+          "y": {
+            "field": "balanced_descriptive_rate",
+            "type": "quantitative",
+            "label": "描述性平衡率",
+            "format": "percent"
+          },
+          "tooltip": [
+            {
+              "field": "panting_window_pass_rate",
+              "type": "quantitative",
+              "label": "喘息窗通过率",
+              "format": "percent"
+            },
+            {
+              "field": "rumination_window_rejection_rate",
+              "type": "quantitative",
+              "label": "反刍窗排除率",
+              "format": "percent"
+            },
+            {
+              "field": "panting_windows",
+              "type": "quantitative",
+              "label": "喘息窗数",
+              "format": "number"
+            },
+            {
+              "field": "rumination_windows",
+              "type": "quantitative",
+              "label": "反刍窗数",
+              "format": "number"
+            }
+          ]
+        },
+        "settings": {
+          "orientation": "horizontal",
+          "groupMode": "single",
+          "showValues": true,
+          "sort": "descending"
+        },
+        "palette": {
+          "kind": "sequential"
+        },
+        "layout": "full"
+      }
+    ],
+    "tables": [
+      {
+        "id": "recording_results_table",
+        "title": "按记录汇总的频谱判据结果",
+        "subtitle": "25 Hz、90 秒非重叠窗、合加速度幅值、矩形窗；17:55 记录已去除重复前缀",
+        "dataset": "recording_results",
+        "sourceId": "recording_results_source",
+        "defaultSort": {
+          "field": "criterion_pass_rate",
+          "direction": "desc"
+        },
+        "density": "spacious",
+        "columns": [
+          {
+            "field": "recording",
+            "label": "记录",
+            "type": "text"
+          },
+          {
+            "field": "expected_label",
+            "label": "文件级标签",
+            "type": "text"
+          },
+          {
+            "field": "windows",
+            "label": "90 秒窗",
+            "format": "number"
+          },
+          {
+            "field": "criterion_passes",
+            "label": "通过窗",
+            "format": "number"
+          },
+          {
+            "field": "criterion_pass_rate",
+            "label": "判据通过率",
+            "format": "percent"
+          },
+          {
+            "field": "median_spectral_ratio",
+            "label": "频谱比中位数",
+            "format": "number"
+          },
+          {
+            "field": "median_peak_1_2_bpm",
+            "label": "1–2 Hz 峰值中位数（次/分）",
+            "format": "number"
+          }
+        ]
+      },
+      {
+        "id": "firmware_results_table",
+        "title": "当前固件 PC runner 的样本级 breath 输出",
+        "subtitle": "25 Hz、每次 150 样本（6 秒）；比例基于处理后样本，不是逐秒人工真值准确率",
+        "dataset": "firmware_results",
+        "sourceId": "firmware_outputs",
+        "defaultSort": {
+          "field": "breath_sample_rate",
+          "direction": "desc"
+        },
+        "density": "spacious",
+        "columns": [
+          {
+            "field": "recording",
+            "label": "记录",
+            "type": "text"
+          },
+          {
+            "field": "expected_label",
+            "label": "文件级标签",
+            "type": "text"
+          },
+          {
+            "field": "processed_samples_after_dedup",
+            "label": "处理样本",
+            "format": "number"
+          },
+          {
+            "field": "breath_samples",
+            "label": "breath 样本",
+            "format": "number"
+          },
+          {
+            "field": "breath_sample_rate",
+            "label": "breath 占比",
+            "format": "percent"
+          }
+        ]
+      }
+    ],
+    "sources": [
+      {
+        "id": "paper_pdf",
+        "label": "Detecting Heat Stress in Dairy Cattle Using Neck-Mounted Activity Collars (2020)",
+        "path": "Doc/Paper/Detecting Heat Stress in Dairy Cattle Using Neck-Mounted Activity Collars（2020）.pdf"
+      },
+      {
+        "id": "recording_results_source",
+        "label": "频谱判据按记录汇总",
+        "path": "Doc/Paper/validation/queries/recording_results.sql",
+        "query": {
+          "engine": "sqlite",
+          "language": "sql",
+          "executed_at": "2026-07-23T12:17:53+08:00",
+          "description": "把独立 Python 复算生成的 recording_summary.csv 物化为报告所用的 4 行按记录汇总数据；SQL 已在内存 SQLite 中执行并核对行数。",
+          "sql": "WITH \"recording_results\" (\"recording\", \"file_name\", \"expected_behavior\", \"expected_label\", \"windows\", \"criterion_passes\", \"criterion_pass_rate\", \"median_spectral_ratio\", \"q25_spectral_ratio\", \"q75_spectral_ratio\", \"median_peak_1_2_bpm\") AS (\n  VALUES\n  ('反刍对照', '05项圈 5826牛 0302 1549  反刍.csv', 'rumination', '反刍对照', 13, 1, 0.0769230769230769, 0.7711836193535121, 0.5988249060455978, 0.8726109826294015, 76.66666666666667),\n  ('喘息 2025-08-19 16:22', '喘息20250819 1622.csv', 'panting', '喘息记录', 8, 1, 0.125, 0.6321250547274904, 0.5713379465820736, 0.7676652147196625, 114.66666666666669),\n  ('喘息 2025-08-20 16:44', '喘息20250820 1644.csv', 'panting', '喘息记录', 34, 20, 0.5882352941176471, 1.055842497363647, 0.9405991338044573, 1.1674841565545278, 99.66666666666669),\n  ('喘息 2025-08-20 17:55', '喘息20250820 1755.csv', 'panting', '喘息记录', 14, 12, 0.8571428571428571, 1.2085706811945074, 1.0314592815766572, 1.3596436641824237, 114.0)\n)\nSELECT * FROM \"recording_results\";\n",
+          "tables_used": [],
+          "filters": [
+            "移除喘息文件首个全零初始化样本",
+            "从 17:55 记录移除与 16:44 记录相同的 15,536 行前缀",
+            "只保留完整的非重叠 90 秒窗"
+          ],
+          "metric_definitions": [
+            "判据通过率 = F₁₋₂ > F₂₋₃ 的窗口数 / 该记录完整窗口数",
+            "F₁₋₂ 与 F₂₋₃ 分别为对应频带 FFT 幅值峰值 / 频带均值"
+          ]
+        }
+      },
+      {
+        "id": "robustness_results_source",
+        "label": "频谱判据稳健性分析",
+        "path": "Doc/Paper/validation/queries/robustness_results.sql",
+        "query": {
+          "engine": "sqlite",
+          "language": "sql",
+          "executed_at": "2026-07-23T12:17:53+08:00",
+          "description": "把 sensitivity_analysis.csv 中 8 个代表性处理场景物化为报告图表数据；SQL 已在内存 SQLite 中执行并核对行数。",
+          "sql": "WITH \"robustness_results\" (\"scenario\", \"detail\", \"panting_windows\", \"panting_window_pass_rate\", \"rumination_windows\", \"rumination_window_rejection_rate\", \"balanced_descriptive_rate\") AS (\n  VALUES\n  ('主分析', '25 Hz, 90 s, raw magnitude, rectangular taper, deduplicated', 56, 0.5892857142857143, 13, 0.9230769230769232, 0.7561813186813187),\n  ('Hann 窗', 'Hann taper', 56, 0.5892857142857143, 13, 1.0, 0.7946428571428572),\n  ('主导轴', 'dominant peak-to-peak axis', 56, 0.6071428571428571, 13, 0.8461538461538461, 0.7266483516483516),\n  ('PCA 投影', 'PCA first component', 56, 0.5714285714285714, 13, 0.8461538461538461, 0.7087912087912087),\n  ('一阶差分幅值', 'magnitude of first differences', 56, 0.625, 13, 0.0769230769230769, 0.3509615384615384),\n  ('30 秒窗', '30 s windows', 171, 0.543859649122807, 40, 0.825, 0.6844298245614036),\n  ('180 秒窗', '180 s windows', 28, 0.6428571428571429, 6, 1.0, 0.8214285714285714),\n  ('误按 10 Hz', 'incorrectly assume paper''s 10 Hz for 25 Hz data', 142, 0.6549295774647887, 33, 0.3333333333333333, 0.494131455399061)\n)\nSELECT * FROM \"robustness_results\";\n",
+          "tables_used": [],
+          "metric_definitions": [
+            "描述性平衡率 = (喘息文件窗口通过率 + 反刍对照窗口排除率) / 2",
+            "该指标不使用逐窗人工真值，不是正式的分类准确率"
+          ]
+        }
+      },
+      {
+        "id": "firmware_outputs",
+        "label": "当前固件 PC runner 对照",
+        "path": "Doc/Paper/validation/queries/firmware_results.sql",
+        "query": {
+          "engine": "sqlite",
+          "language": "sql",
+          "executed_at": "2026-07-23T12:17:53+08:00",
+          "description": "把直接编译当前 C 固件后生成的 firmware_comparison.csv 物化为报告表格；SQL 已在内存 SQLite 中执行并核对行数。",
+          "sql": "WITH \"firmware_results\" (\"recording\", \"file_name\", \"expected_behavior\", \"expected_label\", \"processed_samples_after_dedup\", \"breath_samples\", \"breath_sample_rate\") AS (\n  VALUES\n  ('反刍对照', '05项圈 5826牛 0302 1549  反刍.csv', 'rumination', '反刍对照', 30450, 0, 0.0),\n  ('喘息 2025-08-19 16:22', '喘息20250819 1622.csv', 'panting', '喘息记录', 19650, 16725, 0.851145038167939),\n  ('喘息 2025-08-20 16:44', '喘息20250820 1644.csv', 'panting', '喘息记录', 77700, 23950, 0.3082368082368082),\n  ('喘息 2025-08-20 17:55', '喘息20250820 1755.csv', 'panting', '喘息记录', 31863, 23563, 0.7395097762294824)\n)\nSELECT * FROM \"firmware_results\";\n",
+          "tables_used": [],
+          "metric_definitions": [
+            "breath 样本占比 = behavior=7 样本数 / 处理后样本总数"
+          ]
+        }
+      },
+      {
+        "id": "validation_code",
+        "label": "独立复算代码",
+        "path": "Doc/Paper/validation/validate_panting_algorithm.py"
+      },
+      {
+        "id": "sampling_contract",
+        "label": "ADXL362 PC runner 数据契约",
+        "path": "Tools/adxl362_pc/README.md"
+      }
+    ],
+    "blocks": [
+      {
+        "id": "title",
+        "type": "markdown",
+        "body": "# 喘息频谱算法验证：有区分信号，但尚未证明正确"
+      },
+      {
+        "id": "technical_summary",
+        "type": "markdown",
+        "sourceId": "recording_results_source",
+        "body": "## 技术结论\n\n- **结论不是“算法正确”，而是“频谱规则得到有限的方向性支持”。** 主解释下，喘息文件 56 个窗口中 33 个通过（58.9%），反刍对照 13 个窗口中 12 个被排除（92.3%）。\n- **文件间差异很大。** 三个喘息记录的通过率分别为 12.5%、58.8% 和 85.7%，说明姿态、行为混合、窗边界或信号解释会显著影响结果。\n- **现有数据不能给出生产准确率。** 文件名只是记录级标签；没有逐窗人工呼吸率、喘息起止、温湿度或 THI，因此不能把这些比例称为敏感度、特异度或热应激诊断准确率。"
+      },
+      {
+        "id": "recording_findings",
+        "type": "markdown",
+        "sourceId": "recording_results_source",
+        "body": "## 反刍排除较强，但喘息记录并不稳定\n\n下面按记录展示相同判据的通过率。反刍对照只有 1/13 个窗误通过；但喘息记录从 1/8 到 12/14，相差超过六倍。**所以，该规则更像一个候选特征或二级过滤器，而不是已经由这批数据证明可独立工作的分类器。**"
+      },
+      {
+        "id": "recording_chart_block",
+        "type": "chart",
+        "chartId": "recording_pass_chart"
+      },
+      {
+        "id": "recording_table_block",
+        "type": "table",
+        "tableId": "recording_results_table"
+      },
+      {
+        "id": "scope_definitions",
+        "type": "markdown",
+        "body": "## 本次验证覆盖的是频谱二级判据，不是完整热应激算法\n\n论文流程先用参考文献 [30] 的 `(E, F₂₋₃)` 方法把窗口分为 other / rumination / eating，再仅对 rumination 窗应用 `F₁₋₂ > F₂₋₃`。PDF 没有给出第 8 步的阈值或模型，因此本次只能验证明确写出的频谱不等式。数据也没有牛只标识、姿态真值、逐窗呼吸次数、环境温湿度或 THI；因此不能验证从“快速呼吸”到“热应激”的因果或诊断链条。"
+      },
+      {
+        "id": "methodology",
+        "type": "markdown",
+        "body": "## 复算采用 25 Hz 实际采样率，并显式固定论文未说明的处理选择\n\n项目的 PC runner 声明输入采样率为 25 Hz；论文设备为 10 Hz。主分析因此用 25 Hz、90 秒非重叠窗，对 `sqrt(x²+y²+z²)` 去均值后做矩形窗 FFT；频带定义为 `[1,2)` 与 `[2,3)`，避免 2 Hz 重复计入。16:44 与 17:55 文件存在 15,536 个相同的清洗后样本（约 10.36 分钟），已从 17:55 记录删除，避免重复计权。"
+      },
+      {
+        "id": "robustness",
+        "type": "markdown",
+        "sourceId": "robustness_results_source",
+        "body": "## 预处理歧义足以改变结论强度\n\n主分析的描述性平衡率为 75.6%。Hann 窗为 79.5%，主导轴与 PCA 解释约为 70%–73%；但把三轴公式解释为“一阶差分幅值”时降至 35.1%，把 25 Hz 数据误按论文的 10 Hz 处理时为 49.4%。**这表明论文缺少的轴选择、窗函数、频带边界与采样率适配细节不是小问题，而是复现所必需的算法规格。**"
+      },
+      {
+        "id": "robustness_chart_block",
+        "type": "chart",
+        "chartId": "robustness_chart"
+      },
+      {
+        "id": "firmware_gap",
+        "type": "markdown",
+        "sourceId": "firmware_outputs",
+        "body": "## 当前固件有响应，但不是论文算法的实现\n\n当前 C 代码在 25 Hz、6 秒块上逐轴做时域正弦检测，频率范围为 1.0–2.7 Hz；它没有实现论文的 90 秒 FFT 与 `F₁₋₂/F₂₋₃` 比较。PC runner 在反刍对照中输出 0% `breath`，三个喘息记录的样本级占比分别为 85.1%、30.8% 和去重后的 74.0%。此外，生产计数逻辑把 behavior=7 计入 `other` 计数，而不是独立的 breath 字段；即使检测发生，汇总遥测也可能无法单独呈现喘息。"
+      },
+      {
+        "id": "firmware_table_block",
+        "type": "table",
+        "tableId": "firmware_results_table"
+      },
+      {
+        "id": "limitations",
+        "type": "markdown",
+        "body": "## 主要不确定性使当前证据不足以用于上线判定\n\n- 窗口没有逐窗真值；文件名不能证明每一分钟都在喘息或反刍。\n- 只有一个反刍对照文件，没有采食、行走、饮水、甩头、卧立转换等难负样本。\n- 同一记录内的连续窗口高度相关；名义 Wilson 区间未处理聚类，仅作描述。\n- 没有独立牛只、不同项圈佩戴方向、品种或环境的外部验证。\n- 论文第 8 步分类器不可由所提供 PDF 完整复现。"
+      },
+      {
+        "id": "next_steps",
+        "type": "markdown",
+        "body": "## 建议下一步：先补真值，再冻结算法规格\n\n1. 以 6 秒或 15 秒为最小标注粒度，同步记录人工呼吸率、喘息等级、姿态和行为；至少覆盖多个牛只与多个日期。\n2. 在数据文件中写入采样率、时间戳、牛只 ID、设备 ID、温度、湿度与 THI，并保留原始三轴单位和量程。\n3. 明确 FFT 输入信号、去趋势、窗函数、重叠率、2 Hz 边界、初始反刍分类器和 15 分钟多数投票规则。\n4. 按牛只/日期分组划分训练与测试集，报告逐窗混淆矩阵、事件级召回、误报持续时间和置信区间。\n5. 若验证当前固件，单独按 6 秒输出做评估，并修正或确认 behavior=7 被计入 `other` 的遥测设计。"
+      },
+      {
+        "id": "further_questions",
+        "type": "markdown",
+        "body": "## 仍需确认的问题\n\n- 三个“喘息”文件是否全程喘息，还是只包含若干人工观察到的片段？\n- 反刍文件是否有同步视频或压力鼻带真值，可定位纯反刍区间？\n- 当前目标是复现论文算法，还是评估现有 6 秒固件算法用于量产？\n- `other` 计数承载 breath 是否是协议兼容设计，还是需要新增独立喘息字段？"
+      }
+    ]
+  },
+  "snapshot": {
+    "version": 1,
+    "generatedAt": "2026-07-23T12:17:53+08:00",
+    "status": "ready",
+    "datasets": {
+      "recording_results": [
+        {
+          "recording": "反刍对照",
+          "file_name": "05项圈 5826牛 0302 1549  反刍.csv",
+          "expected_behavior": "rumination",
+          "expected_label": "反刍对照",
+          "windows": 13,
+          "criterion_passes": 1,
+          "criterion_pass_rate": 0.0769230769230769,
+          "median_spectral_ratio": 0.7711836193535121,
+          "q25_spectral_ratio": 0.5988249060455978,
+          "q75_spectral_ratio": 0.8726109826294015,
+          "median_peak_1_2_bpm": 76.66666666666667
+        },
+        {
+          "recording": "喘息 2025-08-19 16:22",
+          "file_name": "喘息20250819 1622.csv",
+          "expected_behavior": "panting",
+          "expected_label": "喘息记录",
+          "windows": 8,
+          "criterion_passes": 1,
+          "criterion_pass_rate": 0.125,
+          "median_spectral_ratio": 0.6321250547274904,
+          "q25_spectral_ratio": 0.5713379465820736,
+          "q75_spectral_ratio": 0.7676652147196625,
+          "median_peak_1_2_bpm": 114.66666666666669
+        },
+        {
+          "recording": "喘息 2025-08-20 16:44",
+          "file_name": "喘息20250820 1644.csv",
+          "expected_behavior": "panting",
+          "expected_label": "喘息记录",
+          "windows": 34,
+          "criterion_passes": 20,
+          "criterion_pass_rate": 0.5882352941176471,
+          "median_spectral_ratio": 1.055842497363647,
+          "q25_spectral_ratio": 0.9405991338044573,
+          "q75_spectral_ratio": 1.1674841565545278,
+          "median_peak_1_2_bpm": 99.66666666666669
+        },
+        {
+          "recording": "喘息 2025-08-20 17:55",
+          "file_name": "喘息20250820 1755.csv",
+          "expected_behavior": "panting",
+          "expected_label": "喘息记录",
+          "windows": 14,
+          "criterion_passes": 12,
+          "criterion_pass_rate": 0.8571428571428571,
+          "median_spectral_ratio": 1.2085706811945074,
+          "q25_spectral_ratio": 1.0314592815766572,
+          "q75_spectral_ratio": 1.3596436641824237,
+          "median_peak_1_2_bpm": 114.0
+        }
+      ],
+      "robustness_results": [
+        {
+          "scenario": "主分析",
+          "detail": "25 Hz, 90 s, raw magnitude, rectangular taper, deduplicated",
+          "panting_windows": 56,
+          "panting_window_pass_rate": 0.5892857142857143,
+          "rumination_windows": 13,
+          "rumination_window_rejection_rate": 0.9230769230769232,
+          "balanced_descriptive_rate": 0.7561813186813187
+        },
+        {
+          "scenario": "Hann 窗",
+          "detail": "Hann taper",
+          "panting_windows": 56,
+          "panting_window_pass_rate": 0.5892857142857143,
+          "rumination_windows": 13,
+          "rumination_window_rejection_rate": 1.0,
+          "balanced_descriptive_rate": 0.7946428571428572
+        },
+        {
+          "scenario": "主导轴",
+          "detail": "dominant peak-to-peak axis",
+          "panting_windows": 56,
+          "panting_window_pass_rate": 0.6071428571428571,
+          "rumination_windows": 13,
+          "rumination_window_rejection_rate": 0.8461538461538461,
+          "balanced_descriptive_rate": 0.7266483516483516
+        },
+        {
+          "scenario": "PCA 投影",
+          "detail": "PCA first component",
+          "panting_windows": 56,
+          "panting_window_pass_rate": 0.5714285714285714,
+          "rumination_windows": 13,
+          "rumination_window_rejection_rate": 0.8461538461538461,
+          "balanced_descriptive_rate": 0.7087912087912087
+        },
+        {
+          "scenario": "一阶差分幅值",
+          "detail": "magnitude of first differences",
+          "panting_windows": 56,
+          "panting_window_pass_rate": 0.625,
+          "rumination_windows": 13,
+          "rumination_window_rejection_rate": 0.0769230769230769,
+          "balanced_descriptive_rate": 0.3509615384615384
+        },
+        {
+          "scenario": "30 秒窗",
+          "detail": "30 s windows",
+          "panting_windows": 171,
+          "panting_window_pass_rate": 0.543859649122807,
+          "rumination_windows": 40,
+          "rumination_window_rejection_rate": 0.825,
+          "balanced_descriptive_rate": 0.6844298245614036
+        },
+        {
+          "scenario": "180 秒窗",
+          "detail": "180 s windows",
+          "panting_windows": 28,
+          "panting_window_pass_rate": 0.6428571428571429,
+          "rumination_windows": 6,
+          "rumination_window_rejection_rate": 1.0,
+          "balanced_descriptive_rate": 0.8214285714285714
+        },
+        {
+          "scenario": "误按 10 Hz",
+          "detail": "incorrectly assume paper's 10 Hz for 25 Hz data",
+          "panting_windows": 142,
+          "panting_window_pass_rate": 0.6549295774647887,
+          "rumination_windows": 33,
+          "rumination_window_rejection_rate": 0.3333333333333333,
+          "balanced_descriptive_rate": 0.494131455399061
+        }
+      ],
+      "firmware_results": [
+        {
+          "recording": "反刍对照",
+          "file_name": "05项圈 5826牛 0302 1549  反刍.csv",
+          "expected_behavior": "rumination",
+          "expected_label": "反刍对照",
+          "processed_samples_after_dedup": 30450,
+          "breath_samples": 0,
+          "breath_sample_rate": 0.0
+        },
+        {
+          "recording": "喘息 2025-08-19 16:22",
+          "file_name": "喘息20250819 1622.csv",
+          "expected_behavior": "panting",
+          "expected_label": "喘息记录",
+          "processed_samples_after_dedup": 19650,
+          "breath_samples": 16725,
+          "breath_sample_rate": 0.851145038167939
+        },
+        {
+          "recording": "喘息 2025-08-20 16:44",
+          "file_name": "喘息20250820 1644.csv",
+          "expected_behavior": "panting",
+          "expected_label": "喘息记录",
+          "processed_samples_after_dedup": 77700,
+          "breath_samples": 23950,
+          "breath_sample_rate": 0.3082368082368082
+        },
+        {
+          "recording": "喘息 2025-08-20 17:55",
+          "file_name": "喘息20250820 1755.csv",
+          "expected_behavior": "panting",
+          "expected_label": "喘息记录",
+          "processed_samples_after_dedup": 31863,
+          "breath_samples": 23563,
+          "breath_sample_rate": 0.7395097762294824
+        }
+      ]
+    }
+  }
+}
