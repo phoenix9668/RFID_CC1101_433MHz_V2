@@ -1,5 +1,9 @@
 # Single-worktree development
 
+For cross-computer/session continuation, start with
+[the 2026-09-26 handoff](SESSION_HANDOFF_20260926.md) and
+[the next-session prompt](NEXT_SESSION_PROMPT.md).
+
 Keep one checkout in the original project directory. Open that directory in
 VS Code with STM32CubeIDE for Visual Studio Code. Develop on branches in this
 checkout; additional Git worktrees are not required.
