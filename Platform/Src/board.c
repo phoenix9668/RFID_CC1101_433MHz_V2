@@ -168,6 +168,17 @@ void board_init(void)
     analog_pins(GPIOB, LL_GPIO_PIN_0 | LL_GPIO_PIN_3 | LL_GPIO_PIN_4 | LL_GPIO_PIN_6 |
                            LL_GPIO_PIN_7 | LL_GPIO_PIN_8 | LL_GPIO_PIN_9 | LL_GPIO_PIN_10 |
                            LL_GPIO_PIN_11);
+#if RFID_BENCH_TIMING_PIN
+    /* Bench only: timing marker on the otherwise unused LPUART pin PB10 (P1.5). */
+    LL_GPIO_ResetOutputPin(GPIOB, LL_GPIO_PIN_10);
+    LL_GPIO_SetPinMode(GPIOB, LL_GPIO_PIN_10, LL_GPIO_MODE_OUTPUT);
+    LL_GPIO_SetPinOutputType(GPIOB, LL_GPIO_PIN_10, LL_GPIO_OUTPUT_PUSHPULL);
+    LL_GPIO_SetPinPull(GPIOB, LL_GPIO_PIN_10, LL_GPIO_PULL_NO);
+#endif
+#if RFID_BENCH_PREFETCH
+    /* Bench only: A/B of the flash prefetch buffer; FLASH_ACR is retained across STOP. */
+    __HAL_FLASH_PREFETCH_BUFFER_ENABLE();
+#endif
 #if RFID_DIAGNOSTICS
     MX_USART1_UART_Init();
 #else
@@ -182,6 +193,15 @@ void board_init(void)
         __HAL_DBGMCU_UNFREEZE_RTC();
     }
 }
+#if RFID_BENCH_TIMING_PIN
+void board_bench_mark(bool high)
+{
+    if (high)
+        LL_GPIO_SetOutputPin(GPIOB, LL_GPIO_PIN_10);
+    else
+        LL_GPIO_ResetOutputPin(GPIOB, LL_GPIO_PIN_10);
+}
+#endif
 void board_idle(bool allow_stop)
 {
     if (!allow_stop)

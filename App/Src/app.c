@@ -11,6 +11,12 @@
 #include "pcg_basic.h"
 #include <string.h>
 #include <stdio.h>
+/* Bench-only timing marker around FIFO word processing; a no-op in production. */
+#if RFID_BENCH_TIMING_PIN
+#define BENCH_MARK(high) board_bench_mark(high)
+#else
+#define BENCH_MARK(high) ((void)0)
+#endif
 static volatile uint32_t events;
 static rfid_history_t history;
 static storage_t store = {.read_word = board_eeprom_read, .write_word = board_eeprom_write};
@@ -171,6 +177,7 @@ static void process_fifo(uint32_t now, bool drain)
              (unsigned long)now, entries, (unsigned long)sample_clock.rate_millihz);
     board_log(trace);
 #endif
+    BENCH_MARK(true);
     for (unsigned i = 0; i < entries; ++i)
     {
         accel_sample_t sample;
@@ -209,6 +216,7 @@ static void process_fifo(uint32_t now, bool drain)
             }
         }
     }
+    BENCH_MARK(false);
 }
 void app_init(void)
 {

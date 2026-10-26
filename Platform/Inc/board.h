@@ -31,4 +31,8 @@ rfid_status_t board_eeprom_write(void *context, uint16_t offset, uint32_t value)
 rfid_status_t board_battery(uint16_t *value);
 void board_identity(uint8_t id[6], uint64_t *seed, uint64_t *stream);
 void board_log(const char *message);
+#if RFID_BENCH_TIMING_PIN
+/* Bench only: PB10 (P1.5) high while the application processes drained FIFO words. */
+void board_bench_mark(bool high);
+#endif
 #endif

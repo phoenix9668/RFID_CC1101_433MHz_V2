@@ -10,6 +10,9 @@
 #if RFID_SENSOR_EXTCLK_TEST
 #include "sensor_extclock_test.h"
 #endif
+#if RFID_BENCH_TIMING_PIN || RFID_BENCH_PREFETCH
+#include <stdio.h>
+#endif
 #if RFID_DIAGNOSTIC_HOLD_AWAKE
 #include "sensor.h"
 #include <stdio.h>
@@ -55,6 +58,12 @@ int main(void)
     }
 #else
     app_init();
+#if RFID_BENCH_TIMING_PIN || RFID_BENCH_PREFETCH
+    char bench[64];
+    snprintf(bench, sizeof(bench), "bench: timing_pin=%d prefetch=%d FLASH_ACR=%08lX\r\n",
+             RFID_BENCH_TIMING_PIN, RFID_BENCH_PREFETCH, (unsigned long)FLASH->ACR);
+    board_log(bench);
+#endif
 #if RFID_DIAGNOSTIC_HOLD_AWAKE
     board_log("bench hold-awake: STOP disabled\r\n");
     uint32_t next_trace = board_millis();
