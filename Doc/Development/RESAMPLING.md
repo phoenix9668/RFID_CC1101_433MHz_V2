@@ -26,6 +26,13 @@ Status: software candidate; not flashed or hardware-qualified. The classifier in
   at 4.8 seconds. A deadline read drains even a below-watermark FIFO. The 160 versus
   170-full-sample margin assumes a slowly varying rate; a large abrupt rate change
   can still overrun, which discards/restarts rather than fabricating samples.
+- A forced drain (checkpoint, window end or deadline) of fewer than 15 words is
+  deferred to the next watermark batch. One to four samples cannot be timed
+  against the previous read: their reconstructed spacing leaves the 10..40 ms
+  window and would reset the resampler and classifier. Deferred samples are
+  counted in whichever window is open when they are processed; sealed windows
+  are never backfilled. The fault was found with the timing sweep described
+  below; on the bench it was masked by the 169 ms batch processing time.
 - At startup and faults, clear parser, resampler and behavior history. Genuine
   gaps and overrun samples are not interpolated into valid data.
 
@@ -37,6 +44,12 @@ Status: software candidate; not flashed or hardware-qualified. The classifier in
   grid with coefficient interpolation. Regenerate with `Tools/generate-resampler-kernel.py`.
 - SciPy `firwin(641, 8, fs=1000, window=('kaiser', 5))` supplies the kernel. Runtime
   normalizes the sampled weights for exact DC gain; accumulation uses int64.
+- Arithmetic is narrowed where the exact result provably fits: tap distances
+  below 320 ms use 32-bit division, products of a 16-bit weight and a 16-bit
+  sample are formed in 32 bits before the 64-bit accumulation, and batch word
+  times use a 32-bit product for spans up to 8.38 s. Outputs are bit-identical
+  to the previous implementation (differential test of 6.8 million pushes plus
+  the full workbook replay).
 - Output signal times lie on a continuous 40 ms grid. The first center is a whole
   RTC second with complete filter support. There is no endpoint extrapolation.
 - An output needs 320 ms of future support. Production accounting uses availability
@@ -48,6 +61,18 @@ Status: software candidate; not flashed or hardware-qualified. The classifier in
 - This FIR is an antialiasing candidate, NOT an exact compensation for the original
   analog response. No thresholds were fitted to make legacy agreement look better.
 
+## Measured processing time
+
+Measured on the V3.8 board on 2026-10-26 with the bench-only PB10 marker
+(`RFID_BENCH_TIMING_PIN`), which is high only while drained words are
+processed. At the observed 39.3 Hz, one 453-word batch took 169.2 ms with the
+previous arithmetic and flash prefetch off, and 133.6 ms with prefetch on.
+Prefetch is therefore enabled in `SystemClock_Config`. The narrowed arithmetic
+above is expected to remove most of the remainder; measure it with the same
+marker before quoting a figure. The instruction-level host simulation used
+earlier predicted 87..95 ms and is optimistic even with prefetch, so use it
+only for relative comparisons. Energy per batch still has to be measured.
+
 ## Software verification
 
 `ctest --test-dir build/resample-verify/host --output-on-failure` includes:
@@ -58,6 +83,12 @@ Status: software candidate; not flashed or hardware-qualified. The classifier in
   passband tones at 2/4 Hz, rejection at 12.5/14 Hz, gaps and RTC wrap.
 - Four independent 4h20 scheduling runs: 39.502 Hz, 50 Hz, 65 Hz and missing FIFO IRQ.
   Startup has explicit missing counts; all 12 subsequent windows have 1200 counts.
+- `app_timing_test`: event-level sweeps of the sensor rate from 32 to 65 Hz in
+  0.01 Hz steps with the RTC's 1/256 s resolution, 1/2048 s wakeup ticks, 6 ms
+  EEPROM word writes and a modelled processing time per word (0.374, 0.295,
+  0.13 and 0 ms). Any resampler or sample-clock reset, FIFO overrun or
+  shortfall of classifications fails. The previous app.c fails this sweep at
+  0.13 and 0 ms per word.
 - Existing protocol, CRC, storage interruption, reset, radio and driver tests.
 
 Inspect GCC .su files for static stack estimates. The linker continues to reserve

@@ -1,7 +1,8 @@
 /* Derived from ST-generated clock configuration in 34d57c2, CubeL0 1.12.2.
  * Copyright (c) 2020 STMicroelectronics. All rights reserved.
  * BSD-3-Clause; see Core/Startup/LICENSE.ST-BSD.txt.
- * Local change: no MCO output in production or after STOP wakeup.
+ * Local changes: no MCO output in production or after STOP wakeup; flash
+ * prefetch enabled at 1 wait state.
  */
 #include "main.h"
 void SystemClock_Config(void)
@@ -49,6 +50,10 @@ void SystemClock_Config(void)
     {
         Error_Handler();
     }
+    /* Instruction prefetch at 1 wait state. Measured on V3.8 with the PB10
+     * bench marker: one 453-word FIFO batch takes 134 ms instead of 169 ms.
+     * FLASH_ACR is retained in STOP; this runs again after every wakeup. */
+    __HAL_FLASH_PREFETCH_BUFFER_ENABLE();
     PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_USART1 | RCC_PERIPHCLK_RTC;
     PeriphClkInit.Usart1ClockSelection = RCC_USART1CLKSOURCE_PCLK2;
     PeriphClkInit.RTCClockSelection = RCC_RTCCLKSOURCE_LSE;

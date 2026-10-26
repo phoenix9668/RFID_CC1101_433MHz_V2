@@ -43,5 +43,10 @@ rfid_status_t sample_clock_batch(sample_clock_t *c, uint32_t now_ms, uint16_t wo
 }
 uint64_t sample_clock_word_time(const sample_clock_t *c, unsigned word_index)
 {
-    return c->start_us + (c->end_us - c->start_us) * (word_index + 1) / c->words;
+    /* Spans up to 8.38 s with at most 512 words fit a 32-bit product exactly,
+     * which avoids a 64-bit software division per word on the Cortex-M0+. */
+    uint64_t span = c->end_us - c->start_us;
+    if (span <= UINT32_MAX / 512u && word_index < 512u)
+        return c->start_us + (uint32_t)span * (word_index + 1) / c->words;
+    return c->start_us + span * (word_index + 1) / c->words;
 }

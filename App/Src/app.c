@@ -114,6 +114,12 @@ static void advance_to(uint32_t time)
     if ((int32_t)(time - period_start) >= 0)
         history.elapsed = (time - period_start) / 1000;
 }
+/* Fallback read deadline when the watermark interrupt is lost: about 160 samples. */
+static uint32_t fifo_deadline(void)
+{
+    uint32_t deadline = sample_clock.ready ? 160000000U / sample_clock.rate_millihz : 2400;
+    return deadline > 4800 ? 4800 : deadline;
+}
 static void process_fifo(uint32_t now, bool drain)
 {
     uint16_t entries;
@@ -148,6 +154,15 @@ static void process_fifo(uint32_t now, bool drain)
     }
     if (!drain && entries < 450)
         return;
+    /* A forced drain of fewer than five samples cannot be timed against the
+     * previous read: the reconstructed spacing falls outside the resampler's
+     * 10..40 ms window and would reset the classifier. Leave those words for
+     * the next watermark batch; they are counted in the window open by then. */
+    if (entries < 15)
+    {
+        next_fifo_check = now + fifo_deadline();
+        return;
+    }
     status = sensor_fifo_read(fifo_bytes, entries * 2);
     if (status != RFID_OK)
     {
@@ -160,9 +175,7 @@ static void process_fifo(uint32_t now, bool drain)
         return;
     }
     rfid_status_t timing = sample_clock_batch(&sample_clock, now, entries);
-    uint32_t deadline = sample_clock.ready ? 160000000U / sample_clock.rate_millihz : 2400;
-    if (deadline > 4800) deadline = 4800;
-    next_fifo_check = now + deadline;
+    next_fifo_check = now + fifo_deadline();
     if (timing != RFID_OK)
     {
         fifo_parser_reset(&parser);

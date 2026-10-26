@@ -175,10 +175,6 @@ void board_init(void)
     LL_GPIO_SetPinOutputType(GPIOB, LL_GPIO_PIN_10, LL_GPIO_OUTPUT_PUSHPULL);
     LL_GPIO_SetPinPull(GPIOB, LL_GPIO_PIN_10, LL_GPIO_PULL_NO);
 #endif
-#if RFID_BENCH_PREFETCH
-    /* Bench only: A/B of the flash prefetch buffer; FLASH_ACR is retained across STOP. */
-    __HAL_FLASH_PREFETCH_BUFFER_ENABLE();
-#endif
 #if RFID_DIAGNOSTICS
     MX_USART1_UART_Init();
 #else

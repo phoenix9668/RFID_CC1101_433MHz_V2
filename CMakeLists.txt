@@ -16,7 +16,6 @@ option(RFID_SENSOR_ODR_TEST "Bench only: DATA_READY timing; no application or EE
 option(RFID_SENSOR_ODR_SWEEP "Bench only: repeated 25/50/100 Hz DATA_READY phases" OFF)
 option(RFID_SENSOR_EXTCLK_TEST "Bench only: internal versus PB0 32 kHz clock" OFF)
 option(RFID_BENCH_TIMING_PIN "Bench only: PB10 (P1.5) high while FIFO words are processed" OFF)
-option(RFID_BENCH_PREFETCH "Bench only: enable the flash prefetch buffer for an A/B timing comparison" OFF)
 if(RFID_SENSOR_EXTCLK_TEST AND (NOT RFID_SENSOR_ODR_TEST OR RFID_SENSOR_ODR_SWEEP))
   message(FATAL_ERROR "EXTCLK_TEST requires ODR_TEST and cannot use ODR_SWEEP")
 endif()
@@ -29,8 +28,8 @@ endif()
 if(RFID_DIAGNOSTIC_HOLD_AWAKE AND NOT RFID_DIAGNOSTICS)
   message(FATAL_ERROR "HOLD_AWAKE is allowed only in Diagnostics")
 endif()
-if((RFID_BENCH_TIMING_PIN OR RFID_BENCH_PREFETCH) AND (NOT RFID_DIAGNOSTICS OR RFID_SENSOR_ODR_TEST))
-  message(FATAL_ERROR "BENCH_TIMING_PIN/BENCH_PREFETCH are allowed only in Diagnostics without ODR_TEST")
+if(RFID_BENCH_TIMING_PIN AND (NOT RFID_DIAGNOSTICS OR RFID_SENSOR_ODR_TEST))
+  message(FATAL_ERROR "BENCH_TIMING_PIN is allowed only in Diagnostics without ODR_TEST")
 endif()
 set(HAL Drivers/STM32L0xx_HAL_Driver)
 set(HAL_MODULES hal hal_cortex hal_rcc hal_rcc_ex hal_flash hal_flash_ex
@@ -55,8 +54,7 @@ target_compile_definitions(firmware_options INTERFACE
   RFID_SENSOR_ODR_TEST=$<BOOL:${RFID_SENSOR_ODR_TEST}>
   RFID_SENSOR_ODR_SWEEP=$<BOOL:${RFID_SENSOR_ODR_SWEEP}>
   RFID_SENSOR_EXTCLK_TEST=$<BOOL:${RFID_SENSOR_EXTCLK_TEST}>
-  RFID_BENCH_TIMING_PIN=$<BOOL:${RFID_BENCH_TIMING_PIN}>
-  RFID_BENCH_PREFETCH=$<BOOL:${RFID_BENCH_PREFETCH}>)
+  RFID_BENCH_TIMING_PIN=$<BOOL:${RFID_BENCH_TIMING_PIN}>)
 target_include_directories(firmware_options INTERFACE Core/Inc App/Inc Platform/Inc
   ${HAL}/Inc Drivers/CMSIS/Include Drivers/CMSIS/Device/ST/STM32L0xx/Include
   Drivers/ADI Drivers/PCG)

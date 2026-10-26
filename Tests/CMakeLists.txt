@@ -14,6 +14,9 @@ add_executable(sensor_odr_test sensor_odr_test.c ../Platform/Src/sensor_odr_test
 target_compile_definitions(sensor_odr_test PRIVATE RFID_SENSOR_ODR_TEST=1)
 add_executable(radio_test radio_test.c ../Platform/Src/radio.c)
 add_executable(app_test app_test.c ../App/Src/app.c ../App/Src/behavior.c ../App/Src/resampler.c ../App/Src/sample_clock.c ../App/Src/fifo_parser.c ../App/Src/history.c ../App/Src/storage.c ../App/Src/protocol.c ../Drivers/PCG/pcg_basic.c)
+add_executable(app_timing_test app_timing_test.c app_timing_app.c ../App/Src/behavior.c ../App/Src/resampler.c ../App/Src/sample_clock.c ../App/Src/fifo_parser.c ../App/Src/history.c ../App/Src/storage.c ../App/Src/protocol.c ../Drivers/PCG/pcg_basic.c)
+target_include_directories(app_timing_test PRIVATE ../App/Inc ../Platform/Inc ../Drivers/ADI ../Drivers/PCG)
+target_compile_options(app_timing_test PRIVATE -std=c11 -O2 -Wall -Wextra -Werror)
 add_executable(resampler_test resampler_test.c ../App/Src/resampler.c ../App/Src/sample_clock.c)
 add_executable(resampler_replay resampler_replay.c ../App/Src/resampler.c ../App/Src/behavior.c)
 target_include_directories(resampler_replay PRIVATE ../App/Inc)
@@ -27,3 +30,11 @@ endforeach()
 add_test(NAME app_nominal_50Hz COMMAND app_test --nominal)
 add_test(NAME app_fast_65Hz COMMAND app_test --fast)
 add_test(NAME app_lost_fifo_irq COMMAND app_test --lost-irq)
+# Sensor-rate sweeps with modelled MCU processing time per drained word: measured on
+# V3.8 without/with flash prefetch, the estimate after the resampler change, and zero.
+# The short-batch fault repeats at every 60 s checkpoint once a rate is in one of its
+# roughly 0.04 Hz wide bands, so 0.01 Hz steps over 300 s are enough to catch it.
+add_test(NAME app_timing_slow COMMAND app_timing_test sweep 32 65 0.01 300 0.374)
+add_test(NAME app_timing_prefetch COMMAND app_timing_test sweep 32 65 0.01 300 0.295)
+add_test(NAME app_timing_fast COMMAND app_timing_test sweep 32 65 0.01 300 0.13)
+add_test(NAME app_timing_zero COMMAND app_timing_test sweep 32 65 0.01 300 0)
