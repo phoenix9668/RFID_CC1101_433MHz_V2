@@ -6,18 +6,28 @@ No later firmware implementation or later panting classifier is merged.
 
 ## Development
 
-Use STM32CubeIDE for Visual Studio Code 3.10.0. This rebuild uses STM32CubeCLT
-1.18.0, GNU Arm GCC 13.3.1, CMake 3.28.1 and Ninja. HAL/LL remains the
-base STM32CubeL0 V1.12.2. Installing a newer ST bundle does not change the
-compiler selected by the local presets.
+Use STM32CubeIDE for Visual Studio Code 3.10.0. HAL/LL remains the base
+STM32CubeL0 V1.12.2.
+
+Since 2026-10-26 the candidate firmware is built with the ST bundles pinned in
+`.settings/bundles.store.json`: GNU Tools for STM32 14.3.1+st.2, CMake
+4.0.1+st.3 and Ninja 1.13.1+st.1. The VS Code extension reads this file, and
+`setup-local.ps1 -Bundles` resolves it when generating the local presets, so
+editing it changes the compiler. Rerun the setup, record any version change and
+verify again. Evidence up to the 2026-09-27 candidate,
+including the resampling report, was built with STM32CubeCLT 1.18.0, GNU Arm GCC
+13.3.1, CMake 3.28.1 and Ninja 1.11.1; setting up without `-Bundles` reproduces
+that toolchain. STM32CubeCLT remains required for STM32CubeProgrammer and the
+ST-LINK GDB server used by the backup and debug scripts.
 
 Run `Tools/setup-local.ps1` with your CubeClt directory, native HostGcc executable,
-Python executable and optional CsvData directory. It generates ignored
-`.local/tools.json` and `CMakeUserPresets.json`; do not commit these files.
-Example (replace the environment variables with your installed tool paths):
+Python executable, optional CsvData directory and, for the bundle toolchain, the
+bundle root. It generates ignored `.local/tools.json` and `CMakeUserPresets.json`;
+do not commit these files. Example (replace the environment variables with your
+installed tool paths):
 
 ```powershell
-./Tools/setup-local.ps1 -CubeClt $env:STM32_CUBE_CLT -HostGcc $env:HOST_GCC -Python $env:PYTHON -CsvData $env:RFID_CSV_DATA
+./Tools/setup-local.ps1 -CubeClt $env:STM32_CUBE_CLT -HostGcc $env:HOST_GCC -Python $env:PYTHON -CsvData $env:RFID_CSV_DATA -Bundles "$env:LOCALAPPDATA\stm32cube\bundles"
 ./Tools/open-vscode.ps1
 ./Tools/build.ps1 -Preset Debug
 ./Tools/verify.ps1
@@ -37,6 +47,33 @@ the BOM part STM32L051C8T6; its source type identifies the CubeMX boundary.
 The existing IOC uses STM32L051C8T3, the same memory/peripheral target with a
 different temperature suffix. No device pack startup or HAL replaces the
 pinned base libraries.
+
+### GCC 14.3.1 switch (2026-10-26)
+
+The extension pinned the bundles above on 2026-10-24 and the user kept them.
+Command-line builds of the unchanged source compare as follows (Flash bytes; RAM
+is 5,160 / 5,152 / 5,568 B in every case; no compiler or linker warnings):
+
+| Toolchain | Debug | Release | Diagnostics |
+| --- | ---: | ---: | ---: |
+| STM32CubeCLT 1.18.0, GCC 13.3.1 (2024-09-26 build) | 25,188 | 22,872 | 29,196 |
+| Bundle GCC 13.3.1+st.9 (2025-05-23 build), byte-identical images | 25,188 | 22,872 | 29,196 |
+| Bundle GCC 14.3.1+st.2 with CMake 3.28.1 or 4.0.1+st.3 | 25,244 | 22,852 | 29,280 |
+
+GCC 14.3.1 HEX SHA-256 values:
+
+```text
+Debug        9A488D0788A27AD1CACE2B56741B0DABAC2596DD38B26C0C1C2B78831D03BEE6
+Release      A4E49E492A3261E54AFBB23ABB675DCE811E5FB97F846AE760D396ED9060656C
+Diagnostics  088EE346D7CC2DFB7F651290AB19829F3B8A968F181586A7CF663735403E63D4
+```
+
+The largest static stack frames are unchanged. A local instruction-level
+Cortex-M0+ simulation (analysis tools, not in this repository) ran the unchanged
+classifier, resampler, sample clock and scheduler from both compilers' Release
+code; results were identical and cycle counts differed by less than 1%. HAL/LL,
+startup, interrupts, SPI, radio, STOP and EEPROM paths are not covered by that
+simulation, so the GCC 14 images still require board validation.
 
 ## Debugging Safety
 

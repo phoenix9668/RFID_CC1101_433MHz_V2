@@ -45,7 +45,10 @@ cmake --build --preset Diagnostics-local
 ```
 
 The `*-local` presets are created by the local setup described in
-[V38_REBUILD.md](V38_REBUILD.md). Shared Debug/Release/Diagnostics presets remain
+[V38_REBUILD.md](V38_REBUILD.md). With `-Bundles` they use the GNU Arm, CMake
+and Ninja versions pinned in `.settings/bundles.store.json`, the same file the
+VS Code extension reads; rerun the setup after changing it. Shared
+Debug/Release/Diagnostics presets remain
 usable when the toolchain is already on PATH. Do not flash automatically when
 building; this resampling candidate has not completed hardware qualification.
 

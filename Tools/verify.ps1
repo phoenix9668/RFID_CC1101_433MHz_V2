@@ -2,9 +2,12 @@ param([switch]$HostOnly, [string]$BuildRoot='build/codex-verify')
 $ErrorActionPreference='Stop'
 $root=Split-Path $PSScriptRoot -Parent
 $config=Get-Content -Raw -LiteralPath (Join-Path $root '.local/tools.json') | ConvertFrom-Json
-$cmake=Join-Path $config.CubeClt 'CMake/bin/cmake.exe'
-$ctest=Join-Path $config.CubeClt 'CMake/bin/ctest.exe'
-$env:PATH="$(Join-Path $config.CubeClt 'GNU-tools-for-STM32/bin');$(Join-Path $config.CubeClt 'Ninja/bin');$(Split-Path $config.HostGcc -Parent);$env:PATH"
+# tools.json written before -Bundles support records only CubeClt; use its layout.
+$arm=if($config.ArmBin) { $config.ArmBin } else { Join-Path $config.CubeClt 'GNU-tools-for-STM32/bin' }
+$cmake=if($config.CMake) { $config.CMake } else { Join-Path $config.CubeClt 'CMake/bin/cmake.exe' }
+$ninja=if($config.Ninja) { $config.Ninja } else { Join-Path $config.CubeClt 'Ninja/bin/ninja.exe' }
+$ctest=Join-Path (Split-Path $cmake -Parent) 'ctest.exe'
+$env:PATH="$arm;$(Split-Path $ninja -Parent);$(Split-Path $config.HostGcc -Parent);$env:PATH"
 function Run([string]$Program,[string[]]$Arguments) {
     & $Program @Arguments
     if($LASTEXITCODE -ne 0) { throw "$Program failed with exit code $LASTEXITCODE" }
@@ -12,7 +15,7 @@ function Run([string]$Program,[string[]]$Arguments) {
 Push-Location $root
 try {
     Run $cmake @('--version')
-    Run (Join-Path $config.CubeClt 'GNU-tools-for-STM32/bin/arm-none-eabi-gcc.exe') @('--version')
+    Run (Join-Path $arm 'arm-none-eabi-gcc.exe') @('--version')
     if(!$HostOnly) {
         foreach($preset in @('Debug','Release','Diagnostics')) {
             $dir="$BuildRoot/$preset"

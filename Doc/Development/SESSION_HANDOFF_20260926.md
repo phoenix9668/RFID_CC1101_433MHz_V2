@@ -295,6 +295,8 @@ git -c http.proxy=http://127.0.0.1:7890 fetch origin
 
 已验证的固件工具版本为 STM32CubeIDE for Visual Studio Code 3.10.0、STM32CubeCLT 1.18.0、GNU Arm GCC 13.3.1、CMake 3.28.1 和配套 Ninja。新装扩展如有不同版本，明确记录差异，不要让它静默切换编译器；本轮未采用 Clang 编译固件。
 
+> 2026-10-26 更新：用户已选定改用 ST 扩展的 bundle 工具链，版本固定在 `.settings/bundles.store.json`：GNU Tools for STM32 14.3.1+st.2、CMake 4.0.1+st.3、Ninja 1.13.1+st.1。`setup-local.ps1` 新增 `-Bundles` 参数来使用这套工具链；不加该参数时，仍按上述 CubeCLT 1.18.0 / GCC 13.3.1 组合复现本交接及此前的证据。GCC 14 版尚未上板验证，对比结果见 [V38_REBUILD.md](V38_REBUILD.md)。
+
 主机测试还需要原生 Windows GCC，不是 arm-none-eabi-gcc。旧机借用了 Vivado 中的 MinGW GCC 6.2.0；新机不必为了它安装整个 Vivado，可以配置可用的原生 GCC，再重新验证。
 
 离线回放旧机环境已核对为 Python 3.12.14、NumPy 2.5.3、SciPy 1.18.1、openpyxl 3.1.5。推荐使用隔离环境，示例：
