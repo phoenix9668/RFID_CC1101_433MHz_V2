@@ -17,6 +17,34 @@
 #else
 #define BENCH_MARK(high) ((void)0)
 #endif
+/* Bench only: stream every FIFO batch, resampler output and classification
+ * over UART so Tests/fifo_dump_replay.c can recompute them on the host. */
+#if RFID_BENCH_RAW_DUMP
+static void dump_line(const char *tag, uint32_t a, long b, long c, long d)
+{
+    static char line[48];
+    snprintf(line, sizeof(line), "%s %lu %ld %ld %ld\r\n", tag, (unsigned long)a, b, c, d);
+    board_log(line);
+}
+static void dump_words(const uint8_t *bytes, unsigned count)
+{
+    static char line[136];
+    for (unsigned base = 0; base < count; base += 24)
+    {
+        int n = snprintf(line, sizeof(line), "w");
+        for (unsigned i = base; i < count && i < base + 24; ++i)
+            n += snprintf(line + n, sizeof(line) - n, " %04X",
+                          bytes[2 * i] | (unsigned)bytes[2 * i + 1] << 8);
+        snprintf(line + n, sizeof(line) - n, "\r\n");
+        board_log(line);
+    }
+}
+#define DUMP(tag, a, b, c, d) dump_line(tag, a, b, c, d)
+#define DUMP_WORDS(bytes, count) dump_words(bytes, count)
+#else
+#define DUMP(tag, a, b, c, d) ((void)0)
+#define DUMP_WORDS(bytes, count) ((void)0)
+#endif
 static volatile uint32_t events;
 static rfid_history_t history;
 static storage_t store = {.read_word = board_eeprom_read, .write_word = board_eeprom_write};
@@ -127,6 +155,7 @@ static void process_fifo(uint32_t now, bool drain)
     rfid_status_t status = sensor_fifo_entries(&entries, &overrun);
     if (status != RFID_OK)
     {
+        DUMP("d", now, 0, 101, 0);
         sensor_ready = false;
         sensor_errors++;
         resampler_reset(&resampler);
@@ -137,6 +166,7 @@ static void process_fifo(uint32_t now, bool drain)
     }
     if (overrun)
     {
+        DUMP("d", now, entries, 100, 0);
         sensor_errors++;
         fifo_parser_reset(&parser);
         behavior_reset();
@@ -166,6 +196,7 @@ static void process_fifo(uint32_t now, bool drain)
     status = sensor_fifo_read(fifo_bytes, entries * 2);
     if (status != RFID_OK)
     {
+        DUMP("d", now, entries, 102, 0);
         sensor_ready = false;
         sensor_errors++;
         fifo_parser_reset(&parser);
@@ -176,6 +207,7 @@ static void process_fifo(uint32_t now, bool drain)
     }
     rfid_status_t timing = sample_clock_batch(&sample_clock, now, entries);
     next_fifo_check = now + fifo_deadline();
+    DUMP("d", now, entries, timing, (long)sample_clock.rate_millihz);
     if (timing != RFID_OK)
     {
         fifo_parser_reset(&parser);
@@ -190,6 +222,7 @@ static void process_fifo(uint32_t now, bool drain)
              (unsigned long)now, entries, (unsigned long)sample_clock.rate_millihz);
     board_log(trace);
 #endif
+    DUMP_WORDS(fifo_bytes, entries);
     BENCH_MARK(true);
     for (unsigned i = 0; i < entries; ++i)
     {
@@ -199,6 +232,7 @@ static void process_fifo(uint32_t now, bool drain)
         bool complete = fifo_parser_word(&parser, word, &sample);
         if (parser.discarded != discarded)
         {
+            DUMP("x", now, (long)i, 1, 0);
             behavior_reset();
             resampler_reset(&resampler);
             sensor_errors++;
@@ -211,17 +245,20 @@ static void process_fifo(uint32_t now, bool drain)
                 sample_clock_word_time(&sample_clock, i), &normalized, &center);
             if (result_status == RFID_INVALID)
             {
+                DUMP("x", now, (long)i, 2, 0);
                 behavior_reset();
                 ++sensor_errors;
                 continue;
             }
             if (result_status != RFID_OK) continue;
+            DUMP("r", (uint32_t)(center / 1000), normalized.x, normalized.y, normalized.z);
             uint8_t result;
             if (behavior_push(normalized, &result))
             {
                 /* Preserve legacy classification-at-emission accounting. FIR
                  * signal time is 320 ms earlier; never backfill sealed windows. */
                 uint32_t timestamp = (uint32_t)((center + RESAMPLER_HALF_US) / 1000);
+                DUMP("c", timestamp, result, 0, 0);
                 /* A classification ending exactly on the boundary belongs to
                    the second just completed, before the window is sealed. */
                 advance_to(timestamp - 1);
@@ -283,6 +320,7 @@ bool app_poll(void)
             sensor_errors++;
         else
         {
+            DUMP("d", now, 0, 103, 0);
             behavior_reset();
             fifo_parser_reset(&parser);
             resampler_reset(&resampler);
