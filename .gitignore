@@ -1,4 +1,6 @@
 # Sources and selected measurement data are tracked; local/private output is not.
+# macOS Finder metadata in any directory.
+.DS_Store
 /build/
 /tmp/
 /.local/
