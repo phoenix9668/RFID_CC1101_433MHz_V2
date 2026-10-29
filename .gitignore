@@ -22,6 +22,10 @@
 __pycache__/
 *.pyc
 
+# Local editor completion settings.
+/.clangd
+/.vscode/c_cpp_properties.json
+
 # Verified duplicates and generated report previews; keep the canonical evidence.
 /Doc/data/*_result_precommit.csv
 /output/pdf/panting_algorithm_validation_report/*.html
