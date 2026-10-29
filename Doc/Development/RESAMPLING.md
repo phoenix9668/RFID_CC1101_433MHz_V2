@@ -1,7 +1,12 @@
 # Scheme 2: 50 Hz acquisition, 25 Hz behavior input
 
-Status: software candidate; not flashed or hardware-qualified. The classifier in
-`App/Src/behavior.c`, RF payload, EEPROM layout and 20-minute RTC window are unchanged.
+Status: hardware-tested candidate. Real FIFO data have been replayed against the
+board outputs, and the latest 16 consecutive sealed windows on the tested V3.8
+board each contain 1200 counts. Behavior accuracy, base-station reception and
+production energy remain unqualified. See the
+[2026-10-27 window-count validation](../ADXL362_Window_Count_Validation/README.md).
+The classifier in `App/Src/behavior.c`, RF payload, EEPROM layout and 20-minute
+RTC window are unchanged.
 
 ## Acquisition and time reconstruction
 
@@ -67,11 +72,12 @@ Measured on the V3.8 board on 2026-10-26 with the bench-only PB10 marker
 (`RFID_BENCH_TIMING_PIN`), which is high only while drained words are
 processed. At the observed 39.3 Hz, one 453-word batch took 169.2 ms with the
 previous arithmetic and flash prefetch off, and 133.6 ms with prefetch on.
-Prefetch is therefore enabled in `SystemClock_Config`. The narrowed arithmetic
-above is expected to remove most of the remainder; measure it with the same
-marker before quoting a figure. The instruction-level host simulation used
-earlier predicted 87..95 ms and is optimistic even with prefetch, so use it
-only for relative comparisons. Energy per batch still has to be measured.
+Prefetch is therefore enabled in `SystemClock_Config`. With the narrowed
+arithmetic above, the same marker measured 45.3 ms per 453-word batch (15 batches,
+44.9..45.4 ms), about 3.7 times faster than the original prefetch-off code.
+The earlier instruction-level host simulation predicted 87..95 ms for the
+previous arithmetic and underestimated its board cost even with prefetch, so
+use it only for relative comparisons. Energy per batch still has to be measured.
 
 ## Software verification
 
@@ -145,9 +151,11 @@ Pooled acceptance therefore does not mean every recording meets the threshold.
 
 ## Required before deployment
 
-1. Record true 50 Hz-setting XYZ with independent RTC/logic-analyzer time, including
-   STOP wakeups, 20-minute transmission and checkpoint boundaries. Verify no gaps,
-   duplicated output times, unbounded FIFO backlog or unexplained rate resets.
+1. Extend the true 50 Hz-setting recordings to motion and fault conditions with
+   independent RTC/logic-analyzer time. Static board/host output comparison and
+   16 consecutive sealed 1200-count windows are now verified; continue checking
+   STOP wakeups, gaps, duplicated output times, backlog and rate resets under
+   the remaining operating conditions.
 2. Compare filter-only and complete conversion on motion data; collect labelled
    cases for all six classes. Current replay has no reference climb/ruminate outputs.
 3. Measure computation time, stack high-water and 20-minute charge with Release

@@ -8,6 +8,7 @@ PCB/RFID_CC1101_433MHz_V3.8/* -text
 PCB/RFID_CC1101_433MHz_V3.8/*.pdf binary
 # Replay evidence and hashed source files must survive checkout byte-for-byte.
 Doc/ADXL362_Resampling_Validation/** -text
+Doc/ADXL362_Window_Count_Validation/*.csv -text whitespace=cr-at-eol
 App/Src/resampler.c -text
 App/Src/resampler_kernel.h -text
 Tools/validate-resampling.py -text

@@ -1,0 +1,83 @@
+{
+  "status": "pass",
+  "scope": "Long-duration per-window accounting on the tested board; not behavior-accuracy acceptance.",
+  "firmware_commit": "57e646d101e542ba88170dde53fbf240628dd9dc",
+  "snapshot_created_utc": "2026-10-27T14:57:04.4481428Z",
+  "snapshot_mode": "UR",
+  "reset_requested_with_user_approval": true,
+  "eeprom_sha256": "71567ec6ca1f47733d8fb46f4888abc1160f87b86adea67eb7e30dd0a40b5bcb",
+  "window_csv_sha256": "a5f030f2cedfa507011ed7fc6e20239ea2279caa4ebbba8a1338c3e8e602a3ad",
+  "firmware_bin_sha256": "92af836ffc3307deb2678b451601b7a396eb6ad6484f0c70d87127714f35d05e",
+  "valid_records": 46,
+  "history_records": 16,
+  "checkpoint_records": 30,
+  "minimum_consecutive_full_windows": 13,
+  "observed_consecutive_full_windows": 16,
+  "covered_window_seconds": 19200,
+  "total_class_counts": 19200,
+  "aggregate_classes": {
+    "rest": 19194,
+    "ingestion": 0,
+    "movement": 0,
+    "climb": 0,
+    "ruminate": 0,
+    "other": 6
+  },
+  "journal_sequence_first_last": [
+    9476,
+    9791
+  ],
+  "journal_sequence_deltas": [
+    21
+  ],
+  "latest_12_distinct_history_slots": 12,
+  "latest_12_total": 14400,
+  "open_checkpoint_excluded": {
+    "slot": 20,
+    "kind": 2,
+    "sequence": 9810,
+    "stage": 3,
+    "elapsed": 1080,
+    "reset": 82,
+    "counts": [
+      1079,
+      0,
+      0,
+      0,
+      0,
+      1
+    ],
+    "total": 1080
+  },
+  "checks": {
+    "backup_complete": true,
+    "same_device": true,
+    "identity_region_unchanged": true,
+    "legacy_region_unchanged": true,
+    "duplicate_eeprom_reads_equal": true,
+    "independent_record_decoders_agree": true,
+    "flash_matches_current_plain_diagnostics": true,
+    "options_unchanged_since_previous_restore": true,
+    "history_slot_advances_modulo_12": true,
+    "journal_slot_advances_modulo_16": true,
+    "all_journal_sequence_deltas_are_21": true,
+    "all_records_reset_82": true,
+    "all_windows_elapsed_1200": true,
+    "all_six_class_totals_1200": true,
+    "minimum_long_run_duration_met": true
+  },
+  "limitations": [
+    "The 16 retained history records are newer than the earlier 4.5-hour UART capture; the snapshot validates a later interval of the same reset-82 run.",
+    "Each history record stores elapsed=1200 and six class counts, but no independent per-record wall-clock timestamp.",
+    "The open 1080-second checkpoint is excluded from full-window acceptance.",
+    "Predominantly stationary data does not establish behavior-class accuracy.",
+    "Record CRC and counts do not establish original base-station reception or production energy use."
+  ],
+  "post_read_observation": {
+    "post_read_boot": "boot stage=3 elapsed=1080 reset=83 err=0/0/0",
+    "post_read_fifo_reads": 13,
+    "post_read_errors_zero": true,
+    "firmware_resumed": true
+  },
+  "minimum_duration_seconds": 15600
+}

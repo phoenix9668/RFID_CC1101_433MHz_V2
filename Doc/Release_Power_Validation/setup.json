@@ -1,0 +1,133 @@
+{
+  "status": "release_commissioned_power_capture_pending",
+  "firmware_commit": "57e646d101e542ba88170dde53fbf240628dd9dc",
+  "build_type": "Release",
+  "flash_bytes": 23012,
+  "ram_bytes_including_reserved_stack": 5152,
+  "candidate_files": {
+    "elf": {
+      "path": "build\\release-qualification-20261027\\RFID_CC1101_V38.elf",
+      "sha256": "9580a9682df6096e3b8a150779fa643aa217a2178181d13ee4097be032913681"
+    },
+    "hex": {
+      "path": "build\\release-qualification-20261027\\RFID_CC1101_V38.hex",
+      "sha256": "b4fd28f5e550778a5b0a4abca3d81c69b9ab21858c2340344666d4673542aa6a"
+    },
+    "bin": {
+      "path": "build\\release-qualification-20261027\\RFID_CC1101_V38.bin",
+      "sha256": "e367e306d68a2f7f0ca8e35b823b75f203ab8d54c82093dff3201ee44a113db6"
+    }
+  },
+  "compile_flags": {
+    "RFID_BENCH_RAW_DUMP": "OFF",
+    "RFID_BENCH_TIMING_PIN": "OFF",
+    "RFID_DIAGNOSTICS": "OFF",
+    "RFID_DIAGNOSTIC_HOLD_AWAKE": "OFF",
+    "RFID_HOST_TESTS": "OFF",
+    "RFID_SENSOR_EXTCLK_TEST": "OFF",
+    "RFID_SENSOR_ODR_SWEEP": "OFF",
+    "RFID_SENSOR_ODR_TEST": "OFF"
+  },
+  "elf_load_segments": [
+    {
+      "physical_address": "0x8000000",
+      "file_bytes": 22968
+    },
+    {
+      "physical_address": "0x80059b8",
+      "file_bytes": 44
+    }
+  ],
+  "flash_verification": {
+    "status": "pass",
+    "firmware_commit": "57e646d101e542ba88170dde53fbf240628dd9dc",
+    "build_type": "Release",
+    "flash_bytes": 23012,
+    "release_bin_sha256": "e367e306d68a2f7f0ca8e35b823b75f203ab8d54c82093dff3201ee44a113db6",
+    "started_utc": "2026-10-27T15:45:08.9873992Z",
+    "finished_utc": "2026-10-27T15:45:28.6511287Z",
+    "reset_requested_to_start_release": true,
+    "checks": {
+      "programmer_succeeded": true,
+      "programmer_verified_download": true,
+      "eeprom_snapshots_complete": true,
+      "eeprom_unchanged_during_programming": true,
+      "legacy_region_unchanged_from_backup": true,
+      "options_snapshots_complete": true,
+      "options_unchanged_during_programming": true,
+      "options_unchanged_from_backup": true,
+      "flash_readback_complete": true,
+      "release_image_matches_flash_readback": true
+    }
+  },
+  "startup_verification": {
+    "status": "startup_and_checkpoint_progress_verified",
+    "preflash_latest": {
+      "sequence": 9862,
+      "stage": 6,
+      "elapsed": 300,
+      "reset": 84
+    },
+    "release_latest_before_read_reset": {
+      "slot": 20,
+      "kind": 2,
+      "sequence": 9873,
+      "stage": 6,
+      "elapsed": 900,
+      "reset": 85,
+      "counts": [
+        860,
+        0,
+        0,
+        0,
+        0,
+        32
+      ]
+    },
+    "snapshot_created_utc": "2026-10-27T15:55:53.0915915Z",
+    "checks": {
+      "same_device": true,
+      "eeprom_progressed": true,
+      "reset_count_advanced_from_preflash": true,
+      "legacy_region_unchanged": true,
+      "identity_unchanged": true,
+      "flash_still_release": true
+    },
+    "complete_release_window_run_qualified": false,
+    "power_capture_started": false,
+    "note": "The UR read ends this short commissioning interval; subsequent independent measurement needs a new start marker."
+  },
+  "instrument_model_reported_by_user": "合宙 IoT Power - CC",
+  "instrument_connected": false,
+  "power_client_installed": false,
+  "power_capture_started": false,
+  "client_setup": {
+    "store_product_id": "9N8S8M8226SH",
+    "store_name": "PowerAnalyzer",
+    "publisher": "晨旭",
+    "direct_download_status": "TLS handshake failed with certificate validation enabled",
+    "store_install_status": "failed",
+    "store_error_code": "0x80244021",
+    "temporary_proxy_retry_status": "blocked by disabled WinGet ProxyCommandLineOptions feature; setting was not changed",
+    "global_proxy_changed": false,
+    "tls_verification_disabled": false
+  },
+  "measurements": {
+    "sleep_current_uA": null,
+    "acquisition_charge_uAh": null,
+    "transmit_charge_uAh": null,
+    "window_charge_uAh": null,
+    "window_average_current_uA": null
+  },
+  "acceptance": {
+    "release_complete_window_counts": "pending",
+    "production_power": "pending",
+    "numeric_power_budget": "not yet specified"
+  },
+  "sources": {
+    "instrument": "https://wiki.luatos.com/iotpower/cc/index.html",
+    "connections": "https://wiki.luatos.com/iotpower/cc/parts.html",
+    "client": "https://wiki.luatos.com/iotpower/pc.html",
+    "store": "https://www.microsoft.com/store/apps/9N8S8M8226SH"
+  }
+}
